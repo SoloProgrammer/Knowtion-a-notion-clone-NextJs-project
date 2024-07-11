@@ -7,7 +7,7 @@ import { ThemeProvider } from "@/providers/theme-provider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: `${BRAND_NAME} - Home`,
+  title: `${BRAND_NAME}`,
   description:
     "Create workspaces for your interacvtive teams and collaborate seamlessly",
   icons: {
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     },
   ],
   openGraph: {
-    title: `${BRAND_NAME} - Home`,
+    title: `${BRAND_NAME}`,
     description:
       "Create workspaces for your interacvtive teams and collaborate seamlessly",
     url: "knowtion.vercel.app",
