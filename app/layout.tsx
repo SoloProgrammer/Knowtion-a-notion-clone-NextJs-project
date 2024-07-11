@@ -24,6 +24,37 @@ export const metadata: Metadata = {
       },
     ],
   },
+  referrer: "origin-when-cross-origin",
+  keywords: [
+    "Next.js",
+    "React",
+    "JavaScript",
+    "Notion",
+    "Knowtion",
+    "Documents",
+  ],
+  authors: [
+    {
+      name: "Pratham Shinde",
+      url: "https://github.com/SoloProgrammer",
+    },
+  ],
+  openGraph: {
+    title: `${BRAND_NAME} - Home`,
+    description:
+      "Create workspaces for your interacvtive teams and collaborate seamlessly",
+    url: "knowtion.vercel.app",
+    siteName: "Knowtion",
+    images: [
+      {
+        url: "/og.png", // Must be an absolute URL
+        width: 800,
+        height: 600,
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
