@@ -6,6 +6,7 @@ type SideBarState = {
   isTrasitioning?: boolean;
   setIsTrasitioning?: (bool: boolean) => void;
 };
+
 const initSideBarStore = (initialState: boolean) =>
   create<SideBarState>((set) => ({
     isCollapsed: initialState,

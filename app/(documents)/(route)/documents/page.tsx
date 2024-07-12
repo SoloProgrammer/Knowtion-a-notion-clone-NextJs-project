@@ -1,4 +1,4 @@
-import { SideBarMenu } from "../../_components/side-bar-menu";
+import { SideBarMenu } from "../../_components/sidebar/side-bar-menu";
 
 const DocumentsPage = () => {
   return (

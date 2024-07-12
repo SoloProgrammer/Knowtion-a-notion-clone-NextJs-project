@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { PropsWithChildren } from "react";
 
 import { Spinner } from "@/components/spinner";
-import { Sidebar } from "./_components/sidebar";
+import { Sidebar } from "./_components/sidebar/sidebar";
 
 import { useConvexAuth } from "convex/react";
 

@@ -4,9 +4,13 @@ import { cn } from "@/lib/utils";
 import { ChevronsLeft } from "lucide-react";
 import { usePathname } from "next/navigation";
 
-import { ElementRef, MouseEvent, useEffect, useRef, useState } from "react";
+import { ElementRef, MouseEvent } from "react";
+
+import { useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
-import { useSideBar } from "../zustand-store/sidebar-store";
+import { useSideBar } from "../../zustand-store/sidebar-store";
+
+import { MAX_WIDTH, MIN_WIDTH } from "./constants";
 
 export const Sidebar = () => {
   const pathName = usePathname();
@@ -15,9 +19,6 @@ export const Sidebar = () => {
   const isResizingRef = useRef(false);
   const [isResetting, setIsResetting] = useState(false);
   const { isCollapsed, setIsCollapsed, isTrasitioning } = useSideBar(isMobile);
-
-  const MAX_WIDTH = 450;
-  const MIN_WIDTH = 250;
 
   const handleDragStart = (e: MouseEvent) => {
     e.preventDefault();
@@ -51,6 +52,10 @@ export const Sidebar = () => {
     }, 300);
   };
 
+  useEffect(() => {
+    isMobile && setIsCollapsed(true);
+  }, [pathName]);
+
   return (
     <>
       <aside
@@ -61,7 +66,7 @@ export const Sidebar = () => {
           isMobile && isCollapsed && "-left-full",
           isResetting && "transition-all",
           isCollapsed && "!w-0 transition-all",
-          isTrasitioning && 'transition-all ease-in-expo'
+          isTrasitioning && "transition-all ease-in-expo"
         )}
       >
         <div
