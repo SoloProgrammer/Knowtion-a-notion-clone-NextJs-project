@@ -8,10 +8,11 @@ import { useConvexAuth } from "convex/react";
 
 import { ArrowRight } from "lucide-react";
 import { LoginButton } from "./login-button";
+import Link from "next/link";
 
 export const Heading = () => {
   const { isAuthenticated, isLoading } = useConvexAuth();
-  
+
   return (
     <div className="max-w-3xl space-y-1 mx-auto flex flex-col gap-3 items-center mt-4">
       <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold">
@@ -28,10 +29,12 @@ export const Heading = () => {
         </div>
       )}
       {!isLoading && isAuthenticated && (
-        <Button className="group" size="sm">
-          Enter {BRAND_NAME}{" "}
-          <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition" />
-        </Button>
+        <Link href={"/documents"}>
+          <Button className="group" size="sm">
+            Enter {BRAND_NAME}{" "}
+            <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition" />
+          </Button>
+        </Link>
       )}
       {!isAuthenticated && !isLoading && <LoginButton className="text-sm" />}
     </div>
