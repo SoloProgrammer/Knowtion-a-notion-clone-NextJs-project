@@ -1,16 +1,20 @@
 "use client";
 
+import Link from "next/link";
+import { SignInButton, UserButton } from "@clerk/clerk-react";
+
 import { useScrollTop } from "@/hooks/use-scroll-top";
+import { useConvexAuth } from "convex/react";
+
+import { FileInput } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 import { Logo } from "./logo";
 import { Button } from "@/components/ui/button";
-import { FileInput } from "lucide-react";
 import { ModeToggle } from "@/components/mode-toggle";
-import { SignInButton, UserButton } from "@clerk/clerk-react";
-import { useConvexAuth } from "convex/react";
 import { Spinner } from "@/components/spinner";
+
 import { BRAND_NAME } from "@/app/constants";
-import Link from "next/link";
 
 export const Navbar = () => {
   const isScrolled = useScrollTop();
