@@ -77,3 +77,6 @@
 :root, body{
   @apply h-full
 }
+.cl-footer > div:nth-child(2){
+  @apply !hidden
+}
