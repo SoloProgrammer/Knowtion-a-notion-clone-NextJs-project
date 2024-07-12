@@ -15,6 +15,7 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { Spinner } from "@/components/spinner";
 
 import { BRAND_NAME } from "@/app/constants";
+import { LoginButton } from "./login-button";
 
 export const Navbar = () => {
   const isScrolled = useScrollTop();
@@ -23,7 +24,7 @@ export const Navbar = () => {
   return (
     <div
       className={cn(
-        "px-3 md:px-6 py-4 fixed top-0 left-0 w-full transition-colors flex justify-between items-center",
+        "px-6 md:px-6 py-4 fixed top-0 left-0 w-full transition-colors flex justify-between items-center",
         isScrolled && "shadow-sm bg-white dark:bg-neutral-900 border-b"
       )}
     >
@@ -34,18 +35,16 @@ export const Navbar = () => {
           {isLoading ? (
             <Spinner />
           ) : !isAuthenticated && !isLoading ? (
-            <SignInButton mode="modal">
-              <Button variant={"default"} size="sm" className="text-xs">
-                Get knowtion free
-              </Button>
-            </SignInButton>
+            <LoginButton />
           ) : (
             <div className="flex items-center gap-2">
-              <Link href={"/documents"} className="">
-                <Button variant={"ghost"} size={"sm"}>
-                  <span className="text-sm">
-                    Enter {BRAND_NAME}
-                  </span>
+              <Link href={"/documents"} className="hidden md:block">
+                <Button
+                  variant={"ghost"}
+                  size={"sm"}
+                  className="bg-neutral-100 dark:bg-neutral-800"
+                >
+                  <span className="text-sm">Enter {BRAND_NAME}</span>
                   <FileInput className="w-4 h-4 ml-2" />
                 </Button>
               </Link>
