@@ -18,6 +18,7 @@ import { UserItem } from "../user-item";
 import { Item } from "../item";
 
 import { MAX_WIDTH, MIN_WIDTH } from "./constants";
+import { DocumentList } from "../document-list";
 
 export const Sidebar = () => {
   const pathName = usePathname();
@@ -107,8 +108,8 @@ export const Sidebar = () => {
         <Item icon={Search} label="Search" isSearch />
         <Item icon={Settings} label="Settings" />
         <Item icon={PlusCircle} label="New page" onClick={onCreateNote} />
-        <div>
-          <p className="line-clamp-1">Documents</p>
+        <div className="mt-5">
+          <DocumentList />
         </div>
         <div
           onMouseDown={handleDragStart}
