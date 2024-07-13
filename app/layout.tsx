@@ -4,6 +4,7 @@ import "./globals.css";
 import { META as meta } from "./constants";
 import { ThemeProvider } from "@/providers/theme-provider";
 import ConvexProvider from "@/providers/convex-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -37,6 +38,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <ConvexProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <Toaster position="bottom-right"/>
             {children}
           </ThemeProvider>
         </ConvexProvider>
