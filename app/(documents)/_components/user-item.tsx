@@ -4,10 +4,10 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 
 import { SignOutButton, useUser } from "@clerk/clerk-react";
