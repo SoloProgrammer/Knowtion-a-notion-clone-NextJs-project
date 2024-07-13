@@ -1,28 +1,33 @@
 "use client";
 
-import { AlignJustify } from "lucide-react";
+import { Text } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
 import { useSideBar } from "../../zustand-store/sidebar-store";
 import { useMediaQuery } from "usehooks-ts";
 
-export const SideBarMenu = () => {
+import { HTMLAttributes } from "react";
+
+export const SideBarMenu = ({
+  className,
+}: Omit<HTMLAttributes<SVGElement>, "onClick">) => {
   const { setIsCollapsed, setIsTrasitioning, isCollapsed } = useSideBar();
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   return (
-    <AlignJustify
+    <Text
       onClick={() => {
         setIsCollapsed(false);
         setIsTrasitioning?.(true);
         setTimeout(() => {
           setIsTrasitioning?.(false);
-        }, 300);
+        }, 400);
       }}
       className={cn(
         "text-muted-foreground cursor-pointer",
-        !isCollapsed && !isMobile && "hidden"
+        !isCollapsed && !isMobile && "hidden",
+        className
       )}
     />
   );
