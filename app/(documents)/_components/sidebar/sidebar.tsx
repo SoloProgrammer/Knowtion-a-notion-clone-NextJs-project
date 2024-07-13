@@ -3,10 +3,17 @@
 import { ElementRef, MouseEvent } from "react";
 
 import { cn } from "@/lib/utils";
-import { ChevronsLeft, PlusCircle, Search, Settings } from "lucide-react";
-import { usePathname } from "next/navigation";
+import {
+  ChevronsLeft,
+  PlusCircle,
+  PlusIcon,
+  Search,
+  Settings,
+} from "lucide-react";
+
 import { toast } from "sonner";
 
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import { useSideBar } from "../../zustand-store/sidebar-store";
@@ -16,9 +23,9 @@ import { api } from "@/convex/_generated/api";
 
 import { UserItem } from "../user-item";
 import { Item } from "../item";
+import { DocumentList } from "../document-list";
 
 import { MAX_WIDTH, MIN_WIDTH } from "./constants";
-import { DocumentList } from "../document-list";
 
 export const Sidebar = () => {
   const pathName = usePathname();
@@ -83,7 +90,7 @@ export const Sidebar = () => {
       <aside
         ref={sidebarRef}
         className={cn(
-          "w-[250px] relative flex flex-col h-full group/sidebar bg-neutral-100 dark:bg-neutral-900 overflow-y-auto z-[99999] border-r",
+          "w-[250px] relative flex flex-col h-full group/sidebar bg-neutral-100 dark:bg-neutral-900 overflow-y-auto z-[99999] border-r pb-10",
           isMobile &&
             "fixed transition-all h-full w-[90%] left-0 top-0 duration-500",
           isMobile && isCollapsed && "-left-full",
@@ -110,6 +117,9 @@ export const Sidebar = () => {
         <Item icon={PlusCircle} label="New page" onClick={onCreateNote} />
         <div className="mt-5">
           <DocumentList />
+          <div className="mt-5">
+            <Item icon={PlusIcon} label="Add a page" onClick={onCreateNote} />
+          </div>
         </div>
         <div
           onMouseDown={handleDragStart}

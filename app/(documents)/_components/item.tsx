@@ -1,11 +1,17 @@
-"use client"
+"use client";
 
 import { MouseEvent } from "react";
 import { toast } from "sonner";
 
-import { ChevronRight, LucideIcon, PlusIcon } from "lucide-react";
+import {
+  ChevronRight,
+  LucideIcon,
+  MoreHorizontal,
+  PlusIcon,
+} from "lucide-react";
 
 import { Skeleton } from "@/components/ui/skeleton";
+import { ArchiveDropDown } from "./archive-dropdown";
 
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -87,26 +93,40 @@ export const Item = ({
           />
         </div>
       )}
+
       {documentIcon ? (
         <div className="text-[18px] shrink-0 mr-2">{documentIcon}</div>
       ) : (
         <Icon className="h-[18px] shrink-0 mr-2" />
       )}
+
       <span className="truncate select-none">{label}</span>
+
       {isSearch && (
         <kbd className="ml-auto bg-muted font-medium border-b text-[10px] text-muted-foreground shadow-sm pointer-events-none select-none rounded inline-flex items-center mr-2 px-1 gap-1">
           <span>Ctrl</span>
           <span>K</span>
         </kbd>
       )}
+
       {!!id && (
-        <div
-          onClick={handleCreateChildDocument}
-          className="opacity-0 ml-auto mr-2 rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 group-hover:opacity-100"
-        >
-          <PlusIcon
-            className={cn("w-4 h-4 text-muted-foreground/80 shrink-0")}
-          />
+        <div className="flex ml-auto items-center gap-x-1">
+          <ArchiveDropDown documentId={id}>
+            <div className="opacity-0 rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 group-hover:opacity-100">
+              <MoreHorizontal
+                className={cn("w-4 h-4 text-muted-foreground/80 shrink-0")}
+              />
+            </div>
+          </ArchiveDropDown>
+
+          <div
+            onClick={handleCreateChildDocument}
+            className="opacity-0  mr-2 rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 group-hover:opacity-100"
+          >
+            <PlusIcon
+              className={cn("w-4 h-4 text-muted-foreground/80 shrink-0")}
+            />
+          </div>
         </div>
       )}
     </div>
