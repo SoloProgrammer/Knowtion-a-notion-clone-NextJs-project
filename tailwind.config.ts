@@ -73,7 +73,7 @@ const config = {
         "accordion-up": "accordion-up 0.2s ease-out",
       },
       transitionTimingFunction: {
-        "in-expo": "cubic-bezier(0.5, 1, 0.89, 1)",
+        "in-expo": "cubic-bezier(0.25, 1, 0.5, 1)",
       },
     },
   },
