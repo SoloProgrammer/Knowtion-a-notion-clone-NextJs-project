@@ -62,7 +62,7 @@ export const DocumentList = ({
           paddingLeft: level ? `${17 + 25 + (level - 1) * 10}px` : "24px",
         }}
         className={cn(
-          "hidden text-muted-foreground/80 text-sm py-1",
+          "hidden text-muted-foreground/80 text-sm py-1 truncate",
           expanded && "last:block",
           level === 0 && "!hidden"
         )}

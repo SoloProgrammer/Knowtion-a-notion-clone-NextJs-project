@@ -38,7 +38,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <ConvexProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <Toaster position="bottom-right"/>
+            <Toaster position="bottom-right" />
             {children}
           </ThemeProvider>
         </ConvexProvider>
