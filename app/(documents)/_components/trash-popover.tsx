@@ -52,7 +52,7 @@ const TrashBox = () => {
 
   const [query, setQuery] = useState<string>("");
 
-  const filteredDocuments = documents?.filter((doc) =>
+  const filteredDocuments = documents?.filter((document) =>
     document.title.toLowerCase().includes(query.toLowerCase())
   );
 
