@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { ModeToggle } from "../mode-toggle";
 
-import { DialogTrigger } from "@radix-ui/react-dialog";
+import { DialogTitle, DialogTrigger } from "@radix-ui/react-dialog";
 
 import { BRAND_NAME } from "@/app/constants";
 
@@ -17,13 +17,13 @@ export const SettingsModal = (props: PropsWithChildren) => {
       <Dialog>
         <DialogTrigger asChild>{props.children}</DialogTrigger>
         <DialogContent>
-          <DialogHeader>
+          <DialogHeader className="!text-start">
             <h3 className="text-lg font-medium">My settings</h3>
           </DialogHeader>
           <Separator />
           <div className="flex justify-between items-center">
             <div className="flex flex-col gap-y-1 items-start">
-              <h4>Appearence</h4>
+              <DialogTitle className="font-medium">Appearence</DialogTitle>
               <span className="text-[.8rem] text-muted-foreground">
                 Customize how {BRAND_NAME} looks on your device
               </span>
