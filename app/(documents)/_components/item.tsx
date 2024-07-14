@@ -74,7 +74,7 @@ export const Item = ({
     <div
       role="button"
       className={cn(
-        "group text-muted-foreground py-1 hover:bg-primary/5 text-sm flex items-center cursor-pointer w-full font-medium",
+        "group text-muted-foreground py-2 md:py-1 hover:bg-primary/5 text-sm flex items-center cursor-pointer w-full font-medium",
         active && "bg-primary/5 text-primary"
       )}
       style={{ paddingLeft: level ? `${level * 10 + 10}px` : "10px" }}
@@ -95,7 +95,7 @@ export const Item = ({
       )}
 
       {documentIcon ? (
-        <div className="text-[18px] shrink-0 mr-2">{documentIcon}</div>
+        <div className="text-[17px] shrink-0 mr-2">{documentIcon}</div>
       ) : (
         <Icon className="h-[18px] shrink-0 mr-2" />
       )}
@@ -114,7 +114,7 @@ export const Item = ({
           <ArchiveDropDown documentId={id}>
             <div className="opacity-0 rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 group-hover:opacity-100">
               <MoreHorizontal
-                className={cn("w-4 h-4 text-muted-foreground/80 shrink-0")}
+                className={cn("w-5 h-5 md:w-4 md:h-4 text-muted-foreground/80 shrink-0")}
               />
             </div>
           </ArchiveDropDown>
@@ -124,7 +124,7 @@ export const Item = ({
             className="opacity-0  mr-2 rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 group-hover:opacity-100"
           >
             <PlusIcon
-              className={cn("w-4 h-4 text-muted-foreground/80 shrink-0")}
+              className={cn("w-5 h-5 md:w-4 md:h-4 text-muted-foreground/80 shrink-0")}
             />
           </div>
         </div>

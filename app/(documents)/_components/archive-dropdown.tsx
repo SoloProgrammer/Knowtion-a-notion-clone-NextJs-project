@@ -32,13 +32,13 @@ export const ArchiveDropDown = ({
 
   const handleArchive = (e: MouseEvent) => {
     e.stopPropagation();
-    e.preventDefault();
+    if (!documentId) return;
     const promise = archive({ id: documentId });
     toast.promise(promise, {
-      loading:"Moving note to trash...",
-      success:"Note trashed",
-      error:"Error moving note to trash. Try again!"
-    })
+      loading: "Moving note to trash...",
+      success: "Note trashed",
+      error: "Error moving note to trash. Try again!",
+    });
   };
   return (
     <DropdownMenu>
@@ -55,9 +55,7 @@ export const ArchiveDropDown = ({
           className="text-muted-foreground"
           onClick={handleArchive}
         >
-          <div className="flex items-center text-sm gap-x-1 font-medium">
-            <Trash className="w-4 h-4 mr-1" /> <span>Delete</span>
-          </div>
+          <Trash className="w-4 h-4 mr-1" /> <span>Delete</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <div className="text-xs text-muted-foreground p-2 py-3">

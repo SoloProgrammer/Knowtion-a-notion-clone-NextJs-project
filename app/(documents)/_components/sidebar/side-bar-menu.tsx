@@ -25,7 +25,7 @@ export const SideBarMenu = ({
         }, 400);
       }}
       className={cn(
-        "text-muted-foreground cursor-pointer",
+        "text-primary/85 cursor-pointer",
         !isCollapsed && !isMobile && "hidden",
         className
       )}
