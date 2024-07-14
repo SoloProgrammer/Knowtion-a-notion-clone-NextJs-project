@@ -36,7 +36,7 @@
   }
 
   .dark {
-    --background: #1e1c1a;
+    --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
 
     --card: 0 0% 3.9%;
@@ -74,9 +74,13 @@
     @apply bg-background text-foreground;
   }
 }
-:root, body{
-  @apply h-full
+:root,
+body {
+  @apply h-full;
 }
-.cl-footer > div:nth-child(2){
-  @apply !hidden
+.cl-footer > div:nth-child(2) {
+  @apply !hidden;
+}
+body {
+  @apply dark:bg-[#121212];
 }
