@@ -27,6 +27,7 @@ import { UserItem } from "../user-item";
 import { Item } from "../item";
 import { DocumentList } from "../document-list";
 import { TrashPopPver } from "../trash-popover";
+import { SettingsModal } from "@/components/modals/settings-modal";
 
 import { MAX_WIDTH, MIN_WIDTH } from "./constants";
 
@@ -117,7 +118,9 @@ export const Sidebar = () => {
           <UserItem />
         </div>
         <Item icon={Search} label="Search" isSearch onClick={openSearch} />
-        <Item icon={Settings} label="Settings" />
+        <SettingsModal>
+          <Item icon={Settings} label="Settings" />
+        </SettingsModal>
         <Item icon={PlusCircle} label="New page" onClick={onCreateNote} />
         <div className="mt-5">
           <DocumentList />

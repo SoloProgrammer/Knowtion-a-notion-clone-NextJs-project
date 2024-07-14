@@ -70,7 +70,7 @@ export const DocumentList = ({
         No pages inside
       </p>
       {documents.map((document) => (
-        <>
+        <div key={document._id}>
           <Item
             icon={FileIcon}
             label={document.title}
@@ -85,7 +85,7 @@ export const DocumentList = ({
           {expanded[document._id] && (
             <DocumentList level={level + 1} parentDocument={document._id} />
           )}
-        </>
+        </div>
       ))}
     </div>
   );
