@@ -4,8 +4,8 @@ import { Text } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-import { useSideBar } from "../../zustand-store/sidebar-store";
 import { useMediaQuery } from "usehooks-ts";
+import { useSideBar } from "@/hooks/zustand/use-sidebar";
 
 import { HTMLAttributes } from "react";
 

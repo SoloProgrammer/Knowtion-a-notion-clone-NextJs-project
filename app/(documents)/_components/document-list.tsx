@@ -62,7 +62,7 @@ export const DocumentList = ({
           paddingLeft: level ? `${17 + 25 + (level - 1) * 10}px` : "24px",
         }}
         className={cn(
-          "hidden text-muted-foreground/80 text-sm py-1",
+          "hidden text-muted-foreground/80 text-sm py-1 truncate",
           expanded && "last:block",
           level === 0 && "!hidden"
         )}
@@ -70,7 +70,7 @@ export const DocumentList = ({
         No pages inside
       </p>
       {documents.map((document) => (
-        <>
+        <div key={document._id}>
           <Item
             icon={FileIcon}
             label={document.title}
@@ -85,7 +85,7 @@ export const DocumentList = ({
           {expanded[document._id] && (
             <DocumentList level={level + 1} parentDocument={document._id} />
           )}
-        </>
+        </div>
       ))}
     </div>
   );

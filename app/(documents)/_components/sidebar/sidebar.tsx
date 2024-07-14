@@ -17,23 +17,19 @@ import { toast } from "sonner";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
-import { useSideBar } from "../../zustand-store/sidebar-store";
+import { useSideBar } from "@/hooks/zustand/use-sidebar";
 import { useMutation } from "convex/react";
+import { useSearch } from "@/hooks/zustand/use-search";
 
 import { api } from "@/convex/_generated/api";
 
 import { UserItem } from "../user-item";
 import { Item } from "../item";
 import { DocumentList } from "../document-list";
-
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { TrashPopPver } from "../trash-popover";
+import { SettingsModal } from "@/components/modals/settings-modal";
 
 import { MAX_WIDTH, MIN_WIDTH } from "./constants";
-import { TrashPopPver } from "../trash-popover";
 
 export const Sidebar = () => {
   const pathName = usePathname();
@@ -43,6 +39,7 @@ export const Sidebar = () => {
   const isResizingRef = useRef(false);
   const [isResetting, setIsResetting] = useState(false);
   const { isCollapsed, setIsCollapsed, isTrasitioning } = useSideBar(isMobile);
+  const { openSearch } = useSearch();
 
   const handleDragStart = (e: MouseEvent) => {
     e.preventDefault();
@@ -98,7 +95,7 @@ export const Sidebar = () => {
       <aside
         ref={sidebarRef}
         className={cn(
-          "w-[250px] relative flex flex-col h-full group/sidebar bg-neutral-100 dark:bg-neutral-900 overflow-y-auto z-[99999] border-r pb-10",
+          "w-[250px] relative flex flex-col h-full group/sidebar bg-neutral-100 dark:bg-neutral-900 overflow-y-auto z-[99999] border-r pb-10 overflow-x-hidden",
           isMobile &&
             "fixed transition-all h-full w-[90%] left-0 top-0 duration-500",
           isMobile && isCollapsed && "-left-full",
@@ -120,8 +117,10 @@ export const Sidebar = () => {
         <div>
           <UserItem />
         </div>
-        <Item icon={Search} label="Search" isSearch />
-        <Item icon={Settings} label="Settings" />
+        <Item icon={Search} label="Search" isSearch onClick={openSearch} />
+        <SettingsModal>
+          <Item icon={Settings} label="Settings" />
+        </SettingsModal>
         <Item icon={PlusCircle} label="New page" onClick={onCreateNote} />
         <div className="mt-5">
           <DocumentList />

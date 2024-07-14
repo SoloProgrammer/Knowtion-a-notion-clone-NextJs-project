@@ -7,6 +7,7 @@ import { Spinner } from "@/components/spinner";
 import { Sidebar } from "./_components/sidebar/sidebar";
 
 import { useConvexAuth } from "convex/react";
+import { SearchCommand } from "@/components/search-command";
 
 const DocumentsLayout = ({ children }: PropsWithChildren) => {
   const { isAuthenticated, isLoading } = useConvexAuth();
@@ -23,6 +24,7 @@ const DocumentsLayout = ({ children }: PropsWithChildren) => {
   return (
     <div className="w-full h-full flex justify-center">
       <Sidebar />
+      <SearchCommand />
       <main className="flex-grow">{children}</main>
     </div>
   );

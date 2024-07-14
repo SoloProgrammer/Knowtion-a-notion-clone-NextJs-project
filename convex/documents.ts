@@ -202,6 +202,30 @@ export const getDocumentsByParentDocument = query({
   },
 });
 
+export const getDocumentsByUser = query({
+  handler: async (ctx) => {
+    try {
+      const identity = await ctx.auth.getUserIdentity();
+
+      if (!identity) {
+        throw new Error("Not authenticated");
+      }
+
+      const userId = identity.subject;
+
+      const documents = await ctx.db
+        .query("documents")
+        .withIndex("by_user", (q) => q.eq("userId", userId))
+        .filter((q) => q.eq(q.field("isArchived"), false))
+        .collect();
+
+      return documents;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  },
+});
+
 export const create = mutation({
   args: {
     title: v.string(),

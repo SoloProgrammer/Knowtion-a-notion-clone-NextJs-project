@@ -7,13 +7,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
+import { SettingsModal } from "@/components/modals/settings-modal";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 
+import { ChevronsLeftRight, LogOut, Mail, Settings } from "lucide-react";
 import { SignOutButton, useUser } from "@clerk/clerk-react";
 
 import { BRAND_NAME } from "@/app/constants";
-import { ChevronsLeftRight, LogOut, Mail } from "lucide-react";
 
 export const UserItem = () => {
   const { user } = useUser();
@@ -43,13 +43,20 @@ export const UserItem = () => {
             <span>{user?.emailAddresses[0].emailAddress}</span>
           </p>
           <DropdownMenuSeparator />
-          <div className="p-2 flex items-center gap-x-2">
-            <Avatar className="w-8 h-8">
-              <AvatarImage src={user?.imageUrl} />
-            </Avatar>
-            <span className="text-sm font-semibold line-clamp-1">
-              {user?.fullName}&apos;s {BRAND_NAME}
-            </span>
+          <div className="flex justify-between items-center">
+            <div className="p-2 flex items-center gap-x-2">
+              <Avatar className="w-8 h-8">
+                <AvatarImage src={user?.imageUrl} />
+              </Avatar>
+              <span className="text-sm font-semibold line-clamp-1">
+                {user?.fullName}&apos;s {BRAND_NAME}
+              </span>
+            </div>
+            <SettingsModal>
+              <div className="p-1 rounded-full hover:bg-secondary mr-1 text-muted-foreground hover:text-primary/90 cursor-pointer">
+                <Settings className="w-4 h-4 shrink-0" />
+              </div>
+            </SettingsModal>
           </div>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
