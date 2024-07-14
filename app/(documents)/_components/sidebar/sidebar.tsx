@@ -9,6 +9,7 @@ import {
   PlusIcon,
   Search,
   Settings,
+  Trash,
 } from "lucide-react";
 
 import { toast } from "sonner";
@@ -25,7 +26,14 @@ import { UserItem } from "../user-item";
 import { Item } from "../item";
 import { DocumentList } from "../document-list";
 
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
 import { MAX_WIDTH, MIN_WIDTH } from "./constants";
+import { TrashPopPver } from "../trash-popover";
 
 export const Sidebar = () => {
   const pathName = usePathname();
@@ -117,9 +125,12 @@ export const Sidebar = () => {
         <Item icon={PlusCircle} label="New page" onClick={onCreateNote} />
         <div className="mt-5">
           <DocumentList />
-          <div className="mt-5">
-            <Item icon={PlusIcon} label="Add a page" onClick={onCreateNote} />
-          </div>
+          <Item icon={PlusIcon} label="Add a page" onClick={onCreateNote} />
+          <TrashPopPver>
+            <div className="mt-5">
+              <Item icon={Trash} label="Trash" />
+            </div>
+          </TrashPopPver>
         </div>
         <div
           onMouseDown={handleDragStart}
