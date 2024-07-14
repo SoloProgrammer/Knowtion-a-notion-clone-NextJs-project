@@ -53,7 +53,7 @@ const TrashBox = () => {
   const [query, setQuery] = useState<string>("");
 
   const filteredDocuments = documents?.filter((doc) =>
-    doc.title.toLowerCase().includes(query.toLowerCase())
+    document.title.toLowerCase().includes(query.toLowerCase())
   );
 
   const onClick = (documentId: string) => {
@@ -105,30 +105,34 @@ const TrashBox = () => {
       </div>
       <div className="mt-4 px-1 pb-1">
         <p className="hidden last:block text-center pb-6">No documents found</p>
-        {filteredDocuments?.map((doc) => (
+        {filteredDocuments?.map((document) => (
           <div
             role="button"
-            onClick={() => onClick(doc._id)}
+            onClick={() => onClick(document._id)}
             className="flex w-full justify-between items-center text-primary hover:bg-primary/5 py-[0.35rem] px-1 rounded-sm text-sm"
-            key={doc._id}
+            key={document._id}
           >
             <span className="truncate pl-1 flex items-center gap-x-1">
               <span className="text-muted-foreground">
-                {doc.icon ? doc.icon : <FileIcon className="w-4 h-4" />}
+                {document.icon ? (
+                  document.icon
+                ) : (
+                  <FileIcon className="w-4 h-4" />
+                )}
               </span>
-              <span>{doc.title}</span>
+              <span>{document.title}</span>
             </span>
             <div className="flex items-center text-muted-foreground mr-[0.1rem]">
               <div
-                onClick={(e) => onRestore(e, doc._id)}
+                onClick={(e) => onRestore(e, document._id)}
                 className="p-1 hover:bg-primary/15 rounded-sm hover:text-primary"
               >
                 <Undo className="w-4 h-4 shrink-0" />
               </div>
               <ConfirmModal
-                onConfirm={() => onRemove(doc._id)}
+                onConfirm={() => onRemove(document._id)}
                 description="This action cannot be undone. This will permanently delete your note!"
-                btnCopy="Delete"
+                btnCopy="Delete note"
               >
                 <div className="p-1 hover:bg-primary/15 rounded-sm hover:text-primary">
                   <Trash className="w-4 h-4 shrink-0" />

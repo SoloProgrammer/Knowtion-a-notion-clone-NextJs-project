@@ -36,12 +36,7 @@ export const ConfirmModal = ({
 }: PropsWithChildren<ConfirmModalProps>) => {
   return (
     <AlertDialog>
-      <AlertDialogTrigger
-        asChild
-        onClick={(e) => {
-          e.stopPropagation();
-        }}
-      >
+      <AlertDialogTrigger asChild onClick={(e) => e.stopPropagation()}>
         {children}
       </AlertDialogTrigger>
       <AlertDialogContent onClick={(e) => e.stopPropagation()}>
@@ -51,7 +46,10 @@ export const ConfirmModal = ({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={() => onConfirm()} className="px-4 bg-red-500 text-white hover:bg-red-600">
+          <AlertDialogAction
+            onClick={() => onConfirm()}
+            className="px-4 bg-red-500 text-white hover:bg-red-600"
+          >
             {btnCopy}
           </AlertDialogAction>
         </AlertDialogFooter>
