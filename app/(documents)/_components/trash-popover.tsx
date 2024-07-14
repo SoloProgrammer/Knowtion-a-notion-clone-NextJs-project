@@ -109,10 +109,10 @@ const TrashBox = () => {
           <div
             role="button"
             onClick={() => onClick(document._id)}
-            className="flex w-full justify-between items-center text-primary hover:bg-primary/5 py-[0.35rem] px-1 rounded-sm text-sm"
+            className="flex w-full justify-between items-center text-primary hover:bg-primary/5 py-[0.35rem] px-1 rounded-sm text-sm group"
             key={document._id}
           >
-            <span className="truncate pl-1 flex items-center gap-x-1">
+            <span className="truncate pl-1 flex items-center gap-x-1 text-muted-foreground group-hover:text-primary font-medium">
               <span className="text-muted-foreground">
                 {document.icon ? (
                   document.icon

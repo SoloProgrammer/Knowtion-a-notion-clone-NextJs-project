@@ -17,7 +17,7 @@ import { toast } from "sonner";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
-import { useSideBar } from "../../zustand-store/sidebar-store";
+import { useSideBar } from "@/hooks/zustand/use-sidebar";
 import { useMutation } from "convex/react";
 
 import { api } from "@/convex/_generated/api";
@@ -25,12 +25,6 @@ import { api } from "@/convex/_generated/api";
 import { UserItem } from "../user-item";
 import { Item } from "../item";
 import { DocumentList } from "../document-list";
-
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 
 import { MAX_WIDTH, MIN_WIDTH } from "./constants";
 import { TrashPopPver } from "../trash-popover";
