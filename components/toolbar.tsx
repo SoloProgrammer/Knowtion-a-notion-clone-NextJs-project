@@ -49,7 +49,7 @@ export const Toolbar = ({ document, preview = false }: ToolbarProps) => {
   };
 
   return (
-    <div className="relative pl-5 md:pl-12 group">
+    <div className="relative px-5 md:px-12 group">
       {document.icon && !preview && (
         <div className="flex items-center group/icon pt-6 gap-x-2 w-fit relative">
           <IconPicker onChange={updateIcon}>
