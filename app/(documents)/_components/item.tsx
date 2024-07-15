@@ -76,7 +76,7 @@ export const Item = ({
     <div
       role="button"
       className={cn(
-        "group text-muted-foreground py-2 md:py-1 hover:bg-primary/5 text-sm flex items-center cursor-pointer w-full font-medium gap-x-2",
+        "group text-muted-foreground py-2 md:py-1 hover:bg-primary/5 text-sm flex items-center cursor-pointer w-full font-medium",
         active && "bg-primary/5 text-primary"
       )}
       style={{ paddingLeft: level ? `${level * 10 + 10}px` : "10px" }}
@@ -104,7 +104,7 @@ export const Item = ({
         <Icon className="h-[18px] shrink-0 mr-2" />
       )}
 
-      <span className="truncate select-none">{label}</span>
+      <span className="truncate select-none mr-2">{label}</span>
 
       {isSearch && (
         <kbd className="ml-auto bg-muted font-medium border-b text-[10px] text-muted-foreground shadow-sm pointer-events-none select-none rounded inline-flex items-center mr-2 px-1 gap-1">
