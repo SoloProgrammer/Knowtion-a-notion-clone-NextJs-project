@@ -7,20 +7,17 @@ import { ArchiveDropDown } from "./archive-dropdown";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
+import { Doc } from "@/convex/_generated/dataModel";
 
 import { MoreHorizontal } from "lucide-react";
 
-import { useQuery } from "convex/react";
-import { useParams } from "next/navigation";
+type NavbarProps = {
+  document: Doc<"documents"> | undefined;
+};
 
-export const Navbar = () => {
-  const params = useParams();
-  const document = useQuery(api.documents.getDocumentById, {
-    id: params.documentId as Id<"documents">,
-  });
+export const Navbar = ({ document }: NavbarProps) => {
   if (document === undefined) return <Navbar.Skeleton />;
+
   return (
     <>
       <nav className="h-14 px-2 border-b flex items-center justify-between">
@@ -34,6 +31,7 @@ export const Navbar = () => {
             lastEdited={document.updatedAt!}
             side="bottom"
             align="end"
+            disabled={document.isArchived}
           >
             <Button variant="ghost" size="sm">
               <MoreHorizontal className="w-4 h-4 shrink-0" />

@@ -25,6 +25,7 @@ type ArchiveDropDownProps = {
   lastEdited: number;
   align?: "start" | "center" | "end";
   side?: "bottom" | "left" | "right" | "top";
+  disabled?: boolean;
 };
 
 export const ArchiveDropDown = ({
@@ -33,6 +34,7 @@ export const ArchiveDropDown = ({
   lastEdited,
   align = "start",
   side = "right",
+  disabled = false
 }: PropsWithChildren<ArchiveDropDownProps>) => {
   const { user } = useUser();
   const archive = useMutation(api.documents.archiveDocument);
@@ -59,6 +61,7 @@ export const ArchiveDropDown = ({
         align={align}
       >
         <DropdownMenuItem
+          disabled={disabled}
           className="text-muted-foreground"
           onClick={handleArchive}
         >
