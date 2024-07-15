@@ -40,7 +40,7 @@ export const ArchivedBanner = ({ documentId }: ArchivedBannerProps) => {
   };
 
   return (
-    <div className="w-full p-3 bg-red-500 text-center flex items-center justify-center gap-x-3 flex-wrap text-white">
+    <div className="w-full px-3 py-2 bg-red-500 text-center flex items-center justify-center gap-x-3 flex-wrap text-white">
       <span className="font-medium">This page is in trash</span>
       <div className="flex items-center gap-x-1 mt-2 md:mt-0">
         <Button
