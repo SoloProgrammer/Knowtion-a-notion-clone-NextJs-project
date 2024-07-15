@@ -18,14 +18,17 @@ import { api } from "@/convex/_generated/api";
 
 import { useUser } from "@clerk/clerk-react";
 import { useMutation } from "convex/react";
+import { getFromNowDate } from "@/utils/date";
 
 type ArchiveDropDownProps = {
   documentId: Id<"documents">;
+  lastEdited: number;
 };
 
 export const ArchiveDropDown = ({
   documentId,
   children,
+  lastEdited,
 }: PropsWithChildren<ArchiveDropDownProps>) => {
   const { user } = useUser();
   const archive = useMutation(api.documents.archiveDocument);
@@ -59,7 +62,9 @@ export const ArchiveDropDown = ({
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <div className="text-xs text-muted-foreground p-2 py-3">
-          <span>Last edited by: {user?.fullName}</span>
+          <span>
+            Last edited {getFromNowDate(lastEdited)} by: {user?.fullName}
+          </span>
         </div>
       </DropdownMenuContent>
     </DropdownMenu>

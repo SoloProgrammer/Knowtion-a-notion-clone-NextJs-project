@@ -31,6 +31,7 @@ type ItemProps = {
   label: string;
   onClick?: () => void;
   icon: LucideIcon;
+  lastEdited?: number;
 };
 
 export const Item = ({
@@ -44,6 +45,7 @@ export const Item = ({
   label,
   onClick,
   icon: Icon,
+  lastEdited,
 }: ItemProps) => {
   const create = useMutation(api.documents.create);
   const router = useRouter();
@@ -60,7 +62,7 @@ export const Item = ({
     const promise = create({ title: "Untitled", parentDocument: id }).then(
       (documentId) => {
         if (!isExpanded) onExpand?.();
-        // router.push(`/documents/${documentId}`);
+        router.push(`/documents/${documentId}`);
       }
     );
     toast.promise(promise, {
@@ -74,7 +76,7 @@ export const Item = ({
     <div
       role="button"
       className={cn(
-        "group text-muted-foreground py-2 md:py-1 hover:bg-primary/5 text-sm flex items-center cursor-pointer w-full font-medium",
+        "group text-muted-foreground py-2 md:py-1 hover:bg-primary/5 text-sm flex items-center cursor-pointer w-full font-medium gap-x-2",
         active && "bg-primary/5 text-primary"
       )}
       style={{ paddingLeft: level ? `${level * 10 + 10}px` : "10px" }}
@@ -95,7 +97,9 @@ export const Item = ({
       )}
 
       {documentIcon ? (
-        <div className="text-[17px] shrink-0 mr-2 select-none">{documentIcon}</div>
+        <div className="text-[17px] shrink-0 mr-2 select-none">
+          {documentIcon}
+        </div>
       ) : (
         <Icon className="h-[18px] shrink-0 mr-2" />
       )}
@@ -111,10 +115,12 @@ export const Item = ({
 
       {!!id && (
         <div className="flex ml-auto items-center gap-x-1">
-          <ArchiveDropDown documentId={id}>
+          <ArchiveDropDown documentId={id} lastEdited={lastEdited!}>
             <div className="opacity-0 rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 group-hover:opacity-100">
               <MoreHorizontal
-                className={cn("w-5 h-5 md:w-4 md:h-4 text-muted-foreground/80 shrink-0")}
+                className={cn(
+                  "w-5 h-5 md:w-4 md:h-4 text-muted-foreground/80 shrink-0"
+                )}
               />
             </div>
           </ArchiveDropDown>
@@ -124,7 +130,9 @@ export const Item = ({
             className="opacity-0  mr-2 rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 group-hover:opacity-100"
           >
             <PlusIcon
-              className={cn("w-5 h-5 md:w-4 md:h-4 text-muted-foreground/80 shrink-0")}
+              className={cn(
+                "w-5 h-5 md:w-4 md:h-4 text-muted-foreground/80 shrink-0"
+              )}
             />
           </div>
         </div>
