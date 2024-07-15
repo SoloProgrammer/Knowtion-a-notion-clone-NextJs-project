@@ -1,22 +1,31 @@
 "use client";
 
+import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
+
+import { api } from "@/convex/_generated/api";
+import { Doc } from "@/convex/_generated/dataModel";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { api } from "@/convex/_generated/api";
-import { Doc } from "@/convex/_generated/dataModel";
-import { useMutation } from "convex/react";
+
 import { FileIcon } from "lucide-react";
-import { ChangeEvent, KeyboardEvent, useState } from "react";
+
+import { useMutation } from "convex/react";
 
 type TitleProps = {
   document: Doc<"documents">;
 };
 
 export const Title = ({ document }: TitleProps) => {
+  const update = useMutation(api.documents.udpate);
+
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(document.title);
-  const update = useMutation(api.documents.udpate);
+
+  useEffect(() => {
+    setTitle(document.title);
+  }, [document.title]);
 
   const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
