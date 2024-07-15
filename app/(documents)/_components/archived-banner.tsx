@@ -6,7 +6,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 
 import { useMutation } from "convex/react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import { ConfirmModal } from "@/components/modals/confirm-action-modal";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,6 @@ type ArchivedBannerProps = {
 
 export const ArchivedBanner = ({ documentId }: ArchivedBannerProps) => {
   const router = useRouter();
-  const params = useParams();
   const restore = useMutation(api.documents.restoreArchives);
   const remove = useMutation(api.documents.deleteDocument);
 
