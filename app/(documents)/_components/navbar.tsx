@@ -2,6 +2,7 @@
 
 import { SideBarMenu } from "./sidebar/side-bar-menu";
 import { Title } from "./title";
+import { ArchivedBanner } from "./archived-banner";
 
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -29,6 +30,7 @@ export const Navbar = () => {
           <Title document={document} />
         </div>
       </nav>
+      {document.isArchived && <ArchivedBanner documentId={document._id}/>}
     </>
   );
 };
