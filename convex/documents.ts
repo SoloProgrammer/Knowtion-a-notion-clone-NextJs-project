@@ -2,6 +2,7 @@ import { v } from "convex/values";
 
 import { mutation, query } from "./_generated/server";
 import { Doc, Id } from "./_generated/dataModel";
+import { udpateDocumentColumns } from "./schema";
 
 export const archiveDocument = mutation({
   args: {
@@ -226,6 +227,41 @@ export const getDocumentsByUser = query({
   },
 });
 
+export const getDocumentById = query({
+  args: {
+    id: v.id("documents"),
+  },
+  handler: async (ctx, args) => {
+    try {
+      const identity = await ctx.auth.getUserIdentity();
+
+      const document = await ctx.db.get(args.id);
+
+      if (!document) {
+        throw new Error("Not found!");
+      }
+
+      if (document.isPublished && !document.isArchived) {
+        return document;
+      }
+
+      if (!identity) {
+        throw new Error("Not authenticated");
+      }
+
+      const userId = identity.subject;
+
+      if (document.userId !== userId) {
+        throw new Error("Unauthorized");
+      }
+
+      return document;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  },
+});
+
 export const create = mutation({
   args: {
     title: v.string(),
@@ -245,6 +281,41 @@ export const create = mutation({
       userId,
       isArchived: false,
       isPublished: false,
+      updatedAt: Date.now(),
+    });
+
+    return document;
+  },
+});
+
+export const udpate = mutation({
+  args: {
+    ...udpateDocumentColumns,
+    id: v.id("documents"),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    const exitingDocument = await ctx.db.get(args.id);
+
+    if (!exitingDocument) {
+      throw new Error("Not found!");
+    }
+
+    const userId = identity.subject;
+
+    if (exitingDocument.userId !== userId) {
+      throw new Error("Unauthorized!");
+    }
+
+    const { id, ...rest } = args;
+    
+    const document = await ctx.db.patch(args.id, {
+      ...rest,
       updatedAt: Date.now(),
     });
 
