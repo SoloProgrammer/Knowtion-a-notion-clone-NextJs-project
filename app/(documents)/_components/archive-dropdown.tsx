@@ -18,14 +18,23 @@ import { api } from "@/convex/_generated/api";
 
 import { useUser } from "@clerk/clerk-react";
 import { useMutation } from "convex/react";
+import { getFromNowDate } from "@/utils/date";
 
 type ArchiveDropDownProps = {
   documentId: Id<"documents">;
+  lastEdited: number;
+  align?: "start" | "center" | "end";
+  side?: "bottom" | "left" | "right" | "top";
+  disabled?: boolean;
 };
 
 export const ArchiveDropDown = ({
   documentId,
   children,
+  lastEdited,
+  align = "start",
+  side = "right",
+  disabled = false
 }: PropsWithChildren<ArchiveDropDownProps>) => {
   const { user } = useUser();
   const archive = useMutation(api.documents.archiveDocument);
@@ -48,10 +57,11 @@ export const ArchiveDropDown = ({
       <DropdownMenuContent
         className="w-72"
         forceMount
-        side="right"
-        align="start"
+        side={side}
+        align={align}
       >
         <DropdownMenuItem
+          disabled={disabled}
           className="text-muted-foreground"
           onClick={handleArchive}
         >
@@ -59,7 +69,9 @@ export const ArchiveDropDown = ({
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <div className="text-xs text-muted-foreground p-2 py-3">
-          <span>Last edited by: {user?.fullName}</span>
+          <span>
+            Last edited {getFromNowDate(lastEdited)} by: {user?.fullName}
+          </span>
         </div>
       </DropdownMenuContent>
     </DropdownMenu>

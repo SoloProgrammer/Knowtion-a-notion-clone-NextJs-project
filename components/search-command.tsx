@@ -55,7 +55,7 @@ export function SearchCommand() {
       <CommandInput placeholder={`Search ${user?.fullName}'s ${BRAND_NAME}`} />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
-        <CommandGroup heading="Suggestions">
+        <CommandGroup heading="Suggestions" className="mb-[.35rem]">
           {documents?.map((document) => (
             <CommandItem
               key={document._id}

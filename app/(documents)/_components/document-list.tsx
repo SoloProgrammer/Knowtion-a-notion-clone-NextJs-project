@@ -81,6 +81,7 @@ export const DocumentList = ({
             isExpanded={expanded[document._id]}
             level={level}
             onExpand={() => onExpand(document._id)}
+            lastEdited={document.updatedAt}
           />
           {expanded[document._id] && (
             <DocumentList level={level + 1} parentDocument={document._id} />
