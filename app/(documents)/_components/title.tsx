@@ -68,9 +68,9 @@ export const Title = ({ document }: TitleProps) => {
 
 Title.Skeleton = () => {
   return (
-    <>
+    <div className="flex items-center gap-x-2">
       <Skeleton className="w-6 rounded-sm h-6 mr-3" />
       <Skeleton className="w-36 rounded-sm h-6" />
-    </>
+    </div>
   );
 };
