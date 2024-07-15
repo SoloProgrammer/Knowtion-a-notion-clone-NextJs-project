@@ -292,6 +292,7 @@ export const udpate = mutation({
   args: {
     ...udpateDocumentColumns,
     id: v.id("documents"),
+    title: v.optional(v.string())
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();

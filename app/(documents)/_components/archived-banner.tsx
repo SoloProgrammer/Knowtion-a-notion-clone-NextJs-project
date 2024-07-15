@@ -28,7 +28,7 @@ export const ArchivedBanner = ({ documentId }: ArchivedBannerProps) => {
       error: "Error restoring Note. Try again!",
     });
   };
- 
+
   const onDelete = () => {
     const promise = remove({ id: documentId });
     toast.promise(promise, {
@@ -36,7 +36,7 @@ export const ArchivedBanner = ({ documentId }: ArchivedBannerProps) => {
       success: "Note deleted!",
       error: "Error deleting Note. Try again!",
     });
-    router.push(`/documents`);
+    return router.push(`/documents`);
   };
 
   return (
