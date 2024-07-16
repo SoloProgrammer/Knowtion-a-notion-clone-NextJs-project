@@ -46,7 +46,7 @@ export const Toolbar = ({ document, preview = false }: ToolbarProps) => {
     }
   };
 
-  const updateIcon = (icon: string | undefined) => {
+  const updateIcon = (icon: string) => {
     updateDocument({ id: document._id, icon });
   };
 
@@ -67,7 +67,7 @@ export const Toolbar = ({ document, preview = false }: ToolbarProps) => {
             className="md:opacity-0 group-hover/icon:opacity-100 transition text-xs text-muted-foreground p-0 rounded-full h-6 w-6 absolute top-0 -right-7"
             variant={"outline"}
             size={"icon"}
-            onClick={() => updateIcon(undefined)}
+            onClick={() => updateIcon("")}
           >
             <X className="w-4 h-4" />
           </Button>
@@ -123,7 +123,7 @@ export const Toolbar = ({ document, preview = false }: ToolbarProps) => {
         {!isEditing && !preview && (
           <p
             onClick={enableInput}
-            className="text-4xl md:text-5xl text-primary/90 font-bold break-words"
+            className="text-4xl md:text-5xl text-primary/90 font-bold break-words !h-[53px]"
           >
             {title}
           </p>

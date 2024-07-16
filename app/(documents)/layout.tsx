@@ -23,7 +23,7 @@ const DocumentsLayout = ({ children }: PropsWithChildren) => {
     return redirect("/");
   }
   return (
-    <div className="w-full h-full flex justify-center">
+    <div className="w-full h-full flex justify-center !overflow-y-hidden">
       <Sidebar />
       <SearchCommand />
       <main className="flex-grow">
