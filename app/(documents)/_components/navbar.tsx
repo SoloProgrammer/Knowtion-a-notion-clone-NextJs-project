@@ -18,7 +18,7 @@ type NavbarProps = {
 export const Navbar = ({ document }: NavbarProps) => {
   return (
     <>
-      <nav className="h-14 px-2 border-b flex items-center justify-between">
+      <nav className="min-h-14 px-2 border-b flex items-center justify-between">
         <div className="flex items-center gap-x-2">
           <SideBarMenu />
           <Title document={document} />
