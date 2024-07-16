@@ -39,9 +39,9 @@ export const CoverImage = ({ url, preview, documentId }: CoverImageProps) => {
   return (
     <div
       className={cn(
-        "relative h-[28vh] md:h-[38vh] group",
-        !!url && "bg-muted",
-        !url && "!h-[12vh]"
+        "relative group",
+        !!url && "bg-muted min-h-[28vh] md:min-h-[38vh]",
+        !url && "!h-[5vh]"
       )}
     >
       {!!url && <Image src={url} fill alt="cover" className="object-cover" />}

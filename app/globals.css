@@ -91,3 +91,6 @@ body {
   width: calc(var(--progress) * 1%);
   transition: .2s width ease-in;
 }
+.ProseMirror{
+  @apply !h-full !bg-transparent !px-[17px] md:!px-[49px]
+}
