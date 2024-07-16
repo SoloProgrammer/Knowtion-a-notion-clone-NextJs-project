@@ -8,6 +8,7 @@ import { Sidebar } from "./_components/sidebar/sidebar";
 
 import { useConvexAuth } from "convex/react";
 import { SearchCommand } from "@/components/search-command";
+import { EdgeStoreProvider } from "@/lib/edgestore";
 
 const DocumentsLayout = ({ children }: PropsWithChildren) => {
   const { isAuthenticated, isLoading } = useConvexAuth();
@@ -25,7 +26,9 @@ const DocumentsLayout = ({ children }: PropsWithChildren) => {
     <div className="w-full h-full flex justify-center">
       <Sidebar />
       <SearchCommand />
-      <main className="flex-grow">{children}</main>
+      <main className="flex-grow">
+        <EdgeStoreProvider>{children}</EdgeStoreProvider>
+      </main>
     </div>
   );
 };

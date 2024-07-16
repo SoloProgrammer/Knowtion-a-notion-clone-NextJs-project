@@ -5,6 +5,7 @@ import { api } from "@/convex/_generated/api";
 
 import { Button } from "./ui/button";
 import { IconPicker } from "./icon-picker";
+import { CoverImageModal } from "./modals/cover-image-modal";
 
 import { Image, Smile, X } from "lucide-react";
 import TextareaAutosize from "react-textarea-autosize";
@@ -30,6 +31,7 @@ export const Toolbar = ({ document, preview = false }: ToolbarProps) => {
   }, [document.title]);
 
   const enableInput = () => {
+    if (preview) return;
     setTitle(document.title!);
     setIsEditing(true);
   };
@@ -44,14 +46,18 @@ export const Toolbar = ({ document, preview = false }: ToolbarProps) => {
     }
   };
 
-  const updateIcon = (icon: string) => {
+  const updateIcon = (icon: string | undefined) => {
     updateDocument({ id: document._id, icon });
+  };
+
+  const updateCoverImage = (url: string) => {
+    updateDocument({ id: document._id, coverImage: url });
   };
 
   return (
     <div className="relative px-5 md:px-12 group">
       {document.icon && !preview && (
-        <div className="flex items-center group/icon pt-6 gap-x-2 w-fit relative">
+        <div className="flex items-center group/icon pt-6 gap-x-2 w-fit relative select-none">
           <IconPicker onChange={updateIcon}>
             <p className="text-6xl hover:opacity-75 transition cursor-pointer">
               {document.icon}
@@ -61,7 +67,7 @@ export const Toolbar = ({ document, preview = false }: ToolbarProps) => {
             className="md:opacity-0 group-hover/icon:opacity-100 transition text-xs text-muted-foreground p-0 rounded-full h-6 w-6 absolute top-0 -right-7"
             variant={"outline"}
             size={"icon"}
-            onClick={() => updateIcon("")}
+            onClick={() => updateIcon(undefined)}
           >
             <X className="w-4 h-4" />
           </Button>
@@ -86,12 +92,18 @@ export const Toolbar = ({ document, preview = false }: ToolbarProps) => {
           </IconPicker>
         )}
         {!document.coverImage && !preview && (
-          <Button variant={"outline"} size={"sm"} className="h-auto py-[.4rem]">
-            <span>
-              <Image className="w-4 h-4 mr-2" />
-            </span>
-            <span>Add cover</span>
-          </Button>
+          <CoverImageModal onImageChange={updateCoverImage}>
+            <Button
+              variant={"outline"}
+              size={"sm"}
+              className="h-auto py-[.4rem]"
+            >
+              <span>
+                <Image className="w-4 h-4 mr-2" />
+              </span>
+              <span>Add cover</span>
+            </Button>
+          </CoverImageModal>
         )}
       </div>
       <div className="mt-3">
@@ -101,9 +113,11 @@ export const Toolbar = ({ document, preview = false }: ToolbarProps) => {
             onChange={(e) => setTitle(e.target.value)}
             onBlur={disableInput}
             onKeyDown={handleKeyDown}
-            onFocus={(e) => e.target.setSelectionRange(title.length, title.length)}
+            onFocus={(e) =>
+              e.target.setSelectionRange(title.length, title.length)
+            }
             autoFocus
-            className="text-primary/90 text-4xl md:text-5xl border-none outline-none font-bold break w-full !h-auto focus-visible:text-primary"
+            className="resize-none text-primary/90 text-4xl md:text-5xl border-none outline-none font-bold break w-full !h-auto focus-visible:text-primary !bg-transparent rounded-sm"
           />
         )}
         {!isEditing && !preview && (
