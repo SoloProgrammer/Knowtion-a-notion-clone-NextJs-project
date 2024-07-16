@@ -314,7 +314,7 @@ export const udpate = mutation({
     }
 
     const { id, ...rest } = args;
-    
+
     const document = await ctx.db.patch(args.id, {
       ...rest,
       updatedAt: Date.now(),

@@ -95,7 +95,7 @@ export const Sidebar = () => {
       <aside
         ref={sidebarRef}
         className={cn(
-          "w-[250px] relative flex flex-col h-full group/sidebar bg-neutral-100 dark:bg-neutral-900 overflow-y-auto z-[99999] border-r pb-10 overflow-x-hidden",
+          "w-[90%] md:w-[250px] relative flex flex-col h-full group/sidebar bg-neutral-100 dark:bg-neutral-900 overflow-y-auto z-[99999] border-r pb-10 overflow-x-hidden",
           isMobile &&
             "fixed transition-all h-full w-[90%] left-0 top-0 duration-500",
           isMobile && isCollapsed && "-left-full",
