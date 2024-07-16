@@ -12,12 +12,10 @@ import { Doc } from "@/convex/_generated/dataModel";
 import { MoreHorizontal } from "lucide-react";
 
 type NavbarProps = {
-  document: Doc<"documents"> | undefined;
+  document: Doc<"documents">;
 };
 
 export const Navbar = ({ document }: NavbarProps) => {
-  if (document === undefined) return <Navbar.Skeleton />;
-
   return (
     <>
       <nav className="h-14 px-2 border-b flex items-center justify-between">
@@ -48,7 +46,7 @@ Navbar.Skeleton = () => {
   return (
     <nav className="flex w-full border-b px-2 h-14 items-center justify-between">
       <Title.Skeleton />
-      <Skeleton className="w-6 h-2 mr-2" />
+      <Skeleton className="w-6 h-2 mr-2 rounded-none" />
     </nav>
   );
 };

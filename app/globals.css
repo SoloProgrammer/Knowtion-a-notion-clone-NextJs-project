@@ -84,3 +84,10 @@ body {
 body {
   @apply dark:bg-[#121212];
 }
+
+.progress-bar::after {
+  content: '';
+  @apply absolute h-full bg-[#73ee08] rounded-full;
+  width: calc(var(--progress) * 1%);
+  transition: .2s width ease-in;
+}
