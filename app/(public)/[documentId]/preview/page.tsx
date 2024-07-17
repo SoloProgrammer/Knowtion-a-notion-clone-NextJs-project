@@ -37,7 +37,7 @@ const PreviewDocumentPage = ({ params }: PreviewDocumentPageProps) => {
 
   return (
     <div className="flex flex-col h-full">
-      <Logo hideBrandName className="fixed z-10 bottom-5 right-5" />
+      <Logo hideBrandName className="fixed z-10 bottom-5 right-5 !inline-flex" />
       <div className="flex flex-col w-full flex-grow overflow-y-auto pb-20">
         <CoverImage
           url={document?.coverImage}
