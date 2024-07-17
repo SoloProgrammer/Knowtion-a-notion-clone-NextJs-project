@@ -9,6 +9,7 @@ import "@blocknote/core/fonts/inter.css";
 import { useTheme } from "next-themes";
 import { useMediaQuery } from "usehooks-ts";
 import { useEffect, useState } from "react";
+import { useEdgeStore } from "@/lib/edgestore";
 
 const DEFAULT_EDITOR_BLOCK = JSON.stringify([
   {
@@ -30,11 +31,21 @@ type EditorProps = {
   editable?: boolean;
 };
 
-export const Editor = ({ onChange, initialContent, editable }: EditorProps) => {
+const Editor = ({ onChange, initialContent, editable }: EditorProps) => {
+  const { edgestore } = useEdgeStore();
+
+  const handleUpload = async (file: File) => {
+    const res = await edgestore.publicFiles.upload({
+      file,
+    });
+    return res.url;
+  };
+
   const editor: BlockNoteEditor = useCreateBlockNote({
     initialContent: JSON.parse(
       initialContent || DEFAULT_EDITOR_BLOCK
     ) as PartialBlock[],
+    uploadFile: handleUpload,
   });
 
   const [blocks, setBlocks] = useState<Block[]>([]);
@@ -58,3 +69,5 @@ export const Editor = ({ onChange, initialContent, editable }: EditorProps) => {
     />
   );
 };
+
+export default Editor;

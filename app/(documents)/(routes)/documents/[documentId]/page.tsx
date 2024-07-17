@@ -1,8 +1,9 @@
 "use client";
 
+import dynamic from "next/dynamic";
+
 import { CoverImage } from "@/app/(documents)/_components/cover-image";
 import { Navbar } from "@/app/(documents)/_components/navbar";
-import { Editor } from "@/components/editor";
 import { Toolbar } from "@/components/toolbar";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -10,6 +11,16 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 
 import { useMutation, useQuery } from "convex/react";
+import { Spinner } from "@/components/spinner";
+
+const DynamicEditor = dynamic(() => import("@/components/editor"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex justify-center mt-10">
+      <Spinner size={"lg"} />
+    </div>
+  ),
+});
 
 type DocumentPageProps = {
   params: {
@@ -36,7 +47,7 @@ const DocumentPage = ({ params }: DocumentPageProps) => {
         <CoverImage url={document?.coverImage} documentId={document?._id!} />
         <div className="md:max-w-4xl lg:max-w-5xl px-2 mx-auto mt-3 flex flex-col gap-y-4 flex-grow w-full">
           <Toolbar document={document!} />
-          <Editor
+          <DynamicEditor
             initialContent={document.content}
             onChange={handleEditorChange}
             editable={true}
