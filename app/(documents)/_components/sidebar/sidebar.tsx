@@ -14,7 +14,7 @@ import {
 
 import { toast } from "sonner";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import { useSideBar } from "@/hooks/zustand/use-sidebar";
@@ -33,6 +33,7 @@ import { MAX_WIDTH, MIN_WIDTH } from "./constants";
 
 export const Sidebar = () => {
   const pathName = usePathname();
+  const router = useRouter();
   const isMobile = useMediaQuery("(max-width: 768px)");
   const create = useMutation(api.documents.create);
   const sidebarRef = useRef<ElementRef<"aside">>(null);
@@ -74,7 +75,9 @@ export const Sidebar = () => {
   };
 
   const onCreateNote = () => {
-    const promise = create({ title: "Untitled" });
+    const promise = create({ title: "Untitled" }).then((documentId) => {
+      router.push(`/documents/${documentId}`);
+    });
     toast.promise(promise, {
       loading: "Creating a new note...",
       success: "Note created!",
@@ -99,6 +102,7 @@ export const Sidebar = () => {
           isMobile &&
             "fixed transition-all h-full w-[90%] left-0 top-0 duration-500",
           isMobile && isCollapsed && "-left-full",
+
           isResetting && "transition-all duration-500",
           isCollapsed && "!w-0 transition-all",
           isTrasitioning && "transition-all ease-in-expo duration-500"
