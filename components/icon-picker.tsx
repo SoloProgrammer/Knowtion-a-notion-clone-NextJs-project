@@ -2,14 +2,15 @@
 
 import { PropsWithChildren } from "react";
 
+import dynamic from "next/dynamic";
 import { Theme } from "emoji-picker-react";
 
+import { useState } from "react";
 import { useTheme } from "next-themes";
-import dynamic from "next/dynamic";
 
 const DynamicEmojiPicker = dynamic(() => import("emoji-picker-react"), {
   ssr: false,
-  loading: () => <Skeleton className="w-[330px] h-[340px]" />,
+  loading: () => <IconPicker.Skeleton />,
 });
 
 import {
@@ -28,6 +29,7 @@ export const IconPicker = ({
   onChange,
 }: PropsWithChildren<IconPickerProps>) => {
   const { resolvedTheme } = useTheme();
+  const [loadingEmojiPicker, setLoadingEmojiPicker] = useState(true);
 
   const currentTheme = (resolvedTheme || "light") as keyof typeof themeMap;
 
@@ -39,18 +41,33 @@ export const IconPicker = ({
   const theme = themeMap[currentTheme];
 
   return (
-    <Popover>
-      <PopoverTrigger asChild>{children}</PopoverTrigger>
+    <Popover onOpenChange={() => setLoadingEmojiPicker(true)}>
+      <PopoverTrigger
+        asChild
+        onClick={() => {
+          setTimeout(() => {
+            setLoadingEmojiPicker(false);
+          }, 0);
+        }}
+      >
+        {children}
+      </PopoverTrigger>
       <PopoverContent align="start" className="p-0 shadow-none border-none">
-        <DynamicEmojiPicker
-          className="text-sm"
-          lazyLoadEmojis
-          height={350}
-          theme={theme}
-          onEmojiClick={(data) => onChange?.(data.emoji)}
-          searchDisabled
-        />
+        {loadingEmojiPicker ? (
+          <IconPicker.Skeleton />
+        ) : (
+          <DynamicEmojiPicker
+            className="text-sm"
+            lazyLoadEmojis
+            height={350}
+            theme={theme}
+            onEmojiClick={(data) => onChange?.(data.emoji)}
+            searchDisabled
+          />
+        )}
       </PopoverContent>
     </Popover>
   );
 };
+
+IconPicker.Skeleton = () => <Skeleton className="w-[345px] h-[345px]" />;

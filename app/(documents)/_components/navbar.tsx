@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Doc } from "@/convex/_generated/dataModel";
 
 import { MoreHorizontal } from "lucide-react";
+import { Publish } from "./publish";
 
 type NavbarProps = {
   document: Doc<"documents">;
@@ -23,7 +24,12 @@ export const Navbar = ({ document }: NavbarProps) => {
           <SideBarMenu />
           <Title document={document} />
         </div>
-        <div>
+        <div className="flex items-center gap-x-2">
+          <Publish
+            documentId={document._id}
+            isPublished={document.isPublished!}
+            disabled={document.isArchived}
+          />
           <ArchiveDropDown
             documentId={document._id}
             lastEdited={document.updatedAt!}
