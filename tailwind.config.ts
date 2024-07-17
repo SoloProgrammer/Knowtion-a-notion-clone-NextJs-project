@@ -75,6 +75,9 @@ const config = {
       transitionTimingFunction: {
         "in-expo": "cubic-bezier(0.25, 1, 0.5, 1)",
       },
+      screens: {
+        xs: "400px",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
