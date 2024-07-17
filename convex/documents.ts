@@ -262,6 +262,19 @@ export const getDocumentById = query({
   },
 });
 
+export const getPreviewDocument = query({
+  args: {
+    id: v.id("documents"),
+  },
+  handler: async (ctx, args) => {
+    const document = await ctx.db.get(args.id);
+    if (!document || !document.isPublished) {
+      throw new Error("Not found!");
+    }
+    return document;
+  },
+});
+
 export const create = mutation({
   args: {
     title: v.string(),
