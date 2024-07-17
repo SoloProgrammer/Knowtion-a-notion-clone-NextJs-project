@@ -31,7 +31,7 @@ type EditorProps = {
   editable?: boolean;
 };
 
-export const Editor = ({ onChange, initialContent, editable }: EditorProps) => {
+const Editor = ({ onChange, initialContent, editable }: EditorProps) => {
   const { edgestore } = useEdgeStore();
 
   const handleUpload = async (file: File) => {
@@ -69,3 +69,5 @@ export const Editor = ({ onChange, initialContent, editable }: EditorProps) => {
     />
   );
 };
+
+export default Editor;
