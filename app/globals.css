@@ -94,6 +94,9 @@ body {
 .ProseMirror{
   @apply !h-full !bg-transparent !px-[17px] md:!px-[49px] !overflow-x-auto
 }
+.bn-block-outer{
+  @apply w-[362px] md:w-auto
+}
 td>p{
   @apply !whitespace-nowrap
 }

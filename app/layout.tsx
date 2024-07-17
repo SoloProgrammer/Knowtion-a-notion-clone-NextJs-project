@@ -1,12 +1,16 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
-import { META as meta } from "./constants";
+
+import type { Metadata } from "next";
+
 import { ThemeProvider } from "@/providers/theme-provider";
 import ConvexProvider from "@/providers/convex-provider";
+
 import { Toaster } from "@/components/ui/sonner";
 
+import { Inter } from "next/font/google";
 const inter = Inter({ subsets: ["latin"] });
+
+import { META as meta } from "./constants";
 
 export const metadata: Metadata = {
   title: meta.title,

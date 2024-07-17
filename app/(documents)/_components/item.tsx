@@ -1,8 +1,8 @@
 "use client";
 
 import { MouseEvent } from "react";
-import { toast } from "sonner";
 
+import { toast } from "sonner";
 import {
   ChevronRight,
   LucideIcon,
