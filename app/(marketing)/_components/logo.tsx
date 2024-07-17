@@ -23,7 +23,7 @@ export const Logo = ({
     <Link
       href={"/"}
       {...props}
-      className={cn("hidden md:flex items-center gap-x-2", className)}
+      className={cn("hidden md:inline-flex items-center gap-x-2", className)}
     >
       <div className="w-[25px] h-[25px] md:w-[35px] md:h-[35px] relative">
         <Image

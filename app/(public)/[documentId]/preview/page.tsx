@@ -6,6 +6,7 @@ import { CoverImage } from "@/app/(documents)/_components/cover-image";
 import { Toolbar } from "@/components/toolbar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/spinner";
+import { Logo } from "@/app/(marketing)/_components/logo";
 
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -36,6 +37,7 @@ const PreviewDocumentPage = ({ params }: PreviewDocumentPageProps) => {
 
   return (
     <div className="flex flex-col h-full">
+      <Logo hideBrandName className="fixed z-10 bottom-5 right-5" />
       <div className="flex flex-col w-full flex-grow overflow-y-auto pb-20">
         <CoverImage
           url={document?.coverImage}
