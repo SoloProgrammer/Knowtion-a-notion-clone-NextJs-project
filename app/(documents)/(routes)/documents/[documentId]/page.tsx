@@ -63,7 +63,7 @@ DocumentPage.Skeleton = () => {
     <>
       <Navbar.Skeleton />
       <CoverImage.Skeleton />
-      <div className="md:max-w-4xl lg:max-w-5xl px-2 mx-auto mt-10">
+      <div className="md:max-w-4xl lg:max-w-5xl px-5 mx-auto mt-10">
         <Skeleton className="w-[270px] h-[40px]" />
         <Skeleton className="w-[100px] h-[20px] mt-10" />
         <Skeleton className="w-[200px] h-[20px] mt-3" />

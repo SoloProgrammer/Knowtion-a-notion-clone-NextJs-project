@@ -1,8 +1,12 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
+import { Raleway } from "next/font/google";
 import { ElementRef, MouseEvent } from "react";
 
 import { cn } from "@/lib/utils";
+
 import {
   ChevronsLeft,
   PlusCircle,
@@ -11,7 +15,6 @@ import {
   Settings,
   Trash,
 } from "lucide-react";
-
 import { toast } from "sonner";
 
 import { usePathname, useRouter } from "next/navigation";
@@ -30,6 +33,12 @@ import { TrashPopPver } from "../trash-popover";
 import { SettingsModal } from "@/components/modals/settings-modal";
 
 import { MAX_WIDTH, MIN_WIDTH } from "./constants";
+import { BRAND_NAME } from "@/app/constants";
+
+const font = Raleway({
+  subsets: ["vietnamese"],
+  weight: ["400", "600", "700"],
+});
 
 export const Sidebar = () => {
   const pathName = usePathname();
@@ -94,20 +103,20 @@ export const Sidebar = () => {
   }, []);
 
   return (
-    <>
-      <aside
-        ref={sidebarRef}
-        className={cn(
-          "w-[90%] md:w-[250px] relative flex flex-col h-full group/sidebar bg-neutral-100 dark:bg-neutral-900 overflow-y-auto z-[99999] border-r pb-10 overflow-x-hidden",
-          isMobile &&
-            "fixed transition-all h-full w-[90%] left-0 top-0 duration-500",
-          isMobile && isCollapsed && "-left-full",
+    <aside
+      ref={sidebarRef}
+      className={cn(
+        "w-[90%] md:w-[250px] relative flex flex-col h-full group/sidebar bg-neutral-100 dark:bg-neutral-900 overflow-y-auto z-[99999] border-r overflow-x-hidden",
+        isMobile &&
+          "fixed transition-all h-full w-[90%] left-0 top-0 duration-500",
+        isMobile && isCollapsed && "-left-full",
 
-          isResetting && "transition-all duration-500",
-          isCollapsed && "!w-0 transition-all",
-          isTrasitioning && "transition-all ease-in-expo duration-500"
-        )}
-      >
+        isResetting && "transition-all duration-500",
+        isCollapsed && "!w-0 transition-all",
+        isTrasitioning && "transition-all ease-in-expo duration-500"
+      )}
+    >
+      <div className="flex-grow pb-5">
         <div
           role="button"
           className={cn(
@@ -140,7 +149,27 @@ export const Sidebar = () => {
           onClick={handleResetSideBarWidth}
           className="absolute top-0 right-0 bg-primary/10 h-full w-1 cursor-ew-resize opacity-0 group-hover/sidebar:opacity-100 transition-opacity hover:border-x-[0.05rem] hover:border-neutral-500"
         />
-      </aside>
-    </>
+      </div>
+      <Link href={"/"}>
+        <div className="px-3 hover:bg-primary/5 transition cursor-pointer h-[55px] border-t flex items-center gap-x-2 group">
+          <div className="w-6 h-6 relative truncate">
+            <Image
+              src={"/logo.png"}
+              fill
+              alt="logo"
+              className="object-cover dark:invert"
+            />
+          </div>
+          <span
+            className={cn(
+              font.className,
+              "text-muted-foreground font-semibold truncate group-hover:text-primary"
+            )}
+          >
+            {BRAND_NAME}
+          </span>
+        </div>
+      </Link>
+    </aside>
   );
 };

@@ -28,7 +28,7 @@ export const Navbar = () => {
         isScrolled && "shadow-sm bg-white dark:bg-neutral-900 border-b"
       )}
     >
-      <Logo className="[&>div+p]:hidden md:[&>div+p]:block flex" />
+      <Logo className="flex" hideBrandName={false} />
       <div className="flex items-center gap-2">
         <ModeToggle />
         <div className="flex items-center gap-2">
