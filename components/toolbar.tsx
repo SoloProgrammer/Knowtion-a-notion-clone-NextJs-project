@@ -120,7 +120,7 @@ export const Toolbar = ({ document, preview = false }: ToolbarProps) => {
             className="resize-none text-primary/90 text-4xl md:text-5xl border-none outline-none font-bold break w-full !h-auto focus-visible:text-primary !bg-transparent rounded-sm"
           />
         )}
-        {!isEditing && !preview && (
+        {!isEditing && (
           <p
             onClick={enableInput}
             className="text-4xl md:text-5xl text-primary/90 font-bold break-words !h-[53px]"
