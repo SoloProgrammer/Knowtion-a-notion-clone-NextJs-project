@@ -95,8 +95,8 @@ body {
   @apply !h-full !bg-transparent !px-[17px] md:!px-[49px] !overflow-x-auto
 }
 .bn-block-outer{
-  @apply w-[362px] md:w-auto
+  @apply w-[335px] xs:w-[362px] md:w-auto;
 }
 td>p{
-  @apply !whitespace-nowrap
+  @apply !whitespace-nowrap;
 }
