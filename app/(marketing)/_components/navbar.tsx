@@ -24,7 +24,7 @@ export const Navbar = () => {
   return (
     <div
       className={cn(
-        "px-6 md:px-6 py-4 fixed top-0 left-0 w-full transition-colors flex justify-between items-center",
+        "px-4 md:px-6 py-3 md:py-4 fixed top-0 left-0 w-full transition-colors flex justify-between items-center",
         isScrolled && "shadow-sm bg-white dark:bg-neutral-900 border-b"
       )}
     >
