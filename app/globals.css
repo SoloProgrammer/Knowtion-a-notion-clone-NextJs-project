@@ -92,5 +92,8 @@ body {
   transition: .2s width ease-in;
 }
 .ProseMirror{
-  @apply !h-full !bg-transparent !px-[17px] md:!px-[49px]
+  @apply !h-full !bg-transparent !px-[17px] md:!px-[49px] !overflow-x-auto
+}
+td>p{
+  @apply !whitespace-nowrap
 }
