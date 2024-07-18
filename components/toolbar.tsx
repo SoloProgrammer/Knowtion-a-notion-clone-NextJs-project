@@ -123,7 +123,7 @@ export const Toolbar = ({ document, preview = false }: ToolbarProps) => {
         {!isEditing && (
           <p
             onClick={enableInput}
-            className="text-4xl md:text-5xl text-primary/90 font-bold break-words !h-[53px]"
+            className="text-4xl md:text-5xl text-primary/90 font-bold break-words !min-h-[53px]"
           >
             {title}
           </p>

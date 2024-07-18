@@ -61,14 +61,14 @@ export const Title = ({ document }: TitleProps) => {
             className="px-[0.68rem] h-7 focus-visible:ring-transparent font-medium"
           />
         ) : (
-          <Button
-            variant={"ghost"}
-            size={"sm"}
+          <div
+            // variant={"ghost"}
+            // size={"sm"}
             onClick={enableInput}
-            className="h-auto font-medium py-1"
+            className="h-auto font-medium line-clamp-1 text-sm cursor-pointer hover:bg-secondary px-3 py-1 rounded-md"
           >
             {title.trim() || "Untitled"}
-          </Button>
+          </div>
         )}
       </div>
     </div>
