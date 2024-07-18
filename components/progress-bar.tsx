@@ -16,7 +16,7 @@ export const ProgressBar = ({ progress }: ProgressBarProps) => {
     >
       <span
         style={{
-          color: progress > 50 ? "black" : "white",
+          color: progress > 55 ? "black" : "white",
         }}
         className="text-center absolute z-10 text-xs left-[50%] top-[50%] translate-y-[-50%] font-bold text-white"
       >
