@@ -17,7 +17,7 @@ const PreviewErrorPage = () => {
         There is nothing here to preview!
       </h1>
       <small className="text-sm text-muted-foreground text-center">
-        The document you are trying to view is&nbsp;not&nbsp;published&nbsp;yet
+        The document you are trying to view is&nbsp;not&nbsp;published&nbsp;yet or gets deleted by the owner.
       </small>
       <Image
         width={300}
