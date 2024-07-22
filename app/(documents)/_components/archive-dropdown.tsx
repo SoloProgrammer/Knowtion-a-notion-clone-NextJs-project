@@ -10,15 +10,14 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 
-import { toast } from "sonner";
 import { Trash } from "lucide-react";
 
 import { Id } from "@/convex/_generated/dataModel";
-import { api } from "@/convex/_generated/api";
+
+import { getFromNowDate } from "@/utils/date";
 
 import { useUser } from "@clerk/clerk-react";
-import { useMutation } from "convex/react";
-import { getFromNowDate } from "@/utils/date";
+import { useArchiveDocumentMutation } from "../(routes)/documents/hooks";
 
 type ArchiveDropDownProps = {
   documentId: Id<"documents">;
@@ -34,21 +33,17 @@ export const ArchiveDropDown = ({
   lastEdited,
   align = "start",
   side = "right",
-  disabled = false
+  disabled = false,
 }: PropsWithChildren<ArchiveDropDownProps>) => {
   const { user } = useUser();
-  const archive = useMutation(api.documents.archiveDocument);
+  const { isArchiving, archive } = useArchiveDocumentMutation();
 
   const handleArchive = (e: MouseEvent) => {
     e.stopPropagation();
     if (!documentId) return;
-    const promise = archive({ id: documentId });
-    toast.promise(promise, {
-      loading: "Moving note to trash...",
-      success: "Note trashed",
-      error: "Error moving note to trash. Try again!",
-    });
+    archive({ id: documentId });
   };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
@@ -61,7 +56,7 @@ export const ArchiveDropDown = ({
         align={align}
       >
         <DropdownMenuItem
-          disabled={disabled}
+          disabled={disabled || isArchiving}
           className="text-muted-foreground"
           onClick={handleArchive}
         >

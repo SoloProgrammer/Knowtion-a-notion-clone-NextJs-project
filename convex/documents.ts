@@ -44,14 +44,14 @@ export const archiveDocument = mutation({
         }
       };
 
-      const document = await ctx.db.patch(args.id, {
+      await ctx.db.patch(args.id, {
         isArchived: true,
         updatedAt: Date.now(),
       });
 
       recursiveArchive(existingDocument._id);
 
-      return document;
+      return true;
     } catch (error) {
       throw new Error((error as Error).message);
     }
@@ -143,9 +143,9 @@ export const deleteDocument = mutation({
         throw new Error("Unauthorized!");
       }
 
-      const document = await ctx.db.delete(args.id);
+      await ctx.db.delete(args.id);
 
-      return document;
+      return true;
     } catch (error) {
       throw new Error((error as Error).message);
     }
@@ -305,7 +305,7 @@ export const udpate = mutation({
   args: {
     ...udpateDocumentColumns,
     id: v.id("documents"),
-    title: v.optional(v.string())
+    title: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();

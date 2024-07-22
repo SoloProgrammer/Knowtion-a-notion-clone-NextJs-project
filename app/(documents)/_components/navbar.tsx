@@ -4,13 +4,13 @@ import { SideBarMenu } from "./sidebar/side-bar-menu";
 import { Title } from "./title";
 import { ArchivedBanner } from "./archived-banner";
 import { ArchiveDropDown } from "./archive-dropdown";
+import { Publish } from "./publish";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { Doc } from "@/convex/_generated/dataModel";
 
 import { MoreHorizontal } from "lucide-react";
-import { Publish } from "./publish";
 
 type NavbarProps = {
   document: Doc<"documents">;

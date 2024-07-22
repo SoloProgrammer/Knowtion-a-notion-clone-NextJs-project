@@ -31,7 +31,7 @@ import { SettingsModal } from "@/components/modals/settings-modal";
 
 import { MAX_WIDTH, MIN_WIDTH } from "./constants";
 import { BRAND_NAME } from "@/app/constants";
-import { useCreateNewDocument } from "../../(routes)/documents/hooks";
+import { useCreateNewDocumentMutation } from "../../(routes)/documents/hooks";
 
 const font = Raleway({
   subsets: ["vietnamese"],
@@ -41,7 +41,7 @@ const font = Raleway({
 export const Sidebar = () => {
   const pathName = usePathname();
   const isMobile = useMediaQuery("(max-width: 768px)");
-  const { onCreateDocument: create, isPending } = useCreateNewDocument();
+  const { onCreateDocument: create, isCreating } = useCreateNewDocumentMutation();
 
   const sidebarRef = useRef<ElementRef<"aside">>(null);
   const isResizingRef = useRef(false);
@@ -124,18 +124,18 @@ export const Sidebar = () => {
           <Item icon={Settings} label="Settings" />
         </SettingsModal>
         <Item
-          icon={isPending ? Loader : PlusCircle}
+          icon={isCreating ? Loader : PlusCircle}
           label="New page"
-          isLoading={isPending}
+          isLoading={isCreating}
           onClick={onCreateDocument}
         />
         <div className="mt-5">
           <DocumentList />
           <Item
-            icon={isPending ? Loader : PlusIcon}
+            icon={isCreating ? Loader : PlusIcon}
             label="Add a page"
             onClick={onCreateDocument}
-            isLoading={isPending}
+            isLoading={isCreating}
           />
           <TrashPopPver>
             <div className="mt-5">
