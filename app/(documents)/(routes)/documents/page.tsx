@@ -6,31 +6,17 @@ import { SideBarMenu } from "../../_components/sidebar/side-bar-menu";
 import { BRAND_NAME } from "@/app/constants";
 import { Button } from "@/components/ui/button";
 
-import { PlusCircle } from "lucide-react";
-import { toast } from "sonner";
+import { Loader, PlusCircle } from "lucide-react";
 
 import { useUser } from "@clerk/clerk-react";
-import { useMutation } from "convex/react";
-
-import { api } from "@/convex/_generated/api";
-import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { useCreateNewDocument } from "./hooks";
 
 const DocumentsPage = () => {
   const { user } = useUser();
-  const create = useMutation(api.documents.create);
-  const router = useRouter();
+  const { onCreateDocument, isPending } = useCreateNewDocument();
 
-  const onCreateDocument = () => {
-    const promise = create({ title: "Untitled" });
-    promise.then((documentId) => {
-      router.push(`/documents/${documentId}`);
-    });
-    toast.promise(promise, {
-      loading: "Creating a new note...",
-      success: "Note created!",
-      error: "Error happens while crearting a new note!",
-    });
-  };
+  const CreateNewDocumentIcon = isPending ? Loader : PlusCircle;
 
   return (
     <div className="flex relative items-start flex-col h-full">
@@ -47,8 +33,18 @@ const DocumentsPage = () => {
         <p className="font-semibold">
           Welcome to {user?.firstName}&apos;s {BRAND_NAME}
         </p>
-        <Button className="mt-5" size={"sm"} onClick={onCreateDocument}>
-          <PlusCircle className="w-4 h-4 mr-2" /> Create a note
+        <Button
+          disabled={isPending}
+          className="mt-5 disabled:opacity-80"
+          size={"sm"}
+          onClick={() => onCreateDocument({ title: "Untitled" })}
+        >
+          <span>
+            <CreateNewDocumentIcon
+              className={cn("w-4 h-4 mr-2", isPending && "animate-spin")}
+            />
+          </span>
+          <span>{isPending ? "Creating new document.." : "Create a note"}</span>
         </Button>
       </div>
     </div>

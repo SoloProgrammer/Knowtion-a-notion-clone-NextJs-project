@@ -9,22 +9,19 @@ import { cn } from "@/lib/utils";
 
 import {
   ChevronsLeft,
+  Loader,
   PlusCircle,
   PlusIcon,
   Search,
   Settings,
   Trash,
 } from "lucide-react";
-import { toast } from "sonner";
 
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import { useSideBar } from "@/hooks/zustand/use-sidebar";
-import { useMutation } from "convex/react";
 import { useSearch } from "@/hooks/zustand/use-search";
-
-import { api } from "@/convex/_generated/api";
 
 import { UserItem } from "../user-item";
 import { Item } from "../item";
@@ -34,6 +31,7 @@ import { SettingsModal } from "@/components/modals/settings-modal";
 
 import { MAX_WIDTH, MIN_WIDTH } from "./constants";
 import { BRAND_NAME } from "@/app/constants";
+import { useCreateNewDocument } from "../../(routes)/documents/hooks";
 
 const font = Raleway({
   subsets: ["vietnamese"],
@@ -42,9 +40,9 @@ const font = Raleway({
 
 export const Sidebar = () => {
   const pathName = usePathname();
-  const router = useRouter();
   const isMobile = useMediaQuery("(max-width: 768px)");
-  const create = useMutation(api.documents.create);
+  const { onCreateDocument: create, isPending } = useCreateNewDocument();
+
   const sidebarRef = useRef<ElementRef<"aside">>(null);
   const isResizingRef = useRef(false);
   const [isResetting, setIsResetting] = useState(false);
@@ -83,16 +81,7 @@ export const Sidebar = () => {
     }, 400);
   };
 
-  const onCreateNote = () => {
-    const promise = create({ title: "Untitled" }).then((documentId) => {
-      router.push(`/documents/${documentId}`);
-    });
-    toast.promise(promise, {
-      loading: "Creating a new note...",
-      success: "Note created!",
-      error: "Error happens while crearting a new note!",
-    });
-  };
+  const onCreateDocument = () => create({ title: "Untitled" });
 
   useEffect(() => {
     isMobile && setIsCollapsed(true);
@@ -134,10 +123,20 @@ export const Sidebar = () => {
         <SettingsModal>
           <Item icon={Settings} label="Settings" />
         </SettingsModal>
-        <Item icon={PlusCircle} label="New page" onClick={onCreateNote} />
+        <Item
+          icon={isPending ? Loader : PlusCircle}
+          label="New page"
+          isLoading={isPending}
+          onClick={onCreateDocument}
+        />
         <div className="mt-5">
           <DocumentList />
-          <Item icon={PlusIcon} label="Add a page" onClick={onCreateNote} />
+          <Item
+            icon={isPending ? Loader : PlusIcon}
+            label="Add a page"
+            onClick={onCreateDocument}
+            isLoading={isPending}
+          />
           <TrashPopPver>
             <div className="mt-5">
               <Item icon={Trash} label="Trash" />
