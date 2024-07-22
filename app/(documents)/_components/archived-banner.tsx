@@ -6,37 +6,32 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 
 import { useMutation } from "convex/react";
-import { useRouter } from "next/navigation";
 
 import { ConfirmModal } from "@/components/modals/confirm-action-modal";
 import { Button } from "@/components/ui/button";
+import {
+  useDeleteDocumentMutation,
+  useRestoreDocumentMutation,
+} from "../(routes)/documents/hooks";
+import { useParams, useRouter } from "next/navigation";
 
 type ArchivedBannerProps = {
   documentId: Id<"documents">;
 };
 
 export const ArchivedBanner = ({ documentId }: ArchivedBannerProps) => {
+  const { restore, isRestoring } = useRestoreDocumentMutation();
+  const { remove, isDeleting } = useDeleteDocumentMutation();
+  const params = useParams();
   const router = useRouter();
-  const restore = useMutation(api.documents.restoreArchives);
-  const remove = useMutation(api.documents.deleteDocument);
 
-  const onRestore = () => {
-    const promise = restore({ id: documentId });
-    toast.promise(promise, {
-      loading: "Restoring note...",
-      success: "Note restored!",
-      error: "Error restoring Note. Try again!",
-    });
-  };
+  const onRestore = () => restore({ id: documentId });
 
   const onDelete = () => {
-    const promise = remove({ id: documentId })
-    toast.promise(promise, {
-      loading: "Deleting note...",
-      success: "Note deleted!",
-      error: "Error deleting Note. Try again!",
-    });
-    router.push(`/documents`);
+    remove({ id: documentId });
+    if (params.documentId === documentId) {
+      router.push("/documents");
+    }
   };
 
   return (
@@ -47,8 +42,9 @@ export const ArchivedBanner = ({ documentId }: ArchivedBannerProps) => {
           onClick={onRestore}
           variant="outline"
           className="h-auto border-white bg-transparent py-2 hover:bg-red-600 !text-white"
+          disabled={isRestoring}
         >
-          Restore page
+          {isRestoring ? "Restoring page..." : "Restore page"}
         </Button>
         <ConfirmModal
           description="This action cannot be undone. This will permanently delete your note!"
@@ -56,10 +52,11 @@ export const ArchivedBanner = ({ documentId }: ArchivedBannerProps) => {
           btnCopy="Delete note"
         >
           <Button
+            disabled={isDeleting}
             variant="outline"
             className="h-auto border-white bg-transparent py-2 hover:bg-red-600 !text-white"
           >
-            Delete forever
+            {isDeleting ? "Deleting..." : "Delete forever"}
           </Button>
         </ConfirmModal>
       </div>

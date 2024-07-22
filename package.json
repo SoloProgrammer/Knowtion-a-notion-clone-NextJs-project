@@ -14,7 +14,7 @@
     "@blocknote/react": "^0.15.0",
     "@clerk/clerk-react": "^5.2.7",
     "@clerk/nextjs": "^5.2.2",
-    "@convex-dev/convex-react-query": "^0.0.0-alpha.2",
+    "@convex-dev/react-query": "^0.0.0-alpha.3",
     "@edgestore/react": "^0.2.0",
     "@edgestore/server": "^0.2.0",
     "@radix-ui/react-alert-dialog": "^1.1.1",
