@@ -10,11 +10,11 @@ import { Loader, PlusCircle } from "lucide-react";
 
 import { useUser } from "@clerk/clerk-react";
 import { cn } from "@/lib/utils";
-import { useCreateNewDocument } from "./hooks";
+import { useCreateNewDocumentMutation } from "./hooks";
 
 const DocumentsPage = () => {
   const { user } = useUser();
-  const { onCreateDocument, isCreating } = useCreateNewDocument();
+  const { onCreateDocument, isCreating } = useCreateNewDocumentMutation();
 
   const CreateNewDocumentIcon = isCreating ? Loader : PlusCircle;
 
