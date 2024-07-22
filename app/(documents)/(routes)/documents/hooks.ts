@@ -32,15 +32,15 @@ export const useCreateNewDocument = () => {
   useEffect(() => {
     let toastId;
     if (isPending) {
-      toastId = toast("Creating new document...", { type: "loading" });
+      toastId = toast.loading("Creating new document...");
     }
     if (documentId) {
-      toast("New document created.", { type: "success" });
+      toast.success("New document created.");
       router.push(`/documents/${documentId}`);
       toast.dismiss(toastId);
     }
     if (isError) {
-      toast("Error, while creating new document", { type: "error" });
+      toast.error("Error, while creating new document");
       toast.dismiss(toastId);
     }
   }, [documentId, isPending, isError]);

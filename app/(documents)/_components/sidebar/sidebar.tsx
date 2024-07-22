@@ -17,7 +17,7 @@ import {
   Trash,
 } from "lucide-react";
 
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import { useSideBar } from "@/hooks/zustand/use-sidebar";
