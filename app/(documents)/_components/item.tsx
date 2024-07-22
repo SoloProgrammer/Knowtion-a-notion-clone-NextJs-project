@@ -1,10 +1,10 @@
 "use client";
 
-import { MouseEvent } from "react";
+import { MouseEvent, useEffect } from "react";
 
-import { toast } from "sonner";
 import {
   ChevronRight,
+  Loader,
   LucideIcon,
   MoreHorizontal,
   PlusIcon,
@@ -13,12 +13,10 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArchiveDropDown } from "./archive-dropdown";
 
-import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
 
-import { useMutation } from "convex/react";
-import { useRouter } from "next/navigation";
+import { useCreateNewDocument } from "../(routes)/documents/hooks";
 
 type ItemProps = {
   id?: Id<"documents">;
@@ -32,6 +30,7 @@ type ItemProps = {
   onClick?: () => void;
   icon: LucideIcon;
   lastEdited?: number;
+  isLoading?: boolean;
 };
 
 export const Item = ({
@@ -46,9 +45,9 @@ export const Item = ({
   onClick,
   icon: Icon,
   lastEdited,
+  isLoading = false,
 }: ItemProps) => {
-  const create = useMutation(api.documents.create);
-  const router = useRouter();
+  const { onCreateDocument, isPending, documentId } = useCreateNewDocument();
 
   const handleExpand = (e: MouseEvent) => {
     e.stopPropagation();
@@ -59,31 +58,28 @@ export const Item = ({
   const handleCreateChildDocument = (e: MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    const promise = create({ title: "Untitled", parentDocument: id }).then(
-      (documentId) => {
-        if (!isExpanded) onExpand?.();
-        router.push(`/documents/${documentId}`);
-      }
-    );
-    toast.promise(promise, {
-      loading: "Creating a new child note...",
-      success: "Child note created!",
-      error: "Error happens while crearting a new child note!",
-    });
+    onCreateDocument({ title: "Untitled", parentDocument: id });
   };
 
+  useEffect(() => {
+    if (documentId) !isExpanded && onExpand?.();
+  }, [documentId]);
+
+  const CreateChildDocumentIcon = isPending ? Loader : PlusIcon;
+
   return (
-    <div
-      role="button"
+    <button
       className={cn(
-        "group text-muted-foreground py-2 md:py-1 hover:bg-primary/5 text-sm flex items-center cursor-pointer w-full font-medium",
+        "group text-muted-foreground py-2 md:py-1 hover:bg-primary/5 text-sm flex items-center cursor-pointer w-full font-medium disabled:cursor-progress disabled:opacity-80",
         active && "bg-primary/5 text-primary"
       )}
       style={{ paddingLeft: level ? `${level * 10 + 10}px` : "10px" }}
       onClick={onClick}
+      disabled={isLoading}
+      aria-disabled={isLoading}
     >
       {!!id && (
-        <div
+        <button
           onClick={handleExpand}
           className="mr-2 rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600"
         >
@@ -93,7 +89,7 @@ export const Item = ({
               isExpanded && "rotate-[90deg]"
             )}
           />
-        </div>
+        </button>
       )}
 
       {documentIcon ? (
@@ -101,7 +97,9 @@ export const Item = ({
           {documentIcon}
         </div>
       ) : (
-        <Icon className="h-[18px] shrink-0 mr-2" />
+        <Icon
+          className={cn("h-[18px] shrink-0 mr-2", isLoading && "animate-spin")}
+        />
       )}
 
       <span className="truncate select-none mr-2">{label}</span>
@@ -125,19 +123,21 @@ export const Item = ({
             </div>
           </ArchiveDropDown>
 
-          <div
+          <button
+            disabled={isPending}
             onClick={handleCreateChildDocument}
             className="opacity-0  mr-2 rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 group-hover:opacity-100"
           >
-            <PlusIcon
+            <CreateChildDocumentIcon
               className={cn(
-                "w-5 h-5 md:w-4 md:h-4 text-muted-foreground/80 shrink-0"
+                "w-5 h-5 md:w-4 md:h-4 text-muted-foreground/80 shrink-0",
+                isPending && "animate-spin"
               )}
             />
-          </div>
+          </button>
         </div>
       )}
-    </div>
+    </button>
   );
 };
 
