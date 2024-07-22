@@ -1,13 +1,14 @@
 "use client";
 
 import { redirect } from "next/navigation";
-import { PropsWithChildren, useEffect } from "react";
+import { PropsWithChildren } from "react";
 
 import { Spinner } from "@/components/spinner";
+import { SearchCommand } from "@/components/search-command";
 import { Sidebar } from "./_components/sidebar/sidebar";
 
 import { useConvexAuth } from "convex/react";
-import { SearchCommand } from "@/components/search-command";
+
 import { EdgeStoreProvider } from "@/lib/edgestore";
 import { DocumentLayoutProvider } from "@/providers/document-layout-provider";
 
