@@ -14,9 +14,9 @@ import { useCreateNewDocument } from "./hooks";
 
 const DocumentsPage = () => {
   const { user } = useUser();
-  const { onCreateDocument, isPending } = useCreateNewDocument();
+  const { onCreateDocument, isCreating } = useCreateNewDocument();
 
-  const CreateNewDocumentIcon = isPending ? Loader : PlusCircle;
+  const CreateNewDocumentIcon = isCreating ? Loader : PlusCircle;
 
   return (
     <div className="flex relative items-start flex-col h-full">
@@ -34,17 +34,17 @@ const DocumentsPage = () => {
           Welcome to {user?.firstName}&apos;s {BRAND_NAME}
         </p>
         <Button
-          disabled={isPending}
+          disabled={isCreating}
           className="mt-5 disabled:opacity-80"
           size={"sm"}
           onClick={() => onCreateDocument({ title: "Untitled" })}
         >
           <span>
             <CreateNewDocumentIcon
-              className={cn("w-4 h-4 mr-2", isPending && "animate-spin")}
+              className={cn("w-4 h-4 mr-2", isCreating && "animate-spin")}
             />
           </span>
-          <span>{isPending ? "Creating new document.." : "Create a note"}</span>
+          <span>{isCreating ? "Creating new document.." : "Create a note"}</span>
         </Button>
       </div>
     </div>

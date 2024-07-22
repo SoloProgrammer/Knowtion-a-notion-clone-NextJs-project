@@ -1,7 +1,7 @@
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 
-import { useConvexMutation } from "@convex-dev/convex-react-query";
+import { useConvexMutation } from "@convex-dev/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -16,12 +16,14 @@ type CreateDocumentProps = {
 export const useCreateNewDocument = () => {
   const {
     mutate: create,
-    isPending,
+    isPending: isCreating,
     data: documentId,
     isError,
+    error,
   } = useMutation({
     mutationFn: useConvexMutation(api.documents.create),
   });
+
   const router = useRouter();
 
   const onCreateDocument = ({
@@ -31,7 +33,7 @@ export const useCreateNewDocument = () => {
 
   useEffect(() => {
     let toastId;
-    if (isPending) {
+    if (isCreating) {
       toastId = toast.loading("Creating new document...");
     }
     if (documentId) {
@@ -43,12 +45,13 @@ export const useCreateNewDocument = () => {
       toast.error("Error, while creating new document");
       toast.dismiss(toastId);
     }
-  }, [documentId, isPending, isError]);
+  }, [documentId, isCreating, isError]);
 
   return {
     onCreateDocument,
-    isPending,
+    isCreating,
     isError,
+    error,
     documentId,
   };
 };

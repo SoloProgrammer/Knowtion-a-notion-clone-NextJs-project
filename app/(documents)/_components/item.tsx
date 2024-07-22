@@ -47,7 +47,7 @@ export const Item = ({
   lastEdited,
   isLoading = false,
 }: ItemProps) => {
-  const { onCreateDocument, isPending, documentId } = useCreateNewDocument();
+  const { onCreateDocument, isCreating, documentId } = useCreateNewDocument();
 
   const handleExpand = (e: MouseEvent) => {
     e.stopPropagation();
@@ -65,7 +65,7 @@ export const Item = ({
     if (documentId) !isExpanded && onExpand?.();
   }, [documentId]);
 
-  const CreateChildDocumentIcon = isPending ? Loader : PlusIcon;
+  const CreateChildDocumentIcon = isCreating ? Loader : PlusIcon;
 
   return (
     <button
@@ -124,14 +124,14 @@ export const Item = ({
           </ArchiveDropDown>
 
           <button
-            disabled={isPending}
+            disabled={isCreating}
             onClick={handleCreateChildDocument}
             className="opacity-0  mr-2 rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 group-hover:opacity-100"
           >
             <CreateChildDocumentIcon
               className={cn(
                 "w-5 h-5 md:w-4 md:h-4 text-muted-foreground/80 shrink-0",
-                isPending && "animate-spin"
+                isCreating && "animate-spin"
               )}
             />
           </button>
