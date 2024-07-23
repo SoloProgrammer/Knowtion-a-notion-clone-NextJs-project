@@ -86,7 +86,7 @@ export const Sidebar = () => {
 
   useEffect(() => {
     isMobile && setIsCollapsed(true);
-    return () => setIsCollapsed(true);
+    return () => setIsCollapsed(isMobile);
   }, [pathName]);
 
   useEffect(() => {
