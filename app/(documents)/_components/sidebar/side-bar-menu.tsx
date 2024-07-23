@@ -12,16 +12,16 @@ import { HTMLAttributes } from "react";
 export const SideBarMenu = ({
   className,
 }: Omit<HTMLAttributes<SVGElement>, "onClick">) => {
-  const { setIsCollapsed, setIsTrasitioning, isCollapsed } = useSideBar();
+  const { setIsCollapsed, setIsTransitioning, isCollapsed } = useSideBar();
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   return (
     <Text
       onClick={() => {
         setIsCollapsed(false);
-        setIsTrasitioning?.(true);
+        setIsTransitioning?.(true);
         setTimeout(() => {
-          setIsTrasitioning?.(false);
+          setIsTransitioning?.(false);
         }, 400);
       }}
       className={cn(

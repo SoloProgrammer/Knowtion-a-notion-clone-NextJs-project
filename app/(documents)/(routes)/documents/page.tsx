@@ -20,7 +20,7 @@ const DocumentsPage = () => {
 
   return (
     <div className="flex relative items-start flex-col h-full">
-      <SideBarMenu className="absolute top-2 left-2" />
+      <SideBarMenu className="absolute top-3 left-3" />
       <div className="flex-grow w-full flex items-center justify-center flex-col">
         <div className="relative w-[350px] h-[350px]">
           <Image
