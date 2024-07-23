@@ -11,14 +11,14 @@ import {
   Popover,
 } from "@/components/ui/popover";
 
-import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 
 import { cn } from "@/lib/utils";
 import { getHostUrl } from "@/utils/urls";
 
-import { useCallback, useState } from "react";
-import { useMutation } from "convex/react";
+import { useEffect, useRef, useState } from "react";
+import { usePublishDocumentMutation } from "../(routes)/documents/hooks";
+import { Spinner } from "@/components/spinner";
 
 type PublishProps = {
   documentId: Id<"documents">;
@@ -31,10 +31,21 @@ export const Publish = ({
   isPublished,
   disabled = false,
 }: PublishProps) => {
-  const update = useMutation(api.documents.udpate);
+  const toastId = useRef<string | number>("");
+  const { publish, isPending: isLoading } = usePublishDocumentMutation(
+    () => {
+      toast.dismiss(toastId.current);
+      toast.success(`Note ${isPublished ? "Unpublished" : "Published"}`);
+    },
+    () => {
+      toast.dismiss(toastId.current);
+      toast.error(
+        `Error while ${isPublished ? "Unpublishing" : "Publishing"} note!`
+      );
+    }
+  );
   const inputValue = `${getHostUrl()}/${documentId}/preview`;
   const [isCopied, setIscopied] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   const handleCopyPublishUrl = () => {
     navigator.clipboard.writeText(inputValue);
@@ -44,18 +55,19 @@ export const Publish = ({
     }, 2000);
   };
 
-  const onPublishHandler = useCallback(async () => {
-    setLoading(true);
-    const promise = update({
+  const onPublishHandler = () => {
+    publish({
       id: documentId,
       isPublished: !isPublished,
-    }).finally(() => setLoading(false));
-    toast.promise(promise, {
-      loading: isPublished ? "Unpublishing..." : "Publishing...",
-      success: `Note ${isPublished ? "Unpublished" : "Published"}`,
-      error: `Error while ${isPublished ? "Unpublishing" : "Publishing"} note!`,
     });
-  }, [isPublished]);
+  };
+
+  useEffect(() => {
+    if (isLoading)
+      toastId.current = toast.loading(
+        isPublished ? "Unpublishing..." : "Publishing..."
+      );
+  }, [isLoading, isPublished]);
 
   return (
     <Popover>
@@ -88,7 +100,7 @@ export const Publish = ({
           </>
         ) : (
           <>
-            <div className="flex items-center gap-x-2 text-sky-400 font-semibold text-sm">
+            <div className="flex items-center gap-x-2 text-sky-400 font-semibold text-[.8rem]">
               <Globe className="h-4 w-4" />
               <h6>This note is live on web.</h6>
             </div>
@@ -113,12 +125,13 @@ export const Publish = ({
           </>
         )}
         <Button
-          disabled={loading}
+          disabled={isLoading}
           className="!w-full mt-2 font-medium"
           onClick={onPublishHandler}
           size={"sm"}
         >
-          {isPublished ? "Unpublish" : "Publish"}
+          <span>{isPublished ? "Unpublish" : "Publish"}</span>
+          {isLoading && <Spinner className="ml-2" />}
         </Button>
       </PopoverContent>
     </Popover>
