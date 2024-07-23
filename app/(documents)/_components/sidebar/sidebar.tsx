@@ -41,12 +41,13 @@ const font = Raleway({
 export const Sidebar = () => {
   const pathName = usePathname();
   const isMobile = useMediaQuery("(max-width: 768px)");
-  const { onCreateDocument: create, isCreating } = useCreateNewDocumentMutation();
+  const { onCreateDocument: create, isCreating } =
+    useCreateNewDocumentMutation();
 
   const sidebarRef = useRef<ElementRef<"aside">>(null);
   const isResizingRef = useRef(false);
   const [isResetting, setIsResetting] = useState(false);
-  const { isCollapsed, setIsCollapsed, isTrasitioning } = useSideBar(isMobile);
+  const { isCollapsed, setIsCollapsed, isTransitioning } = useSideBar(isMobile);
   const { openSearch } = useSearch();
 
   const handleDragStart = (e: MouseEvent) => {
@@ -85,6 +86,7 @@ export const Sidebar = () => {
 
   useEffect(() => {
     isMobile && setIsCollapsed(true);
+    return () => setIsCollapsed(isMobile);
   }, [pathName]);
 
   useEffect(() => {
@@ -102,7 +104,7 @@ export const Sidebar = () => {
 
         isResetting && "transition-all duration-500",
         isCollapsed && "!w-0 transition-all",
-        isTrasitioning && "transition-all ease-in-expo duration-500"
+        isTransitioning && "transition-all ease-in-expo duration-500"
       )}
     >
       <div className="flex-grow pb-5">

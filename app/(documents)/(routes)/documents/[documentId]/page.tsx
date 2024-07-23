@@ -10,8 +10,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 
-import { useMutation, useQuery } from "convex/react";
+import { useMutation } from "convex/react";
 import { Spinner } from "@/components/spinner";
+import { useGetSingleDocument } from "../hooks";
 
 const DynamicEditor = dynamic(() => import("@/components/editor"), {
   ssr: false,
@@ -29,12 +30,12 @@ type DocumentPageProps = {
 };
 
 const DocumentPage = ({ params }: DocumentPageProps) => {
-  const document = useQuery(api.documents.getDocumentById, {
-    id: params.documentId as Id<"documents">,
-  });
+  const { data: document, isLoading } = useGetSingleDocument(
+    params.documentId as Id<"documents">
+  );
   const update = useMutation(api.documents.udpate);
 
-  if (document === undefined) return <DocumentPage.Skeleton />;
+  if (isLoading || !document) return <DocumentPage.Skeleton />;
 
   const handleEditorChange = (content: string) => {
     update({ id: document?._id, content });

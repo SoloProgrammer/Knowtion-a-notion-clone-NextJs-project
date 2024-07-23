@@ -3,15 +3,15 @@ import { create, StoreApi, UseBoundStore } from "zustand";
 type SideBarState = {
   isCollapsed: boolean;
   setIsCollapsed: (collapse: boolean) => void;
-  isTrasitioning?: boolean;
-  setIsTrasitioning?: (bool: boolean) => void;
+  isTransitioning?: boolean;
+  setIsTransitioning?: (bool: boolean) => void;
 };
 
 const initSideBarStore = (initialState: boolean) =>
   create<SideBarState>((set) => ({
     isCollapsed: initialState,
     setIsCollapsed: (collapse) => set(() => ({ isCollapsed: collapse })),
-    setIsTrasitioning: (bool) => set(() => ({ isTrasitioning: bool })),
+    setIsTransitioning: (bool) => set(() => ({ isTransitioning: bool })),
   }));
 
 let store: UseBoundStore<StoreApi<SideBarState>>;
