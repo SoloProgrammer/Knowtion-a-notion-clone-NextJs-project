@@ -11,13 +11,11 @@ import {
 
 import { FileIcon } from "lucide-react";
 
-import { api } from "@/convex/_generated/api";
-
 import { useSearch } from "@/hooks/zustand/use-search";
-import { useQuery } from "convex/react";
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { useParams, useRouter } from "next/navigation";
+import { useGetDocumentsQuery } from "@/app/(documents)/(routes)/documents/hooks";
 
 import { BRAND_NAME } from "@/app/constants";
 
@@ -25,7 +23,7 @@ export function SearchCommand() {
   const { isOpen, hideSearch, toggleSearch } = useSearch();
   const { user } = useUser();
   const [isMounted, setIsMounted] = useState(false);
-  const documents = useQuery(api.documents.getDocumentsByUser);
+  const { data: documents } = useGetDocumentsQuery();
   const router = useRouter();
   const params = useParams();
 

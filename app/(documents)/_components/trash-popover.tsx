@@ -13,14 +13,15 @@ import {
 
 import { FileIcon, SearchIcon, Trash, Undo } from "lucide-react";
 
-import { api } from "@/convex/_generated/api";
 import { Doc, Id } from "@/convex/_generated/dataModel";
 
-import { useQuery } from "convex/react";
+import { cn } from "@/lib/utils";
+
 import { useParams, useRouter } from "next/navigation";
 import { useMediaQuery } from "usehooks-ts";
 import {
   useDeleteDocumentMutation,
+  useGetArchiveDocumentsQuery,
   useRestoreDocumentMutation,
 } from "../(routes)/documents/hooks";
 
@@ -46,7 +47,7 @@ export const TrashPopPver = ({ children }: PropsWithChildren) => {
 };
 
 const TrashBox = () => {
-  const documents = useQuery(api.documents.getArchiveDocuments);
+  const { data: documents, isLoading } = useGetArchiveDocumentsQuery();
 
   const [query, setQuery] = useState<string>("");
 
@@ -54,7 +55,7 @@ const TrashBox = () => {
     document.title.toLowerCase().includes(query.toLowerCase())
   );
 
-  if (!documents) {
+  if (isLoading) {
     return (
       <div className="flex w-full justify-center py-5">
         <Spinner size={"lg"} />
@@ -110,10 +111,18 @@ const TrashDocumentItem = ({ document }: TrashDocumentItemProps) => {
     <div
       role="button"
       onClick={() => onClick(document._id)}
-      className="flex w-full justify-between items-center text-primary hover:bg-primary/5 py-[0.35rem] px-1 rounded-sm text-sm group"
+      className={cn(
+        "flex w-full justify-between items-center text-primary hover:bg-primary/5 py-[0.35rem] px-1 rounded-sm text-sm group mt-1",
+        params.documentId === document._id && "bg-primary/5"
+      )}
       key={document._id}
     >
-      <span className="truncate pl-1 flex items-center gap-x-1 text-muted-foreground group-hover:text-primary font-medium">
+      <span
+        className={cn(
+          "truncate pl-1 flex items-center gap-x-1 text-muted-foreground group-hover:text-primary font-medium",
+          params.documentId === document._id && "text-primary"
+        )}
+      >
         <span className="text-muted-foreground">
           {document.icon ? document.icon : <FileIcon className="w-4 h-4" />}
         </span>

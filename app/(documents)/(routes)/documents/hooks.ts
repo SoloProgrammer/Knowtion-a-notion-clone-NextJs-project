@@ -1,8 +1,8 @@
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 
-import { useConvexMutation } from "@convex-dev/react-query";
-import { useMutation } from "@tanstack/react-query";
+import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 
@@ -13,7 +13,7 @@ type CreateDocumentProps = {
   parentDocument?: Id<"documents">;
 };
 
-export const useCreateNewDocumentMutation = () => {
+const useCreateNewDocumentMutation = () => {
   const {
     mutate: create,
     isPending: isCreating,
@@ -58,7 +58,7 @@ export const useCreateNewDocumentMutation = () => {
   };
 };
 
-export const useArchiveDocumentMutation = () => {
+const useArchiveDocumentMutation = () => {
   let toastId = useRef<string | number>("");
 
   const {
@@ -94,7 +94,7 @@ export const useArchiveDocumentMutation = () => {
   };
 };
 
-export const useDeleteDocumentMutation = () => {
+const useDeleteDocumentMutation = () => {
   let toastId = useRef<string | number>("");
 
   const {
@@ -128,7 +128,7 @@ export const useDeleteDocumentMutation = () => {
   };
 };
 
-export const useRestoreDocumentMutation = () => {
+const useRestoreDocumentMutation = () => {
   const toastId = useRef<string | number>("");
   const {
     mutate: restore,
@@ -157,4 +157,40 @@ export const useRestoreDocumentMutation = () => {
     isRestoring,
     isError,
   };
+};
+
+const usePublishDocumentMutation = (
+  onSuccess?: () => void,
+  onError?: () => void
+) => {
+  const { mutate: publish, ...rest } = useMutation({
+    mutationFn: useConvexMutation(api.documents.udpate),
+    onSuccess,
+    onError,
+  });
+  return { publish, ...rest };
+};
+
+const useGetSidebarDocumentsQuery = (
+  parentDocument: Id<"documents"> | undefined
+) =>
+  useQuery(
+    convexQuery(api.documents.getDocumentsByParentDocument, { parentDocument })
+  );
+
+const useGetDocumentsQuery = () =>
+  useQuery(convexQuery(api.documents.getDocumentsByUser, {}));
+
+const useGetArchiveDocumentsQuery = () =>
+  useQuery(convexQuery(api.documents.getArchiveDocuments, {}));
+
+export {
+  useArchiveDocumentMutation,
+  useCreateNewDocumentMutation,
+  useDeleteDocumentMutation,
+  useRestoreDocumentMutation,
+  useGetSidebarDocumentsQuery,
+  useGetDocumentsQuery,
+  useGetArchiveDocumentsQuery,
+  usePublishDocumentMutation,
 };
