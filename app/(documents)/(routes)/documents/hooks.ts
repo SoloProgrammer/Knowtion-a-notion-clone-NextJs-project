@@ -184,6 +184,9 @@ const useGetDocumentsQuery = () =>
 const useGetArchiveDocumentsQuery = () =>
   useQuery(convexQuery(api.documents.getArchiveDocuments, {}));
 
+const useGetSingleDocument = (id: Id<"documents">) =>
+  useQuery(convexQuery(api.documents.getDocumentById, { id }));
+
 export {
   useArchiveDocumentMutation,
   useCreateNewDocumentMutation,
@@ -193,4 +196,5 @@ export {
   useGetDocumentsQuery,
   useGetArchiveDocumentsQuery,
   usePublishDocumentMutation,
+  useGetSingleDocument,
 };
