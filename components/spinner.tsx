@@ -2,6 +2,7 @@ import { Loader } from "lucide-react";
 
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
+import { HTMLAttributes } from "react";
 
 const spinnerVariants = cva("animate-spin", {
   variants: {
@@ -19,12 +20,16 @@ const spinnerVariants = cva("animate-spin", {
 
 export interface SpinnerProps extends VariantProps<typeof spinnerVariants> {}
 
-export const Spinner = ({ size }: SpinnerProps) => {
+export const Spinner = ({
+  size,
+  className,
+}: Omit<HTMLAttributes<HTMLOrSVGElement> & SpinnerProps, "onClick">) => {
   return (
     <Loader
       className={cn(
         spinnerVariants({ size }),
-        "text-muted-foreground shrink-0"
+        "text-muted-foreground shrink-0",
+        className
       )}
     />
   );
