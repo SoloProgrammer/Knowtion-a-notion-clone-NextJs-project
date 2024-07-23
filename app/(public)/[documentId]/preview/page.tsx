@@ -12,6 +12,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 
 import { useQuery } from "convex/react";
+import { useGetSingleDocument } from "@/app/(documents)/(routes)/documents/hooks";
 
 const DynamicEditor = dynamic(() => import("@/components/editor"), {
   ssr: false,
@@ -29,15 +30,18 @@ type PreviewDocumentPageProps = {
 };
 
 const PreviewDocumentPage = ({ params }: PreviewDocumentPageProps) => {
-  const document = useQuery(api.documents.getPreviewDocument, {
-    id: params.documentId as Id<"documents">,
-  });
+  const { data: document, isLoading } = useGetSingleDocument(
+    params.documentId as Id<"documents">
+  );
 
-  if (document === undefined) return <PreviewDocumentPage.Skeleton />;
+  if (isLoading || !document) return <PreviewDocumentPage.Skeleton />;
 
   return (
     <div className="flex flex-col h-full">
-      <Logo hideBrandName className="fixed z-10 bottom-5 right-5 !inline-flex" />
+      <Logo
+        hideBrandName
+        className="fixed z-10 bottom-5 right-5 !inline-flex"
+      />
       <div className="flex flex-col w-full flex-grow overflow-y-auto pb-20">
         <CoverImage
           url={document?.coverImage}
