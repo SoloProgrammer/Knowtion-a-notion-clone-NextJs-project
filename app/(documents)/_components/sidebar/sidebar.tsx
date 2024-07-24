@@ -22,6 +22,7 @@ import { useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import { useSideBar } from "@/hooks/zustand/use-sidebar";
 import { useSearch } from "@/hooks/zustand/use-search";
+import { useCreateNewDocumentMutation } from "../../(routes)/documents/hooks";
 
 import { UserItem } from "../user-item";
 import { Item } from "../item";
@@ -31,7 +32,6 @@ import { SettingsModal } from "@/components/modals/settings-modal";
 
 import { MAX_WIDTH, MIN_WIDTH } from "./constants";
 import { BRAND_NAME } from "@/app/constants";
-import { useCreateNewDocumentMutation } from "../../(routes)/documents/hooks";
 
 const font = Raleway({
   subsets: ["vietnamese"],
