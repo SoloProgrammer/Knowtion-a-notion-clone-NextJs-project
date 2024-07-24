@@ -52,7 +52,7 @@ const DocumentPage = ({ params }: DocumentPageProps) => {
       <Navbar document={document!} />
       <div
         className={cn(
-          "flex flex-col w-full flex-grow overflow-y-auto pb-20 border-[2px] border-transparent transition-colors",
+          "flex flex-col w-full flex-grow overflow-y-auto pb-20 border-[3px] border-transparent transition-colors",
           isPreview && "border-green-400"
         )}
       >

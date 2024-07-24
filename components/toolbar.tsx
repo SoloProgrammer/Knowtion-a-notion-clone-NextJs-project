@@ -11,7 +11,8 @@ import { Image, Smile, X } from "lucide-react";
 import TextareaAutosize from "react-textarea-autosize";
 
 import { useMutation } from "convex/react";
-import { KeyboardEvent, useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useDebounceFunction } from "@/hooks/use-debounce-function";
 
 type ToolbarProps = {
   document: Doc<"documents">;
@@ -22,28 +23,23 @@ export const Toolbar = ({ document, preview = false }: ToolbarProps) => {
   if (!document) return null;
 
   const updateDocument = useMutation(api.documents.udpate);
-
-  const [isEditing, setIsEditing] = useState(false);
-  const [title, setTitle] = useState<string>(document.title!);
+  const titleInputRef = useRef<HTMLTextAreaElement | null>(null);
+  const [editing, setEditing] = useState(false);
 
   useEffect(() => {
-    setTitle(document.title!);
-  }, [document.title]);
-
-  const enableInput = () => {
-    if (preview) return;
-    setTitle(document.title!);
-    setIsEditing(true);
-  };
-
-  const disableInput = () => setIsEditing(false);
-
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      disableInput();
-      updateDocument({ id: document._id, title: title.trim() || "Untitled" });
+    if (titleInputRef.current && !editing) {
+      titleInputRef.current.value = document.title;
     }
+  }, [document.title, editing]);
+
+  const updateDocumentTitle = useDebounceFunction(updateDocument);
+
+  const handleChange = (title: string) => {
+    setEditing(true);
+    updateDocumentTitle({
+      id: document._id,
+      title: title.trim(),
+    });
   };
 
   const updateIcon = (icon: string) => {
@@ -107,27 +103,19 @@ export const Toolbar = ({ document, preview = false }: ToolbarProps) => {
         )}
       </div>
       <div className="mt-3">
-        {isEditing && !preview && (
-          <TextareaAutosize
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            onBlur={disableInput}
-            onKeyDown={handleKeyDown}
-            onFocus={(e) =>
-              e.target.setSelectionRange(title.length, title.length)
-            }
-            autoFocus
-            className="resize-none text-primary/90 text-4xl md:text-5xl border-none outline-none font-bold break w-full !h-auto focus-visible:text-primary !bg-transparent rounded-sm"
-          />
-        )}
-        {!isEditing && (
-          <p
-            onClick={enableInput}
-            className="text-4xl md:text-5xl text-primary/90 font-bold break-words !min-h-[53px]"
-          >
-            {title}
-          </p>
-        )}
+        <TextareaAutosize
+          ref={titleInputRef}
+          placeholder="Untitled"
+          defaultValue={document.title || "Untitled"}
+          onBlur={() => {
+            setTimeout(() => {
+              setEditing(false);
+            }, 1000);
+          }}
+          onChange={(e) => handleChange(e.target.value)}
+          readOnly={preview}
+          className="placeholder:text-muted-foreground resize-none text-primary/90 text-4xl md:text-5xl border-none outline-none font-bold break w-full !h-auto focus-visible:text-primary !bg-transparent rounded-sm"
+        />
       </div>
     </div>
   );
