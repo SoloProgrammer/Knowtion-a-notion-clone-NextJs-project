@@ -26,7 +26,7 @@ export const Title = ({ document }: TitleProps) => {
   }, [document.title]);
 
   const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setTitle(e.target.value.trim());
+    setTitle(e.target.value);
   };
   const disableInput = () => {
     setIsEditing(false);
