@@ -8,10 +8,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/spinner";
 import { Logo } from "@/app/(marketing)/_components/logo";
 
-import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 
-import { useQuery } from "convex/react";
 import { useGetSingleDocument } from "@/app/(documents)/(routes)/documents/hooks";
 
 const DynamicEditor = dynamic(() => import("@/components/editor"), {
