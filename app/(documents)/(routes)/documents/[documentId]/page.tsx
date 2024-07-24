@@ -13,6 +13,10 @@ import { Id } from "@/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import { Spinner } from "@/components/spinner";
 import { useGetSingleDocument } from "../hooks";
+import { PreviewTabs } from "@/app/(documents)/_components/preview-tabs";
+import { useState } from "react";
+import { PreviewIndicator } from "@/app/(documents)/_components/preview-indicator";
+import { cn } from "@/lib/utils";
 
 const DynamicEditor = dynamic(() => import("@/components/editor"), {
   ssr: false,
@@ -30,9 +34,11 @@ type DocumentPageProps = {
 };
 
 const DocumentPage = ({ params }: DocumentPageProps) => {
+  const [isPreview, setIsPreview] = useState(false);
   const { data: document, isLoading } = useGetSingleDocument(
     params.documentId as Id<"documents">
   );
+
   const update = useMutation(api.documents.udpate);
 
   if (isLoading || !document) return <DocumentPage.Skeleton />;
@@ -44,17 +50,33 @@ const DocumentPage = ({ params }: DocumentPageProps) => {
   return (
     <div className="flex flex-col h-full">
       <Navbar document={document!} />
-      <div className="flex flex-col w-full flex-grow overflow-y-auto pb-20">
-        <CoverImage url={document?.coverImage} documentId={document?._id!} />
+      <div
+        className={cn(
+          "flex flex-col w-full flex-grow overflow-y-auto pb-20 border-[2px] border-transparent transition-colors",
+          isPreview && "border-green-400"
+        )}
+      >
+        <PreviewIndicator
+          className={cn(
+            "opacity-0 transition-all",
+            isPreview && "opacity-100"
+          )}
+        />
+        <CoverImage
+          url={document?.coverImage}
+          documentId={document?._id!}
+          preview={isPreview}
+        />
         <div className="md:max-w-4xl lg:max-w-5xl px-2 mx-auto mt-3 flex flex-col gap-y-4 flex-grow w-full">
-          <Toolbar document={document!} />
+          <Toolbar document={document!} preview={isPreview} />
           <DynamicEditor
             initialContent={document.content}
             onChange={handleEditorChange}
-            editable={true}
+            editable={!isPreview}
           />
         </div>
       </div>
+      <PreviewTabs setIsPreview={setIsPreview} />
     </div>
   );
 };
