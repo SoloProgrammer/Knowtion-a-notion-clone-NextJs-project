@@ -5,7 +5,6 @@ import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
 import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
 
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -19,7 +18,6 @@ type TitleProps = {
 
 export const Title = ({ document }: TitleProps) => {
   const update = useMutation(api.documents.udpate);
-
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(document.title);
 
@@ -30,7 +28,9 @@ export const Title = ({ document }: TitleProps) => {
   const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
   };
-  const disableInput = () => setIsEditing(false);
+  const disableInput = () => {
+    setIsEditing(false);
+  };
   const enableInput = () => {
     setTitle(document.title);
     setIsEditing(true);
@@ -38,7 +38,7 @@ export const Title = ({ document }: TitleProps) => {
 
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === "Enter") {
-      update({ title: title.trim() || "Untitled", id: document._id });
+      update({ title: title.trim(), id: document._id });
       disableInput();
     }
   };
@@ -55,15 +55,18 @@ export const Title = ({ document }: TitleProps) => {
           <Input
             onKeyDown={handleKeyDown}
             autoFocus
-            onBlur={disableInput}
+            placeholder="Untitled"
+            onBlur={() => {
+              disableInput();
+              setTitle(document.title);
+            }}
             value={title}
             onChange={handleTitleChange}
-            className="px-[0.68rem] h-7 focus-visible:ring-transparent font-medium"
+            className="placeholder:text-muted-foreground px-[0.68rem] h-7 focus-visible:ring-transparent font-medium"
           />
         ) : (
           <div
-            // variant={"ghost"}
-            // size={"sm"}
+            role="button"
             onClick={enableInput}
             className="h-auto font-medium line-clamp-1 text-sm cursor-pointer hover:bg-secondary px-3 py-1 rounded-md"
           >

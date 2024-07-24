@@ -72,7 +72,7 @@ export const DocumentList = ({
         <div key={document._id}>
           <Item
             icon={FileIcon}
-            label={document.title}
+            label={document.title || "Untitled"}
             onClick={() => onRedirect(document._id)}
             active={params.documentId === document._id}
             documentIcon={document.icon}
