@@ -116,10 +116,10 @@ export const Toolbar = ({ document, preview = false }: ToolbarProps) => {
           readOnly={preview}
           className="placeholder:text-muted-foreground resize-none text-primary/90 focus-visible:text-primary/90 text-4xl md:text-5xl border-none outline-none font-bold break w-full !h-auto !bg-transparent rounded-sm"
         />
-        <small className="flex items-center text-muted-foreground/70 select-none">
+        {!preview && <small className="flex items-center text-muted-foreground/70 select-none">
           <span><Info className="w-4 h-4 mr-1"/></span>
           <span>Changes will be saved when you stop editing</span>
-        </small>
+        </small>}
       </div>
     </div>
   );
