@@ -7,7 +7,7 @@ import { Button } from "./ui/button";
 import { IconPicker } from "./icon-picker";
 import { CoverImageModal } from "./modals/cover-image-modal";
 
-import { Image, Smile, X } from "lucide-react";
+import { Image, Info, Smile, X } from "lucide-react";
 import TextareaAutosize from "react-textarea-autosize";
 
 import { useMutation } from "convex/react";
@@ -114,8 +114,12 @@ export const Toolbar = ({ document, preview = false }: ToolbarProps) => {
           }}
           onChange={(e) => handleChange(e.target.value)}
           readOnly={preview}
-          className="placeholder:text-muted-foreground resize-none text-primary/90 text-4xl md:text-5xl border-none outline-none font-bold break w-full !h-auto focus-visible:text-primary !bg-transparent rounded-sm"
+          className="placeholder:text-muted-foreground resize-none text-primary/90 focus-visible:text-primary/90 text-4xl md:text-5xl border-none outline-none font-bold break w-full !h-auto !bg-transparent rounded-sm"
         />
+        <small className="flex items-center text-muted-foreground/70 select-none">
+          <span><Info className="w-4 h-4 mr-1"/></span>
+          <span>Changes will be saved when you stop editing</span>
+        </small>
       </div>
     </div>
   );
