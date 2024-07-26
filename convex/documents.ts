@@ -275,6 +275,35 @@ export const getPreviewDocument = query({
   },
 });
 
+export const getSharedDocuments = query({
+  args: {
+    email: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new ConvexError("Not authenticated");
+    }
+
+    const collaborators = await ctx.db
+      .query("collaborators")
+      .withIndex("by_email", (q) => q.eq("email", args.email))
+      .collect();
+
+    const documentIds = collaborators.map(
+      (collaborator) => collaborator.document
+    );
+    const documents = await Promise.all(
+      documentIds.map(async (id) => {
+        return await ctx.db.get(id);
+      })
+    );
+
+    return documents;
+  },
+});
+
 export const create = mutation({
   args: {
     title: v.string(),
@@ -341,9 +370,9 @@ export const addCollaborator = mutation({
   args: {
     id: v.id("documents"),
     collaborator: v.object({
-      id: v.string(),
       name: v.string(),
       imgUrl: v.string(),
+      email: v.string(),
     }),
   },
   handler: async (ctx, args) => {
@@ -359,16 +388,22 @@ export const addCollaborator = mutation({
       throw new ConvexError("Not found!");
     }
 
-    let collaborators = exitingDocument.collaborators;
+    const existingCollaborator = await ctx.db
+      .query("collaborators")
+      .withIndex("by_email_document", (q) =>
+        q.eq("document", args.id).eq("email", args.collaborator.email)
+      )
+      .collect();
 
-    if (!collaborators) collaborators = [];
-
-    if (collaborators.some((u) => u.id === args.collaborator.id)) {
-      throw new ConvexError(`Document already shared with ${args.collaborator.name}`);
+    if (existingCollaborator?.length > 0) {
+      throw new ConvexError(
+        `Document already shared with ${args.collaborator.name}`
+      );
     }
 
-    await ctx.db.patch(args.id, {
-      collaborators: collaborators?.concat(args.collaborator),
+    await ctx.db.insert("collaborators", {
+      ...args.collaborator,
+      document: args.id,
     });
 
     return true;
