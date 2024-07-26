@@ -1,11 +1,10 @@
 "use client";
 
-import { FileIcon } from "lucide-react";
+import { FileIcon, Folder } from "lucide-react";
 
 import { Doc, Id } from "@/convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
 
-import { useQuery } from "convex/react";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -56,6 +55,14 @@ export const DocumentList = ({
 
   return (
     <div>
+      <h3
+        className={cn(
+          "px-4 pb-3 text-primary/80 flex items-center gap-x-2 text-sm font-semibold",
+          (level > 0 || !documents || documents.length < 1) && "hidden"
+        )}
+      >
+        <Folder className="w-4 h-4" /> My documents
+      </h3>
       <p
         style={{
           paddingLeft: level ? `${17 + 25 + (level - 1) * 10}px` : "24px",

@@ -15,8 +15,8 @@ type CreateDocumentProps = {
 };
 
 export type Collaborator = {
-  id: string;
   name: string;
+  email: string;
   imgUrl: string;
 };
 
@@ -213,6 +213,9 @@ const useGetArchiveDocumentsQuery = () =>
 const useGetSingleDocument = (id: Id<"documents">) =>
   useQuery(convexQuery(api.documents.getDocumentById, { id }));
 
+const useGetSharedDocuments = (email: string) =>
+  useQuery(convexQuery(api.documents.getSharedDocuments, { email }));
+
 export {
   useArchiveDocumentMutation,
   useCreateNewDocumentMutation,
@@ -224,4 +227,5 @@ export {
   usePublishDocumentMutation,
   useGetSingleDocument,
   useAddCollaboratorMutation,
+  useGetSharedDocuments,
 };

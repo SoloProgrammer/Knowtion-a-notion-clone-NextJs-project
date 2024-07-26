@@ -1,32 +1,37 @@
 "use client";
 
-import { useSearchUsers } from "@/actions/user.actions";
 import { Spinner } from "@/components/spinner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Collaborator,
+  useAddCollaboratorMutation,
+} from "../(routes)/documents/hooks";
+import { UsersList } from "./user-list";
 import {
   PopoverContent,
   Popover,
   PopoverTrigger,
 } from "@/components/ui/popover";
+
 import { Id } from "@/convex/_generated/dataModel";
-import { useDebounceFunction } from "@/hooks/use-debounce-function";
-import { User } from "@clerk/nextjs/server";
-import { useQuery } from "@tanstack/react-query";
+
 import { MailPlus, Send } from "lucide-react";
 import { ChangeEvent, useState } from "react";
-import {
-  Collaborator,
-  useAddCollaboratorMutation,
-} from "../(routes)/documents/hooks";
 import { toast } from "sonner";
-import { UsersList } from "./user-list";
+import { User } from "@clerk/nextjs/server";
+
+import { useSearchUsers } from "@/actions/user.actions";
+import { useDebounceFunction } from "@/hooks/use-debounce-function";
+import { useQuery } from "@tanstack/react-query";
+import { useUser } from "@clerk/clerk-react";
 
 type CollaborationBarProps = {
   documentId: Id<"documents">;
 };
 
 export const CollaborationBar = ({ documentId }: CollaborationBarProps) => {
+  const { user } = useUser();
   const [query, setQuery] = useState("");
   const [isEnabled, setIsEnabled] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | undefined>();
@@ -40,7 +45,9 @@ export const CollaborationBar = ({ documentId }: CollaborationBarProps) => {
 
   const { data: users, isFetching } = useQuery({
     queryFn: async () => {
-      const users = await useSearchUsers(query.trim());
+      const users = (await useSearchUsers(query.trim())).filter(
+        (u) => u.id !== user?.id
+      );
       setIsEnabled(false);
       return users;
     },
@@ -66,9 +73,9 @@ export const CollaborationBar = ({ documentId }: CollaborationBarProps) => {
     if (!selectedUser) return;
 
     const collaborator: Collaborator = {
-      id: selectedUser.id,
       imgUrl: selectedUser.imageUrl,
       name: selectedUser.firstName || "guest",
+      email: selectedUser.emailAddresses[0].emailAddress,
     };
     add({
       id: documentId,
@@ -80,7 +87,7 @@ export const CollaborationBar = ({ documentId }: CollaborationBarProps) => {
     <div className="p-2 border-b flex items-center justify-between">
       <div>shared with</div>
       <div>
-        <Popover>
+        <Popover onOpenChange={() => setQuery("")}>
           <PopoverTrigger>
             <Button size={"sm"} className="h-auto py-1">
               <span>Invite</span>
