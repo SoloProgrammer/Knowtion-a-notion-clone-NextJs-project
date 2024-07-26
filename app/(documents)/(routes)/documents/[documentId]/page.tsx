@@ -41,7 +41,9 @@ const DocumentPage = ({ params }: DocumentPageProps) => {
 
   const update = useMutation(api.documents.udpate);
 
-  if (isLoading || !document) return <DocumentPage.Skeleton />;
+  if (isLoading) return <DocumentPage.Skeleton />;
+
+  if (!document) throw new Error("Document not found");
 
   const handleEditorChange = (content: string) => {
     update({ id: document?._id, content });
