@@ -364,9 +364,7 @@ export const addCollaborator = mutation({
     if (!collaborators) collaborators = [];
 
     if (collaborators.some((u) => u.id === args.collaborator.id)) {
-      throw new ConvexError(
-        `Document already shared with ${args.collaborator.name}`
-      );
+      throw new ConvexError(`Document already shared with ${args.collaborator.name}`);
     }
 
     await ctx.db.patch(args.id, {
