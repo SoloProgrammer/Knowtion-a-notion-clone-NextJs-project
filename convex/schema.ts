@@ -9,12 +9,27 @@ export const DocumentColumns = {
   content: v.optional(v.string()),
   coverImage: v.optional(v.string()),
   icon: v.optional(v.string()),
+  collaborators: v.optional(
+    v.array(
+      v.object({
+        name: v.string(),
+        id: v.string(),
+        imgUrl: v.string(),
+      })
+    )
+  ),
   isPublished: v.optional(v.boolean()),
   updatedAt: v.optional(v.number()),
 };
 
-const { userId, isArchived, parentDocument, updatedAt, ...rest } =
-  DocumentColumns;
+const {
+  userId,
+  isArchived,
+  parentDocument,
+  updatedAt,
+  collaborators,
+  ...rest
+} = DocumentColumns;
 
 export const udpateDocumentColumns = rest;
 
