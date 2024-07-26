@@ -41,7 +41,9 @@ const DocumentPage = ({ params }: DocumentPageProps) => {
 
   const update = useMutation(api.documents.udpate);
 
-  if (isLoading || !document) return <DocumentPage.Skeleton />;
+  if (isLoading) return <DocumentPage.Skeleton />;
+
+  if (!document) throw new Error("Not found!");
 
   const handleEditorChange = (content: string) => {
     update({ id: document?._id, content });
@@ -57,10 +59,7 @@ const DocumentPage = ({ params }: DocumentPageProps) => {
         )}
       >
         <PreviewIndicator
-          className={cn(
-            "opacity-0 transition-all",
-            isPreview && "opacity-100"
-          )}
+          className={cn("opacity-0 transition-all", isPreview && "opacity-100")}
         />
         <CoverImage
           url={document?.coverImage}
