@@ -13,16 +13,16 @@ import {
 } from "@/components/ui/popover";
 
 import { Id } from "@/convex/_generated/dataModel";
+import { Collaborator, User } from "../(routes)/documents/types";
 
 import { MailPlus, Send } from "lucide-react";
 import { ChangeEvent, useState } from "react";
 import { toast } from "sonner";
 
-import { User, useSearchUsers } from "@/actions/user.actions";
+import { useSearchUsers } from "@/actions/user.actions";
 import { useDebounceFunction } from "@/hooks/use-debounce-function";
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@clerk/clerk-react";
-import { Collaborator } from "../(routes)/documents/types";
 
 type CollaborationBarProps = {
   documentId: Id<"documents">;
