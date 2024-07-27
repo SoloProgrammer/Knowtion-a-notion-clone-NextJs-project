@@ -126,7 +126,7 @@ const TrashDocumentItem = ({ document }: TrashDocumentItemProps) => {
         <span className="text-muted-foreground">
           {document.icon ? document.icon : <FileIcon className="w-4 h-4" />}
         </span>
-        <span>{document.title}</span>
+        <span>{document.title || "Untitled"}</span>
       </span>
       <div className="flex items-center text-muted-foreground mr-[0.1rem]">
         <button

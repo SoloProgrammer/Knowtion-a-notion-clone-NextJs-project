@@ -16,14 +16,14 @@ export const PreviewTabs = ({
       <TabsList>
         <TabsTrigger
           value="account"
-          className="min-w-[90px]"
+          className="min-w-[90px] data-[state=active]:!shadow"
           onClick={() => setIsPreview(false)}
         >
           Editor
         </TabsTrigger>
         <TabsTrigger
           value="password"
-          className="min-w-[90px]"
+          className="min-w-[90px] data-[state=active]:!shadow"
           onClick={() => setIsPreview(true)}
         >
           Preview
