@@ -3,6 +3,7 @@ import { Id } from "@/convex/_generated/dataModel";
 
 import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { ConvexError } from "convex/values";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 
@@ -11,6 +12,12 @@ import { toast } from "sonner";
 type CreateDocumentProps = {
   title: string;
   parentDocument?: Id<"documents">;
+};
+
+export type Collaborator = {
+  name: string;
+  email: string;
+  imgUrl: string;
 };
 
 const useCreateNewDocumentMutation = () => {
@@ -171,6 +178,25 @@ const usePublishDocumentMutation = (
   return { publish, ...rest };
 };
 
+const useAddCollaboratorMutation = (
+  onSuccess?: () => void,
+  onError?: (errMsg: string) => void
+) => {
+  const { mutate: add, ...rest } = useMutation({
+    mutationFn: useConvexMutation(api.documents.addCollaborator),
+    onSuccess,
+    onError: (err) => {
+      let message = err.message;
+      if (err instanceof ConvexError) {
+        message = err.data as string;
+      }
+      onError?.(message);
+    },
+  });
+
+  return { add, ...rest };
+};
+
 const useGetSidebarDocumentsQuery = (
   parentDocument: Id<"documents"> | undefined
 ) =>
@@ -187,6 +213,9 @@ const useGetArchiveDocumentsQuery = () =>
 const useGetSingleDocument = (id: Id<"documents">) =>
   useQuery(convexQuery(api.documents.getDocumentById, { id }));
 
+const useGetSharedDocuments = (email: string) =>
+  useQuery(convexQuery(api.documents.getSharedDocuments, { email }));
+
 export {
   useArchiveDocumentMutation,
   useCreateNewDocumentMutation,
@@ -197,4 +226,6 @@ export {
   useGetArchiveDocumentsQuery,
   usePublishDocumentMutation,
   useGetSingleDocument,
+  useAddCollaboratorMutation,
+  useGetSharedDocuments,
 };

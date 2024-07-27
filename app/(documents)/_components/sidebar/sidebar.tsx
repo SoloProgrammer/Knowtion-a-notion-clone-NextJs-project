@@ -29,6 +29,7 @@ import { Item } from "../item";
 import { DocumentList } from "../document-list";
 import { TrashPopPver } from "../trash-popover";
 import { SettingsModal } from "@/components/modals/settings-modal";
+import { SharedDocumentList } from "../shared-document-list";
 
 import { MAX_WIDTH, MIN_WIDTH } from "./constants";
 import { BRAND_NAME } from "@/app/constants";
@@ -82,7 +83,7 @@ export const Sidebar = () => {
     }, 400);
   };
 
-  const onCreateDocument = () => create({ title: "Untitled" });
+  const onCreateDocument = () => create({ title: "" });
 
   useEffect(() => {
     isMobile && setIsCollapsed(true);
@@ -131,7 +132,7 @@ export const Sidebar = () => {
           isLoading={isCreating}
           onClick={onCreateDocument}
         />
-        <div className="mt-5">
+        <div className="mt-3">
           <DocumentList />
           <Item
             icon={isCreating ? Loader : PlusIcon}
@@ -139,6 +140,7 @@ export const Sidebar = () => {
             onClick={onCreateDocument}
             isLoading={isCreating}
           />
+          <SharedDocumentList />
           <TrashPopPver>
             <div className="mt-5">
               <Item icon={Trash} label="Trash" />
