@@ -134,13 +134,13 @@ export const Sidebar = () => {
         />
         <div className="mt-3">
           <DocumentList />
-          <SharedDocumentList/>
           <Item
             icon={isCreating ? Loader : PlusIcon}
             label="Add a page"
             onClick={onCreateDocument}
             isLoading={isCreating}
           />
+          <SharedDocumentList />
           <TrashPopPver>
             <div className="mt-5">
               <Item icon={Trash} label="Trash" />

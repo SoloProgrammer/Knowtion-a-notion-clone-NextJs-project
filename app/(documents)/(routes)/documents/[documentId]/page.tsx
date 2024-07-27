@@ -53,7 +53,7 @@ const DocumentPage = ({ params }: DocumentPageProps) => {
   return (
     <div className="flex flex-col h-full">
       <Navbar document={document!} />
-      <CollaborationBar documentId={document._id} />
+      <CollaborationBar documentId={document._id} ownerId={document.userId} />
       <div
         className={cn(
           "flex flex-col w-full flex-grow overflow-y-auto pb-20 border-[3px] border-transparent transition-colors",

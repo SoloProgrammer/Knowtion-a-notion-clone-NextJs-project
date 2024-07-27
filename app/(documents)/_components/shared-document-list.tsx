@@ -15,14 +15,16 @@ export const SharedDocumentList = () => {
   const { user } = useUser();
   const router = useRouter();
   const params = useParams();
-  const { data: documents } = useGetSharedDocuments(
+  const { data: documents, isLoading } = useGetSharedDocuments(
     user?.emailAddresses[0].emailAddress!
   );
 
-  if (!documents) return null;
-
   const onRedirect = (documentId: Id<"documents"> | undefined) =>
     router.push(`/documents/${documentId}`);
+
+  if (isLoading) {
+    return <Item.Skeleton />;
+  }
 
   return (
     <div className="mt-3">
@@ -37,6 +39,7 @@ export const SharedDocumentList = () => {
       {documents?.map((document) => (
         <div key={document?._id}>
           <Item
+            showActions={false}
             icon={FileIcon}
             label={document?.title || "Untitled"}
             onClick={() => onRedirect(document?._id)}

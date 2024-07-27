@@ -37,7 +37,7 @@ export const DocumentList = ({
 
   const { data: documents, isLoading } =
     useGetSidebarDocumentsQuery(parentDocument);
-
+  
   if (isLoading) {
     return (
       <>

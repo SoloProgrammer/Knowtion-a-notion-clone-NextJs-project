@@ -250,8 +250,23 @@ export const getDocumentById = query({
       }
 
       const userId = identity.subject;
+      const userEmail = identity.email;
 
-      if (document.userId !== userId) {
+      if (document.isArchived && document.userId !== userId) {
+        throw new ConvexError("Document is archived by the owner!");
+      }
+
+      const collaborators = await ctx.db
+        .query("collaborators")
+        .withIndex("by_document", (q) => q.eq("document", args.id))
+        .collect();
+
+      if (
+        document.userId !== userId &&
+        !collaborators
+          .map((collaborator) => collaborator.email)
+          .includes(userEmail!)
+      ) {
         throw new ConvexError("Unauthorized");
       }
 
@@ -289,18 +304,20 @@ export const getSharedDocuments = query({
     const collaborators = await ctx.db
       .query("collaborators")
       .withIndex("by_email", (q) => q.eq("email", args.email))
+      .order("desc")
       .collect();
 
     const documentIds = collaborators.map(
       (collaborator) => collaborator.document
     );
+
     const documents = await Promise.all(
       documentIds.map(async (id) => {
         return await ctx.db.get(id);
       })
     );
 
-    return documents;
+    return documents.filter((doc) => !doc?.isArchived);
   },
 });
 

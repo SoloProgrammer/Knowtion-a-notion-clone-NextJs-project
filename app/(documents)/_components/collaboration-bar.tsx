@@ -28,9 +28,13 @@ import { useUser } from "@clerk/clerk-react";
 
 type CollaborationBarProps = {
   documentId: Id<"documents">;
+  ownerId: string;
 };
 
-export const CollaborationBar = ({ documentId }: CollaborationBarProps) => {
+export const CollaborationBar = ({
+  documentId,
+  ownerId,
+}: CollaborationBarProps) => {
   const { user } = useUser();
   const [query, setQuery] = useState("");
   const [isEnabled, setIsEnabled] = useState(false);
@@ -46,7 +50,7 @@ export const CollaborationBar = ({ documentId }: CollaborationBarProps) => {
   const { data: users, isFetching } = useQuery({
     queryFn: async () => {
       const users = (await useSearchUsers(query.trim())).filter(
-        (u) => u.id !== user?.id
+        (u) => u.id !== user?.id && u.id !== ownerId
       );
       setIsEnabled(false);
       return users;

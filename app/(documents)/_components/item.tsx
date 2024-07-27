@@ -31,6 +31,7 @@ type ItemProps = {
   icon: LucideIcon;
   lastEdited?: number;
   isLoading?: boolean;
+  showActions?: boolean;
 };
 
 export const Item = ({
@@ -46,6 +47,7 @@ export const Item = ({
   icon: Icon,
   lastEdited,
   isLoading = false,
+  showActions = true,
 }: ItemProps) => {
   const { onCreateDocument, isCreating, documentId } =
     useCreateNewDocumentMutation();
@@ -81,8 +83,9 @@ export const Item = ({
     >
       {!!id && (
         <button
+          disabled={!showActions}
           onClick={handleExpand}
-          className="mr-2 rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600"
+          className="mr-2 rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 disabled:cursor-not-allowed"
         >
           <ChevronRight
             className={cn(
@@ -112,7 +115,7 @@ export const Item = ({
         </kbd>
       )}
 
-      {!!id && (
+      {!!id && showActions && (
         <div className="flex ml-auto items-center gap-x-1">
           <ArchiveDropDown documentId={id} lastEdited={lastEdited!}>
             <button className="opacity-0 rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 group-hover:opacity-100">
