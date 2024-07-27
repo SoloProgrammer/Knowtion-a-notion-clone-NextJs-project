@@ -44,7 +44,7 @@ const DocumentPage = ({ params }: DocumentPageProps) => {
 
   if (isLoading) return <DocumentPage.Skeleton />;
 
-  if (!document) throw new Error("Not found!");
+  if (!document) throw new Error("Document not found");
 
   const handleEditorChange = (content: string) => {
     update({ id: document?._id, content });
