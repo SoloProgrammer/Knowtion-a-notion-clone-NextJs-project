@@ -22,4 +22,13 @@ export default defineSchema({
   documents: defineTable(DocumentColumns)
     .index("by_user", ["userId"])
     .index("by_user_parent", ["userId", "parentDocument"]),
+  collaborators: defineTable({
+    name: v.string(),
+    email: v.string(),
+    imgUrl: v.string(),
+    document: v.id("documents"),
+  })
+    .index("by_document", ["document"])
+    .index("by_email", ["email"])
+    .index("by_email_document", ["document", "email"]),
 });

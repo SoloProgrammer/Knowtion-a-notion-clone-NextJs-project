@@ -1,4 +1,4 @@
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 
 import { mutation, query } from "./_generated/server";
 import { Doc, Id } from "./_generated/dataModel";
@@ -13,18 +13,18 @@ export const archiveDocument = mutation({
       const identity = await ctx.auth.getUserIdentity();
 
       if (!identity) {
-        throw new Error("Not authenticated");
+        throw new ConvexError("Not authenticated");
       }
       const userId = identity.subject;
 
       const existingDocument = await ctx.db.get(args.id);
 
       if (!existingDocument) {
-        throw new Error("Not found!");
+        throw new ConvexError("Not found!");
       }
 
       if (existingDocument.userId !== userId) {
-        throw new Error("Unauthorized!");
+        throw new ConvexError("Unauthorized!");
       }
 
       const recursiveArchive = async (documentId: Id<"documents">) => {
@@ -53,7 +53,7 @@ export const archiveDocument = mutation({
 
       return true;
     } catch (error) {
-      throw new Error((error as Error).message);
+      throw new ConvexError((error as Error).message);
     }
   },
 });
@@ -67,18 +67,18 @@ export const restoreArchives = mutation({
       const identity = await ctx.auth.getUserIdentity();
 
       if (!identity) {
-        throw new Error("Not authenticated");
+        throw new ConvexError("Not authenticated");
       }
       const userId = identity.subject;
 
       const existingDocument = await ctx.db.get(args.id);
 
       if (!existingDocument) {
-        throw new Error("Not found!");
+        throw new ConvexError("Not found!");
       }
 
       if (existingDocument.userId !== userId) {
-        throw new Error("Unauthorized!");
+        throw new ConvexError("Unauthorized!");
       }
 
       let payload: Partial<Doc<"documents">> = {
@@ -115,7 +115,7 @@ export const restoreArchives = mutation({
 
       return document;
     } catch (error) {
-      throw new Error((error as Error).message);
+      throw new ConvexError((error as Error).message);
     }
   },
 });
@@ -129,25 +129,25 @@ export const deleteDocument = mutation({
       const identity = await ctx.auth.getUserIdentity();
 
       if (!identity) {
-        throw new Error("Not authenticated");
+        throw new ConvexError("Not authenticated");
       }
       const userId = identity.subject;
 
       const existingDocument = await ctx.db.get(args.id);
 
       if (!existingDocument) {
-        throw new Error("Not found!");
+        throw new ConvexError("Not found!");
       }
 
       if (existingDocument.userId !== userId) {
-        throw new Error("Unauthorized!");
+        throw new ConvexError("Unauthorized!");
       }
 
       await ctx.db.delete(args.id);
 
       return true;
     } catch (error) {
-      throw new Error((error as Error).message);
+      throw new ConvexError((error as Error).message);
     }
   },
 });
@@ -158,7 +158,7 @@ export const getArchiveDocuments = query({
       const identity = await ctx.auth.getUserIdentity();
 
       if (!identity) {
-        throw new Error("Not authenticated");
+        throw new ConvexError("Not authenticated");
       }
 
       const userId = identity.subject;
@@ -172,7 +172,7 @@ export const getArchiveDocuments = query({
 
       return documents;
     } catch (error) {
-      throw new Error((error as Error).message);
+      throw new ConvexError((error as Error).message);
     }
   },
 });
@@ -185,7 +185,7 @@ export const getDocumentsByParentDocument = query({
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
-      throw new Error("Not authenticated");
+      throw new ConvexError("Not authenticated");
     }
 
     const userId = identity.subject;
@@ -209,7 +209,7 @@ export const getDocumentsByUser = query({
       const identity = await ctx.auth.getUserIdentity();
 
       if (!identity) {
-        throw new Error("Not authenticated");
+        throw new ConvexError("Not authenticated");
       }
 
       const userId = identity.subject;
@@ -222,7 +222,7 @@ export const getDocumentsByUser = query({
 
       return documents;
     } catch (error) {
-      throw new Error((error as Error).message);
+      throw new ConvexError((error as Error).message);
     }
   },
 });
@@ -238,7 +238,7 @@ export const getDocumentById = query({
       const document = await ctx.db.get(args.id);
 
       if (!document) {
-        throw new Error("Not found!");
+        throw new ConvexError("Not found!");
       }
 
       if (document.isPublished && !document.isArchived) {
@@ -246,18 +246,33 @@ export const getDocumentById = query({
       }
 
       if (!identity) {
-        throw new Error("Not authenticated");
+        throw new ConvexError("Not authenticated");
       }
 
       const userId = identity.subject;
+      const userEmail = identity.email;
 
-      if (document.userId !== userId) {
-        throw new Error("Unauthorized");
+      if (document.isArchived && document.userId !== userId) {
+        throw new ConvexError("Document is archived by the owner!");
+      }
+
+      const collaborators = await ctx.db
+        .query("collaborators")
+        .withIndex("by_document", (q) => q.eq("document", args.id))
+        .collect();
+
+      if (
+        document.userId !== userId &&
+        !collaborators
+          .map((collaborator) => collaborator.email)
+          .includes(userEmail!)
+      ) {
+        throw new ConvexError("Unauthorized");
       }
 
       return document;
     } catch (error) {
-      throw new Error((error as Error).message);
+      throw new ConvexError((error as Error).message);
     }
   },
 });
@@ -269,9 +284,40 @@ export const getPreviewDocument = query({
   handler: async (ctx, args) => {
     const document = await ctx.db.get(args.id);
     if (!document || !document.isPublished) {
-      throw new Error("Not found!");
+      throw new ConvexError("Not found!");
     }
     return document;
+  },
+});
+
+export const getSharedDocuments = query({
+  args: {
+    email: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new ConvexError("Not authenticated");
+    }
+
+    const collaborators = await ctx.db
+      .query("collaborators")
+      .withIndex("by_email", (q) => q.eq("email", args.email))
+      .order("desc")
+      .collect();
+
+    const documentIds = collaborators.map(
+      (collaborator) => collaborator.document
+    );
+
+    const documents = await Promise.all(
+      documentIds.map(async (id) => {
+        return await ctx.db.get(id);
+      })
+    );
+
+    return documents.filter((doc) => !doc?.isArchived);
   },
 });
 
@@ -284,7 +330,7 @@ export const create = mutation({
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
-      throw new Error("Not authenticated");
+      throw new ConvexError("Not authenticated");
     }
     const userId = identity.subject;
 
@@ -311,19 +357,19 @@ export const udpate = mutation({
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
-      throw new Error("Not authenticated");
+      throw new ConvexError("Not authenticated");
     }
 
     const exitingDocument = await ctx.db.get(args.id);
 
     if (!exitingDocument) {
-      throw new Error("Not found!");
+      throw new ConvexError("Not found!");
     }
 
     const userId = identity.subject;
 
     if (exitingDocument.userId !== userId) {
-      throw new Error("Unauthorized!");
+      throw new ConvexError("Unauthorized!");
     }
 
     const { id, ...rest } = args;
@@ -334,5 +380,49 @@ export const udpate = mutation({
     });
 
     return document;
+  },
+});
+
+export const addCollaborator = mutation({
+  args: {
+    id: v.id("documents"),
+    collaborator: v.object({
+      name: v.string(),
+      imgUrl: v.string(),
+      email: v.string(),
+    }),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new ConvexError("Not authenticated");
+    }
+
+    const exitingDocument = await ctx.db.get(args.id);
+
+    if (!exitingDocument) {
+      throw new ConvexError("Not found!");
+    }
+
+    const existingCollaborator = await ctx.db
+      .query("collaborators")
+      .withIndex("by_email_document", (q) =>
+        q.eq("document", args.id).eq("email", args.collaborator.email)
+      )
+      .collect();
+
+    if (existingCollaborator?.length > 0) {
+      throw new ConvexError(
+        `Document already shared with ${args.collaborator.name}`
+      );
+    }
+
+    await ctx.db.insert("collaborators", {
+      ...args.collaborator,
+      document: args.id,
+    });
+
+    return true;
   },
 });

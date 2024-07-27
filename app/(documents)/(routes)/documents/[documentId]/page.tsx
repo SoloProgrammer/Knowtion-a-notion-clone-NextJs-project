@@ -17,6 +17,7 @@ import { PreviewTabs } from "@/app/(documents)/_components/preview-tabs";
 import { useState } from "react";
 import { PreviewIndicator } from "@/app/(documents)/_components/preview-indicator";
 import { cn } from "@/lib/utils";
+import { CollaborationBar } from "@/app/(documents)/_components/collaboration-bar";
 
 const DynamicEditor = dynamic(() => import("@/components/editor"), {
   ssr: false,
@@ -52,6 +53,7 @@ const DocumentPage = ({ params }: DocumentPageProps) => {
   return (
     <div className="flex flex-col h-full">
       <Navbar document={document!} />
+      <CollaborationBar documentId={document._id} ownerId={document.userId} />
       <div
         className={cn(
           "flex flex-col w-full flex-grow overflow-y-auto pb-20 border-[3px] border-transparent transition-colors",
@@ -59,10 +61,7 @@ const DocumentPage = ({ params }: DocumentPageProps) => {
         )}
       >
         <PreviewIndicator
-          className={cn(
-            "opacity-0 transition-all",
-            isPreview && "opacity-100"
-          )}
+          className={cn("opacity-0 transition-all", isPreview && "opacity-100")}
         />
         <CoverImage
           url={document?.coverImage}
