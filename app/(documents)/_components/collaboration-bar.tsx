@@ -3,11 +3,9 @@
 import { Spinner } from "@/components/spinner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Collaborator,
-  useAddCollaboratorMutation,
-} from "../(routes)/documents/hooks";
+import { useAddCollaboratorMutation } from "../(routes)/documents/hooks";
 import { UsersList } from "./user-list";
+import { Collaborators } from "./collaborators";
 import {
   PopoverContent,
   Popover,
@@ -15,11 +13,11 @@ import {
 } from "@/components/ui/popover";
 
 import { Id } from "@/convex/_generated/dataModel";
+import { Collaborator, User } from "../(routes)/documents/types";
 
 import { MailPlus, Send } from "lucide-react";
 import { ChangeEvent, useState } from "react";
 import { toast } from "sonner";
-import { User } from "@clerk/nextjs/server";
 
 import { useSearchUsers } from "@/actions/user.actions";
 import { useDebounceFunction } from "@/hooks/use-debounce-function";
@@ -69,7 +67,7 @@ export const CollaborationBar = ({
   );
 
   const handleUserSelect = (user: User) => {
-    setQuery(user.emailAddresses[0].emailAddress);
+    setQuery(user.email);
     setSelectedUser(user);
   };
 
@@ -77,9 +75,9 @@ export const CollaborationBar = ({
     if (!selectedUser) return;
 
     const collaborator: Collaborator = {
-      imgUrl: selectedUser.imageUrl,
-      name: selectedUser.firstName || "guest",
-      email: selectedUser.emailAddresses[0].emailAddress,
+      imgUrl: selectedUser.imgUrl!,
+      name: selectedUser.name || "guest",
+      email: selectedUser.email,
     };
     add({
       id: documentId,
@@ -89,10 +87,30 @@ export const CollaborationBar = ({
 
   return (
     <div className="p-2 border-b flex items-center justify-between">
-      <div>shared with</div>
+      <div>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              disabled={ownerId !== user?.id}
+              className="h-auto py-1 bg-secondary/50 select-none"
+              size={"sm"}
+              variant={"ghost"}
+            >
+              Manage collaborators
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent
+            align="start"
+            className="p-2"
+            onOpenAutoFocus={(e) => e.preventDefault()}
+          >
+            <Collaborators documentId={documentId} />
+          </PopoverContent>
+        </Popover>
+      </div>
       <div>
         <Popover onOpenChange={() => setQuery("")}>
-          <PopoverTrigger>
+          <PopoverTrigger asChild>
             <Button size={"sm"} className="h-auto py-1">
               <span>Invite</span>
               <MailPlus className="w-4 h-4 ml-1" />
