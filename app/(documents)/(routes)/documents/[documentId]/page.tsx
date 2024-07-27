@@ -56,7 +56,7 @@ const DocumentPage = ({ params }: DocumentPageProps) => {
       <CollaborationBar documentId={document._id} ownerId={document.userId} />
       <div
         className={cn(
-          "flex flex-col w-full flex-grow overflow-y-auto pb-20 border-[3px] border-transparent transition-colors",
+          "flex flex-col w-full flex-grow overflow-y-auto pb-20 border-b-[3px] border-transparent transition-colors",
           isPreview && "border-green-400"
         )}
       >

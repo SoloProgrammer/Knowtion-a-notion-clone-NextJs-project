@@ -14,12 +14,6 @@ type CreateDocumentProps = {
   parentDocument?: Id<"documents">;
 };
 
-export type Collaborator = {
-  name: string;
-  email: string;
-  imgUrl: string;
-};
-
 const useCreateNewDocumentMutation = () => {
   const {
     mutate: create,
@@ -197,6 +191,25 @@ const useAddCollaboratorMutation = (
   return { add, ...rest };
 };
 
+const useRemoveCollaboratorMutation = (
+  onSuccess?: () => void,
+  onError?: (errMsg: string) => void
+) => {
+  const { mutate: remove, ...rest } = useMutation({
+    mutationFn: useConvexMutation(api.documents.removeCollaborator),
+    onSuccess,
+    onError: (err) => {
+      let message = err.message;
+      if (err instanceof ConvexError) {
+        message = err.data as string;
+      }
+      onError?.(message);
+    },
+  });
+
+  return { ...rest, remove };
+};
+
 const useGetSidebarDocumentsQuery = (
   parentDocument: Id<"documents"> | undefined
 ) =>
@@ -216,6 +229,9 @@ const useGetSingleDocument = (id: Id<"documents">) =>
 const useGetSharedDocuments = (email: string) =>
   useQuery(convexQuery(api.documents.getSharedDocuments, { email }));
 
+const useGetCollaboratorsByDocument = (documentId: Id<"documents">) =>
+  useQuery(convexQuery(api.documents.getCollaborators, { id: documentId }));
+
 export {
   useArchiveDocumentMutation,
   useCreateNewDocumentMutation,
@@ -227,5 +243,7 @@ export {
   usePublishDocumentMutation,
   useGetSingleDocument,
   useAddCollaboratorMutation,
+  useRemoveCollaboratorMutation,
   useGetSharedDocuments,
+  useGetCollaboratorsByDocument,
 };

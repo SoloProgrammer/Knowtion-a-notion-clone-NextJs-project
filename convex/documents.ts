@@ -321,6 +321,30 @@ export const getSharedDocuments = query({
   },
 });
 
+export const getCollaborators = query({
+  args: {
+    id: v.id("documents"),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new ConvexError("Not authenticated");
+    }
+
+    const collaborators = await ctx.db
+      .query("collaborators")
+      .withIndex("by_document", (q) => q.eq("document", args.id))
+      .collect();
+
+    return collaborators.map((collaborator) => ({
+      name: collaborator.name,
+      email: collaborator.email,
+      imgUrl: collaborator.imgUrl,
+    }));
+  },
+});
+
 export const create = mutation({
   args: {
     title: v.string(),
@@ -422,6 +446,37 @@ export const addCollaborator = mutation({
       ...args.collaborator,
       document: args.id,
     });
+
+    return true;
+  },
+});
+
+export const removeCollaborator = mutation({
+  args: {
+    email: v.string(),
+    documentId: v.id("documents"),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new ConvexError("Not authenticated");
+    }
+
+    const existingCollaborator = (
+      await ctx.db
+        .query("collaborators")
+        .withIndex("by_email_document", (q) =>
+          q.eq("document", args.documentId).eq("email", args.email)
+        )
+        .collect()
+    )[0];
+
+    if (!existingCollaborator) {
+      throw new ConvexError("Collaborator Not found!");
+    }
+
+    await ctx.db.delete(existingCollaborator._id);
 
     return true;
   },

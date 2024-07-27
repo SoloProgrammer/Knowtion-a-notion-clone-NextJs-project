@@ -1,5 +1,6 @@
 "use client";
 
+import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { PropsWithChildren, useEffect } from "react";
 
 export const DocumentLayoutProvider = ({ children }: PropsWithChildren) => {
@@ -12,5 +13,5 @@ export const DocumentLayoutProvider = ({ children }: PropsWithChildren) => {
     };
   }, []);
 
-  return children;
+  return <TooltipProvider>{children}</TooltipProvider>;
 };
