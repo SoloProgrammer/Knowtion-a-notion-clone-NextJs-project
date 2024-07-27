@@ -1,13 +1,7 @@
 "use server";
 
+import { User } from "@/app/(documents)/(routes)/documents/types";
 import { clerkClient } from "@clerk/nextjs/server";
-
-export type User = {
-  id?: string;
-  name: string;
-  email: string;
-  imgUrl: string;
-};
 
 export const useSearchUsers = async (query: string) => {
   const { data } = await clerkClient().users.getUserList({ query });
