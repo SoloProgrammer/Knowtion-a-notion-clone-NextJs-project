@@ -61,7 +61,7 @@ const UserItem = ({ user, onUserSelect, enabledRemove }: UserItemProps) => {
           )}
         />
       </Avatar>
-      <span className="truncate text-xs">{user.email}</span>
+      <span className={cn("truncate text-[.775rem]", enabledRemove && "group-hover:text-red-500")}>{user.email}</span>
     </div>
   );
 };

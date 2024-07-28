@@ -71,7 +71,7 @@ export function SearchCommand() {
                   <FileIcon className="w-4 h-4" />
                 )}
               </span>
-              <span>{document.title}</span>
+              <span>{document.title || "Untitled"}</span>
             </CommandItem>
           ))}
         </CommandGroup>

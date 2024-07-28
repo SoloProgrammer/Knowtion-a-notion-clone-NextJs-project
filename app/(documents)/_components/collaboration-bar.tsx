@@ -109,7 +109,10 @@ export const CollaborationBar = ({
         </Popover>
       </div>
       <div>
-        <Popover onOpenChange={() => setQuery("")}>
+        <Popover onOpenChange={() => {
+          setQuery("")
+          setSelectedUser(undefined)
+        }}>
           <PopoverTrigger asChild>
             <Button size={"sm"} className="h-auto py-1">
               <span>Invite</span>
