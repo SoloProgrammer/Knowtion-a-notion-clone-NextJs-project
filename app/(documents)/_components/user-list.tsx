@@ -45,7 +45,7 @@ const UserItem = ({ user, onUserSelect, enabledRemove }: UserItemProps) => {
         enabledRemove && "hover:bg-red-400/20"
       )}
     >
-      <Avatar className="w-6 h-6">
+      <Avatar className="w-5 h-5">
         <AvatarImage
           src={user.imgUrl}
           alt={user.name as string}
@@ -61,7 +61,7 @@ const UserItem = ({ user, onUserSelect, enabledRemove }: UserItemProps) => {
           )}
         />
       </Avatar>
-      <span className={cn("truncate text-[.8rem]", enabledRemove && "group-hover:text-red-500")}>{user.email}</span>
+      <span className={cn("truncate text-[.775rem]", enabledRemove && "group-hover:text-red-500")}>{user.email}</span>
     </div>
   );
 };
