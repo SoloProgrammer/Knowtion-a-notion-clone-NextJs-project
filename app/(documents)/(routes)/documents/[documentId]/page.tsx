@@ -17,6 +17,7 @@ import { PreviewTabs } from "@/app/(documents)/_components/preview-tabs";
 import { useState } from "react";
 import { PreviewIndicator } from "@/app/(documents)/_components/preview-indicator";
 import { cn } from "@/lib/utils";
+import { useDebounceFunction } from "@/hooks/use-debounce-function";
 
 const DynamicEditor = dynamic(() => import("@/components/editor"), {
   ssr: false,
@@ -39,7 +40,7 @@ const DocumentPage = ({ params }: DocumentPageProps) => {
     params.documentId as Id<"documents">
   );
 
-  const update = useMutation(api.documents.udpate);
+  const update = useDebounceFunction(useMutation(api.documents.udpate), 1000);
 
   if (isLoading) return <DocumentPage.Skeleton />;
 
