@@ -107,7 +107,7 @@ export const Collaborators = ({ documentId }: CollaboratorProps) => {
       </div>
       <Separator />
       <div className="mt-2">
-        <p className="text-primary/90 text-xs font-semibold pb-2">
+        <p className="text-muted-foreground text-xs font-semibold pb-2">
           Shared with
         </p>
         <UsersList

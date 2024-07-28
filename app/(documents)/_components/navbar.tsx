@@ -4,6 +4,7 @@ import { SideBarMenu } from "./sidebar/side-bar-menu";
 import { Title } from "./title";
 import { ArchivedBanner } from "./archived-banner";
 import { ArchiveDropDown } from "./archive-dropdown";
+import { CollaborationBar } from "./collaboration-bar";
 import { Publish } from "./publish";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -43,6 +44,7 @@ export const Navbar = ({ document }: NavbarProps) => {
           </ArchiveDropDown>
         </div>
       </nav>
+      <CollaborationBar documentId={document._id} ownerId={document.userId} />
       {document.isArchived && <ArchivedBanner documentId={document._id} />}
     </>
   );
