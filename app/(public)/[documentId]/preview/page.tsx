@@ -10,16 +10,19 @@ import { Logo } from "@/app/(marketing)/_components/logo";
 
 import { Id } from "@/convex/_generated/dataModel";
 
-import { useGetSingleDocument } from "@/app/(documents)/(routes)/documents/hooks";
+import { useGetPreviewDocument } from "@/app/(documents)/(routes)/documents/hooks";
 
-const DynamicEditor = dynamic(() => import("@/components/editor"), {
-  ssr: false,
-  loading: () => (
-    <div className="flex justify-center mt-10">
-      <Spinner size={"lg"} />
-    </div>
-  ),
-});
+const DynamicPreviewEditor = dynamic(
+  () => import("@/components/preview-editor"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex justify-center mt-10">
+        <Spinner size={"lg"} />
+      </div>
+    ),
+  }
+);
 
 type PreviewDocumentPageProps = {
   params: {
@@ -28,11 +31,13 @@ type PreviewDocumentPageProps = {
 };
 
 const PreviewDocumentPage = ({ params }: PreviewDocumentPageProps) => {
-  const { data: document, isLoading } = useGetSingleDocument(
+  const { data: document, isLoading, isError } = useGetPreviewDocument(
     params.documentId as Id<"documents">
   );
 
-  if (isLoading || !document) return <PreviewDocumentPage.Skeleton />;
+  if (isLoading) return <PreviewDocumentPage.Skeleton />;
+
+  if (!document || isError) throw new Error("Some error happens");
 
   return (
     <div className="flex flex-col h-full">
@@ -48,10 +53,7 @@ const PreviewDocumentPage = ({ params }: PreviewDocumentPageProps) => {
         />
         <div className="md:max-w-4xl lg:max-w-5xl px-2 mx-auto mt-3 flex flex-col gap-y-4 flex-grow w-full">
           <Toolbar document={document!} preview />
-          <DynamicEditor
-            initialContent={document.content}
-            editable={!document.isPublished ? true : false}
-          />
+          <DynamicPreviewEditor initialContent={document.content!} />
         </div>
       </div>
     </div>

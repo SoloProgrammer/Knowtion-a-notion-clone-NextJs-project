@@ -23,6 +23,7 @@ import {
   useGetCollaboratorsByDocument,
   useRemoveCollaboratorMutation,
 } from "../(routes)/documents/hooks";
+import { useOthers } from "@liveblocks/react/suspense";
 
 type CollaboratorProps = {
   documentId: Id<"documents">;
@@ -47,6 +48,10 @@ export const Collaborators = ({ documentId }: CollaboratorProps) => {
       toast.error("Some error occured! Try again.");
     }
   );
+
+  const others = useOthers();
+
+  const onlineCollaborators = others.map(({ info }) => info);
 
   if (isLoading) {
     return (
@@ -83,29 +88,38 @@ export const Collaborators = ({ documentId }: CollaboratorProps) => {
 
   return (
     <div>
-      <div>
-        <p className="text-muted-foreground text-xs font-semibold">
-          Now Editing
-        </p>
-        <div className="flex -space-x-1 my-3 pb-1">
-          {collaborators?.map((collaborator) => (
-            <Tooltip key={collaborator.email}>
-              <TooltipTrigger>
-                <Avatar className="w-8 h-8 ring-green-400 ring-2 rounded-full">
-                  <AvatarImage
-                    src={collaborator.imgUrl}
-                    alt={collaborator.name}
-                  />
-                </Avatar>
-              </TooltipTrigger>
-              <TooltipContent side="bottom" className="!text-xs !p-1 !px-2">
-                {collaborator.name}
-              </TooltipContent>
-            </Tooltip>
-          ))}
+      {onlineCollaborators.length > 0 && (
+        <div>
+          <p className="text-muted-foreground text-xs font-semibold">
+            Now Editing
+          </p>
+          <div className="flex -space-x-1 my-3 pb-1">
+            {onlineCollaborators?.map((collaborator) => {
+              return (
+                <Tooltip key={collaborator.id}>
+                  <TooltipTrigger>
+                    <Avatar
+                      className={`w-8 h-8 rounded-full`}
+                      style={{
+                        boxShadow: `0 0 0 2px ${collaborator.color}`,
+                      }}
+                    >
+                      <AvatarImage
+                        src={collaborator.avatar}
+                        alt={collaborator.name}
+                      />
+                    </Avatar>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="!text-xs !p-1 !px-2">
+                    {collaborator.name}
+                  </TooltipContent>
+                </Tooltip>
+              );
+            })}
+          </div>
+          <Separator />
         </div>
-      </div>
-      <Separator />
+      )}
       <div className="mt-2">
         <p className="text-muted-foreground text-xs font-semibold pb-2">
           Shared with

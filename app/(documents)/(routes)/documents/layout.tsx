@@ -5,7 +5,7 @@ import { PropsWithChildren } from "react";
 
 import { Spinner } from "@/components/spinner";
 import { SearchCommand } from "@/components/search-command";
-import { Sidebar } from "./_components/sidebar/sidebar";
+import { Sidebar } from "../../_components/sidebar/sidebar";
 
 import { useConvexAuth } from "convex/react";
 

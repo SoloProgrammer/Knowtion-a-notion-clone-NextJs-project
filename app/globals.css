@@ -92,7 +92,7 @@ body {
   transition: .2s width ease-in;
 }
 .ProseMirror{
-  @apply !h-full !bg-transparent !px-[17px] md:!px-[49px] !overflow-x-auto
+  @apply !h-full !bg-transparent !px-[17px] md:!px-[49px] !overflow-x-auto pt-4
 }
 .bn-block-outer{
   @apply w-[335px] xs:w-[362px] md:w-auto;

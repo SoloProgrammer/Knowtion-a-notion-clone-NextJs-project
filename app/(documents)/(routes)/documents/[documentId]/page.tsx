@@ -6,18 +6,20 @@ import { CoverImage } from "@/app/(documents)/_components/cover-image";
 import { Navbar } from "@/app/(documents)/_components/navbar";
 import { Toolbar } from "@/components/toolbar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@/components/spinner";
+import { PreviewTabs } from "@/app/(documents)/_components/preview-tabs";
+import { PreviewIndicator } from "@/app/(documents)/_components/preview-indicator";
 
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 
 import { useMutation } from "convex/react";
-import { Spinner } from "@/components/spinner";
 import { useGetSingleDocument } from "../hooks";
-import { PreviewTabs } from "@/app/(documents)/_components/preview-tabs";
-import { useState } from "react";
-import { PreviewIndicator } from "@/app/(documents)/_components/preview-indicator";
-import { cn } from "@/lib/utils";
 import { useDebounceFunction } from "@/hooks/use-debounce-function";
+import { useState } from "react";
+
+import { cn } from "@/lib/utils";
+import { useUser } from "@clerk/clerk-react";
 
 const DynamicEditor = dynamic(() => import("@/components/editor"), {
   ssr: false,
@@ -36,15 +38,18 @@ type DocumentPageProps = {
 
 const DocumentPage = ({ params }: DocumentPageProps) => {
   const [isPreview, setIsPreview] = useState(false);
-  const { data: document, isLoading } = useGetSingleDocument(
-    params.documentId as Id<"documents">
-  );
+  const {
+    data: document,
+    isLoading,
+    isError,
+  } = useGetSingleDocument(params.documentId as Id<"documents">);
+  const { user } = useUser();
 
   const update = useDebounceFunction(useMutation(api.documents.udpate), 1000);
 
   if (isLoading) return <DocumentPage.Skeleton />;
 
-  if (!document) throw new Error("Document not found");
+  if (!document || isError) throw new Error("Document not found");
 
   const handleEditorChange = (content: string) => {
     update({ id: document?._id, content });
@@ -52,10 +57,10 @@ const DocumentPage = ({ params }: DocumentPageProps) => {
 
   return (
     <div className="flex flex-col h-full">
-      <Navbar document={document!} />
+      <Navbar document={document!} ownerId={user?.id} />
       <div
         className={cn(
-          "flex flex-col w-full flex-grow overflow-y-auto pb-20 border-b-[3px] border-transparent transition-colors",
+          "flex flex-col w-full flex-grow overflow-y-auto overflow-x-hidden pb-20 border-b-[3px] border-transparent transition-colors",
           isPreview && "border-green-400"
         )}
       >
@@ -69,11 +74,7 @@ const DocumentPage = ({ params }: DocumentPageProps) => {
         />
         <div className="md:max-w-4xl lg:max-w-5xl px-2 mx-auto mt-3 flex flex-col gap-y-4 flex-grow w-full">
           <Toolbar document={document!} preview={isPreview} />
-          <DynamicEditor
-            initialContent={document.content}
-            onChange={handleEditorChange}
-            editable={!isPreview}
-          />
+          <DynamicEditor onChange={handleEditorChange} editable={!isPreview} />
         </div>
       </div>
       <PreviewTabs setIsPreview={setIsPreview} />
