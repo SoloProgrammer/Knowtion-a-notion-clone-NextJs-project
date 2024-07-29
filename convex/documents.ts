@@ -241,19 +241,16 @@ export const getDocumentById = query({
         throw new ConvexError("Not found!");
       }
 
-      if (document.isPublished && !document.isArchived) {
-        return document;
-      }
-
       if (!identity) {
         throw new ConvexError("Not authenticated");
       }
 
       const userId = identity.subject;
+
       const userEmail = identity.email;
 
       if (document.isArchived && document.userId !== userId) {
-        throw new ConvexError("Document is archived by the owner!");
+        throw new ConvexError("Document is deleted.");
       }
 
       const collaborators = await ctx.db
@@ -390,9 +387,19 @@ export const udpate = mutation({
       throw new ConvexError("Not found!");
     }
 
+    const collaborators = await ctx.db
+      .query("collaborators")
+      .withIndex("by_document", (q) => q.eq("document", args.id))
+      .collect();
+
     const userId = identity.subject;
 
-    if (exitingDocument.userId !== userId) {
+    if (
+      exitingDocument.userId !== userId &&
+      !collaborators
+        .map((collaborator) => collaborator.email)
+        .includes(identity.email!)
+    ) {
       throw new ConvexError("Unauthorized!");
     }
 
