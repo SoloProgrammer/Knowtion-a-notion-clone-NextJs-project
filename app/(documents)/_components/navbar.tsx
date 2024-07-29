@@ -15,9 +15,10 @@ import { MoreHorizontal } from "lucide-react";
 
 type NavbarProps = {
   document: Doc<"documents">;
+  ownerId?: string;
 };
 
-export const Navbar = ({ document }: NavbarProps) => {
+export const Navbar = ({ document, ownerId }: NavbarProps) => {
   return (
     <>
       <nav className="min-h-14 px-2 border-b flex items-center justify-between">
@@ -29,14 +30,14 @@ export const Navbar = ({ document }: NavbarProps) => {
           <Publish
             documentId={document._id}
             isPublished={document.isPublished!}
-            disabled={document.isArchived}
+            disabled={document.isArchived || document.userId !== ownerId}
           />
           <ArchiveDropDown
             documentId={document._id}
             lastEdited={document.updatedAt!}
             side="bottom"
             align="end"
-            disabled={document.isArchived}
+            disabled={document.isArchived || document.userId !== ownerId}
           >
             <Button variant="ghost" size="sm">
               <MoreHorizontal className="w-4 h-4 shrink-0" />
