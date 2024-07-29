@@ -226,6 +226,9 @@ const useGetArchiveDocumentsQuery = () =>
 const useGetSingleDocument = (id: Id<"documents">) =>
   useQuery(convexQuery(api.documents.getDocumentById, { id }));
 
+const useGetPreviewDocument = (id: Id<"documents">) =>
+  useQuery(convexQuery(api.documents.getPreviewDocument, { id }));
+
 const useGetSharedDocuments = (email: string) =>
   useQuery(convexQuery(api.documents.getSharedDocuments, { email }));
 
@@ -242,6 +245,7 @@ export {
   useGetArchiveDocumentsQuery,
   usePublishDocumentMutation,
   useGetSingleDocument,
+  useGetPreviewDocument,
   useAddCollaboratorMutation,
   useRemoveCollaboratorMutation,
   useGetSharedDocuments,
