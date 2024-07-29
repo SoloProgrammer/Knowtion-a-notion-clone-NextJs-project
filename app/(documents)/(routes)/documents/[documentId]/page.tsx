@@ -6,18 +6,19 @@ import { CoverImage } from "@/app/(documents)/_components/cover-image";
 import { Navbar } from "@/app/(documents)/_components/navbar";
 import { Toolbar } from "@/components/toolbar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@/components/spinner";
+import { PreviewTabs } from "@/app/(documents)/_components/preview-tabs";
+import { PreviewIndicator } from "@/app/(documents)/_components/preview-indicator";
 
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 
 import { useMutation } from "convex/react";
-import { Spinner } from "@/components/spinner";
 import { useGetSingleDocument } from "../hooks";
-import { PreviewTabs } from "@/app/(documents)/_components/preview-tabs";
-import { useState } from "react";
-import { PreviewIndicator } from "@/app/(documents)/_components/preview-indicator";
-import { cn } from "@/lib/utils";
 import { useDebounceFunction } from "@/hooks/use-debounce-function";
+import { useState } from "react";
+
+import { cn } from "@/lib/utils";
 
 const DynamicEditor = dynamic(() => import("@/components/editor"), {
   ssr: false,
@@ -36,7 +37,7 @@ type DocumentPageProps = {
 
 const DocumentPage = ({ params }: DocumentPageProps) => {
   const [isPreview, setIsPreview] = useState(false);
-  const { data: document, isLoading } = useGetSingleDocument(
+  const { data: document, isLoading, isError } = useGetSingleDocument(
     params.documentId as Id<"documents">
   );
 
@@ -44,7 +45,7 @@ const DocumentPage = ({ params }: DocumentPageProps) => {
 
   if (isLoading) return <DocumentPage.Skeleton />;
 
-  if (!document) throw new Error("Document not found");
+  if (!document || isError) throw new Error("Document not found");
 
   const handleEditorChange = (content: string) => {
     update({ id: document?._id, content });
@@ -70,7 +71,6 @@ const DocumentPage = ({ params }: DocumentPageProps) => {
         <div className="md:max-w-4xl lg:max-w-5xl px-2 mx-auto mt-3 flex flex-col gap-y-4 flex-grow w-full">
           <Toolbar document={document!} preview={isPreview} />
           <DynamicEditor
-            initialContent={document.content}
             onChange={handleEditorChange}
             editable={!isPreview}
           />
