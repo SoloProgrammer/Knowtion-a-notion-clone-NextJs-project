@@ -1,37 +1,72 @@
 "use client";
 
+import * as Y from "yjs";
 import { useCreateBlockNote } from "@blocknote/react";
 import { BlockNoteView } from "@blocknote/mantine";
-import { Block, BlockNoteEditor, PartialBlock } from "@blocknote/core";
+import { BlockNoteEditor } from "@blocknote/core";
+import { LiveblocksYjsProvider } from "@liveblocks/yjs";
 import "@blocknote/mantine/style.css";
 import "@blocknote/core/fonts/inter.css";
 
 import { useTheme } from "next-themes";
 import { useMediaQuery } from "usehooks-ts";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useEdgeStore } from "@/lib/edgestore";
+import { useRoom, useSelf } from "@liveblocks/react/suspense";
 
-const DEFAULT_EDITOR_BLOCK = JSON.stringify([
-  {
-    id: "2365a937-aaeb-4e30-8090-d644cec3da0e",
-    type: "paragraph",
-    props: {
-      textColor: "default",
-      backgroundColor: "default",
-      textAlignment: "left",
-    },
-    content: [],
-    children: [],
-  },
-]);
+const DEFAULT_EDITOR_BLOCKS = JSON.stringify(
+  Array(10)
+    .fill(0)
+    .map((_) => ({
+      id: crypto.randomUUID(),
+      type: "paragraph",
+      props: {
+        textColor: "default",
+        backgroundColor: "default",
+        textAlignment: "left",
+      },
+      content: [],
+      children: [],
+    }))
+);
 
 type EditorProps = {
   onChange?: (content: string) => void;
-  initialContent?: string;
   editable?: boolean;
 };
 
-const Editor = ({ onChange, initialContent, editable }: EditorProps) => {
+const Editor = ({ onChange, editable }: EditorProps) => {
+  const room = useRoom();
+  const [doc, setDoc] = useState<Y.Doc>(new Y.Doc());
+  const [provider, setProvider] = useState<any>(
+    new LiveblocksYjsProvider(room, doc)
+  );
+
+  // useEffect(() => {
+  //   const yDoc = new Y.Doc();
+  //   const initialContentParsed = JSON.parse(
+  //     initialContent || DEFAULT_EDITOR_BLOCKS
+  //   ) as PartialBlock[];
+
+  //   const yFragment = yDoc.getXmlFragment("root");
+  //   initialContentParsed.forEach((block) => {
+  //     const yBlock = new Y.XmlElement("block");
+  //     yBlock.setAttribute("id", block.id!);
+  //     yBlock.setAttribute("type", block.type!);
+  //     yBlock.setAttribute("props", JSON.stringify(block.props));
+  //     // yFragment.push([yBlock]);
+  //   });
+
+  //   const yProvider = new LiveblocksYjsProvider(room, yDoc);
+  //   setDoc(yDoc);
+  //   setProvider(yProvider);
+
+  //   return () => {
+  //     yDoc.destroy();
+  //     yProvider.destroy();
+  //   };
+  // }, [room, initialContent]);
+
   const { edgestore } = useEdgeStore();
 
   const handleUpload = async (file: File) => {
@@ -41,18 +76,19 @@ const Editor = ({ onChange, initialContent, editable }: EditorProps) => {
     return res.url;
   };
 
+  const userInfo = useSelf((me) => me.info);
+
   const editor: BlockNoteEditor = useCreateBlockNote({
-    initialContent: JSON.parse(
-      initialContent || DEFAULT_EDITOR_BLOCK
-    ) as PartialBlock[],
     uploadFile: handleUpload,
+    collaboration: {
+      provider,
+      fragment: doc.getXmlFragment("root"),
+      user: {
+        name: userInfo.name,
+        color: userInfo.color,
+      },
+    },
   });
-
-  const [blocks, setBlocks] = useState<Block[]>([]);
-
-  useEffect(() => {
-    blocks.length > 0 && onChange?.(JSON.stringify(blocks));
-  }, [blocks]);
 
   const isMobile = useMediaQuery("(max-width:768px)");
 
@@ -61,8 +97,10 @@ const Editor = ({ onChange, initialContent, editable }: EditorProps) => {
   return (
     <BlockNoteView
       className="flex-grow !bg-transparent"
-      onChange={() => setBlocks(editor.document)}
       editable={editable}
+      onChange={() => {
+        onChange?.(JSON.stringify(editor.document));
+      }}
       editor={editor}
       theme={resolvedTheme === "dark" ? "dark" : "light"}
       sideMenu={!isMobile}

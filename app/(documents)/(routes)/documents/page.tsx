@@ -37,7 +37,7 @@ const DocumentsPage = () => {
           disabled={isCreating}
           className="mt-5 disabled:opacity-80"
           size={"sm"}
-          onClick={() => onCreateDocument({ title: "Untitled" })}
+          onClick={() => onCreateDocument({ title: "" })}
         >
           <span>
             <CreateNewDocumentIcon
