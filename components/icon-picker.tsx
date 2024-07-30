@@ -62,7 +62,7 @@ export const IconPicker = ({
             height={350}
             theme={theme}
             onEmojiClick={(data) => onChange?.(data.emoji)}
-            searchDisabled
+            autoFocusSearch={false}
           />
         )}
       </PopoverContent>
