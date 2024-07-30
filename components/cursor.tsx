@@ -36,7 +36,7 @@ export default function Cursor({ color, x, y, name, avatar }: CursorProps) {
       <motion.div
         transition={{ bounce: 0, duration: 0.1 }}
         {...anim(cursorMove)}
-        className="z-[99999] absolute top-0 left-0"
+        className="z-[10] absolute top-0 left-0"
       >
         <svg
           width="24"
