@@ -19,7 +19,7 @@ export const POST = async (request: NextRequest) => {
       userInfo: {
         id: user?.id || crypto.randomUUID(),
         name: user?.fullName || "Guest",
-        email: user?.emailAddresses[0].emailAddress,
+        email: user?.emailAddresses[0].emailAddress as string,
         avatar: user?.imageUrl || "https://liveblocks.io/avatars/avatar-1.png",
         color: generate_random_hex_color(),
       },

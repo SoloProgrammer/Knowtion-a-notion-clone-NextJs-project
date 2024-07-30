@@ -337,7 +337,7 @@ export const getCollaborators = query({
     return collaborators.map((collaborator) => ({
       name: collaborator.name,
       email: collaborator.email,
-      imgUrl: collaborator.imgUrl,
+      imgUrl: collaborator.avatar,
     }));
   },
 });
@@ -419,7 +419,7 @@ export const addCollaborator = mutation({
     id: v.id("documents"),
     collaborator: v.object({
       name: v.string(),
-      imgUrl: v.string(),
+      avatar: v.string(),
       email: v.string(),
     }),
   },
