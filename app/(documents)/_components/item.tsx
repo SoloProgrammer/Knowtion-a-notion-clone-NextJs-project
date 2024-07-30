@@ -61,7 +61,7 @@ export const Item = ({
   const handleCreateChildDocument = (e: MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    onCreateDocument({ title: "Untitled", parentDocument: id });
+    onCreateDocument({ title: "", parentDocument: id });
   };
 
   useEffect(() => {
