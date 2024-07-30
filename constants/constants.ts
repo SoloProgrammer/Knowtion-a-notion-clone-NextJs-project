@@ -12,9 +12,10 @@ export const BRIGHT_HEX_COLOR_CODES = [
   "#ff218c",
   "#fc2f00",
   "#fb5607",
+  "#ff5e5b",
+  "#EC7063",
   "#be0aff",
   "#8f00ff",
   "#8E44AD",
-  "#EC7063",
   "#D583F0",
 ];
