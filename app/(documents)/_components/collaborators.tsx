@@ -24,6 +24,7 @@ import {
   useRemoveCollaboratorMutation,
 } from "../(routes)/documents/hooks";
 import { useOthers } from "@liveblocks/react/suspense";
+import { CollaboratorsAvatarStack } from "@/components/collaborators-avatar-stack";
 
 type CollaboratorProps = {
   documentId: Id<"documents">;
@@ -79,7 +80,9 @@ export const Collaborators = ({ documentId }: CollaboratorProps) => {
     );
   }
 
-  const handleRemoveCollaborator = (collaborator: Collaborator) => {
+  const handleRemoveCollaborator = (
+    collaborator: Omit<Collaborator, "avatar">
+  ) => {
     remove({ email: collaborator.email, documentId: documentId });
     toastId.current = toast.loading(
       `Unsharing the document with ${collaborator.name}`
@@ -94,28 +97,7 @@ export const Collaborators = ({ documentId }: CollaboratorProps) => {
             Now Editing
           </p>
           <div className="flex -space-x-1 my-3 pb-1">
-            {onlineCollaborators?.map((collaborator) => {
-              return (
-                <Tooltip key={collaborator.id}>
-                  <TooltipTrigger>
-                    <Avatar
-                      className={`w-8 h-8 rounded-full`}
-                      style={{
-                        boxShadow: `0 0 0 2px ${collaborator.color}`,
-                      }}
-                    >
-                      <AvatarImage
-                        src={collaborator.avatar}
-                        alt={collaborator.name}
-                      />
-                    </Avatar>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom" className="!text-xs !p-1 !px-2">
-                    {collaborator.name}
-                  </TooltipContent>
-                </Tooltip>
-              );
-            })}
+            <CollaboratorsAvatarStack collaborators={onlineCollaborators} />
           </div>
           <Separator />
         </div>
