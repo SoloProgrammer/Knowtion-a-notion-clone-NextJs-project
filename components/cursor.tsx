@@ -1,13 +1,15 @@
 import React from "react";
+import { Avatar, AvatarImage } from "./ui/avatar";
 
 type CursorProps = {
   color: string;
   x: number;
   y: number;
   name?: string;
+  avatar?: string;
 };
 
-export default function Cursor({ color, x, y, name }: CursorProps) {
+export default function Cursor({ color, x, y, name, avatar }: CursorProps) {
   return (
     <div
       style={{
@@ -15,7 +17,7 @@ export default function Cursor({ color, x, y, name }: CursorProps) {
         left: 0,
         top: 0,
         transform: `translateX(${x}px) translateY(${y}px)`,
-        transition:'.1s transform'
+        transition: ".1s transform",
       }}
       className="z-[99999]"
     >
@@ -32,12 +34,15 @@ export default function Cursor({ color, x, y, name }: CursorProps) {
           fill={color}
         />
       </svg>
-      <p
-        className="px-1 rounded-sm text-black font-medium text-xs -translate-y-4"
+      <div
+        className="p-1 px-2 flex gap-x-2 items-center rounded-full text-white font-medium text-xs -translate-y-4"
         style={{ background: color }}
       >
-        {name}
-      </p>
+        <Avatar className="ring-2 ring-white w-[13px] h-[13px]">
+          <AvatarImage src={avatar} />
+        </Avatar>
+        <span>{name}</span>
+      </div>
     </div>
   );
 }
