@@ -82,7 +82,7 @@ body {
   @apply !hidden;
 }
 body {
-  @apply dark:bg-[#121212];
+  @apply dark:bg-[#121212] overflow-x-hidden;
 }
 
 .progress-bar::after {

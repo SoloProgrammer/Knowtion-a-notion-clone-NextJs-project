@@ -1,7 +1,8 @@
 import { Footer } from "./_components/footer";
 import { Heading } from "./_components/heading";
-import { HeroScrollDemo } from "./_components/hero-scroll";
+import { HeroScroll } from "./_components/hero-scroll";
 import { Heros } from "./_components/heros";
+import { BentoGrid } from "./_components/bento-grid";
 
 const MarketingPage = () => {
   return (
@@ -9,8 +10,9 @@ const MarketingPage = () => {
       <div className="flex flex-col flex-grow justify-center md:justify-start text-center px-6 pb-10 gap-5">
         <Heading />
         <Heros />
+        <HeroScroll />
+        <BentoGrid />
       </div>
-      <HeroScrollDemo />
       <Footer />
     </div>
   );

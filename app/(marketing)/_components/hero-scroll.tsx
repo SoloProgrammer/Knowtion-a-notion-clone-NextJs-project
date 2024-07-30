@@ -6,18 +6,24 @@ import Image from "next/image";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import { TypingCursor } from "@/components/typing-cursor";
 
-export function HeroScrollDemo() {
+export function HeroScroll() {
   return (
-    <div className="flex flex-col overflow-hidden">
+    <div className="flex flex-col overflow-hidden pb-32 md:pb-0">
       <ContainerScroll
         titleComponent={
           <>
-            <h1 className="text-xl md:text-4xl font-semibold text-black dark:text-white">
-              Unleash the power{" "}
+            <h1 className="text-3xl md:text-4xl font-semibold dark:text-white">
+              Unleash the
               <TypingCursor
                 color="#ff218c"
                 text="Pratham shinde"
-                className="h-[20px] md:h-[38px]"
+                className="h-[22px] md:h-[38px] md:hidden"
+              />{" "}
+              power{" "}
+              <TypingCursor
+                color="#ff218c"
+                text="Pratham shinde"
+                className="h-[20px] md:h-[38px] hidden md:inline-block"
               />
               of <br />
               <span className="text-4xl md:text-[6rem] font-bold mt-1 leading-none">
@@ -31,7 +37,7 @@ export function HeroScrollDemo() {
                 <TypingCursor
                   text="John wick"
                   color="#01befe"
-                  className="h-[33px] inline-block md:hidden"
+                  className="h-[26px] inline-block md:hidden"
                 />
                 n
               </span>
