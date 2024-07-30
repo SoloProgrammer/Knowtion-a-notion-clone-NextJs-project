@@ -25,7 +25,7 @@ export default defineSchema({
   collaborators: defineTable({
     name: v.string(),
     email: v.string(),
-    imgUrl: v.string(),
+    avatar: v.string(),
     document: v.id("documents"),
   })
     .index("by_document", ["document"])
