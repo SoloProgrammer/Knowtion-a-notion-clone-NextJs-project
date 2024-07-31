@@ -34,7 +34,7 @@ export const Heros = () => {
             src={"/notion-2-image.png"}
             alt="notion-image"
             fill
-            className="dark:invert"
+            className="dark:invert z-[1]"
           />
         </motion.div>
       </div>

@@ -30,7 +30,7 @@ export const Heading = () => {
       )}
       {!isLoading && isAuthenticated && (
         <Link href={"/documents"}>
-          <Button className="group" size="sm">
+          <Button className="group z-10 relative" size="sm">
             Enter {BRAND_NAME}{" "}
             <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition" />
           </Button>
