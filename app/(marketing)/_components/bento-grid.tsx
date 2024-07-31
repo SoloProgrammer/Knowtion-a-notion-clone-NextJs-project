@@ -68,7 +68,7 @@ const FeatureCard = ({
     [0, 1],
     isMobile
       ? [100, -200]
-      : [index > 1 ? `10%` : -200, index > 1 ? `-${46 - index}%` : -100]
+      : [index > 1 ? `10%` : -200, index > 1 ? `-39%` : -100]
   );
 
   const { image, title, desc } = card;
