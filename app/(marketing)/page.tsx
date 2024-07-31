@@ -1,16 +1,63 @@
+import { TextReveal } from "react-animate-components-ts";
+import { Raleway } from "next/font/google";
+
 import { Footer } from "./_components/footer";
 import { Heading } from "./_components/heading";
-import { HeroScrollDemo } from "./_components/hero-scroll";
+import { HeroScroll } from "./_components/hero-scroll";
 import { Heros } from "./_components/heros";
+import { BentoGrid } from "./_components/bento-grid";
+import { TextTranslate } from "./_components/text-translate";
+
+import { BRAND_NAME } from "../constants";
+import { cn } from "@/lib/utils";
+
+const font = Raleway({
+  subsets: ["vietnamese"],
+  weight: ["400", "600", "700"],
+});
 
 const MarketingPage = () => {
+  const words = [
+    "<span class=text-[#fc2f00]>Features</span>",
+    "that",
+    "are",
+    "<span class='text-[#04e762] animate-pulse'>live</span>",
+    "on",
+    "knowtion",
+  ];
   return (
-    <div className="min-h-full flex flex-col antialiased">
-      <div className="flex flex-col flex-grow justify-center md:justify-start text-center px-6 pb-10 gap-5">
-        <Heading />
-        <Heros />
+    <div className="min-h-full flex flex-col antialiased w-screen">
+      <div className="flex flex-col flex-grow justify-center md:justify-start text-center p-0 pb-10 gap-5 mx-auto">
+        <div className="w-screen h-full md:h-[90vh] bg-white dark:bg-[#121212] !p-0 md:shadow-xl">
+          <Heading />
+          <Heros />
+        </div>
+        <HeroScroll />
+        <h1
+          className={cn(
+            "h-[150px] md:h-[270px] -mt-40 md:mt-0 mb-32 md:mb-10 text-5xl md:text-[100px] uppercase font-bold text-neutral-600 dark:text-neutral-300 heading",
+            font.className
+          )}
+        >
+          <TextReveal words={words} animateOnce={false} delayPerWord={0.15} />
+        </h1>
+        <BentoGrid />
+        <TextTranslate className="md:block !text-[#d7d2ca82]">
+          {Array(10)
+            .fill(0)
+            .map((_, i) => (
+              <span
+                key={i}
+                className={cn(
+                  "uppercase select-none inline-block px-4 tracking-normal",
+                  font.className
+                )}
+              >
+                {BRAND_NAME}
+              </span>
+            ))}
+        </TextTranslate>
       </div>
-      <HeroScrollDemo />
       <Footer />
     </div>
   );
