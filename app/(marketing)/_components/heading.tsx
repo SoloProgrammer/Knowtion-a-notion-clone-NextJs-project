@@ -15,7 +15,7 @@ export const Heading = () => {
 
   return (
     <div className="max-w-3xl space-y-1 mx-auto flex flex-col gap-5 items-center mt-4">
-      <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold px-2">
+      <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold px-2 md:px-0">
         Your Ideas, Documents. & Plans. Unified. Welcome to{" "}
         <span className="underline">{BRAND_NAME}</span>
       </h1>
