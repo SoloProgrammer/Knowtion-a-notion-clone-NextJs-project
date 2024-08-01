@@ -10,6 +10,7 @@ import { TextTranslate } from "./_components/text-translate";
 
 import { BRAND_NAME } from "../constants";
 import { cn } from "@/lib/utils";
+import { ScrollDownIcon } from "./_components/scroll-down-icon";
 
 const font = Raleway({
   subsets: ["vietnamese"],
@@ -28,9 +29,10 @@ const MarketingPage = () => {
   return (
     <div className="min-h-full flex flex-col antialiased w-screen">
       <div className="flex flex-col flex-grow justify-center md:justify-start text-center p-0 pb-10 gap-5 mx-auto">
-        <div className="w-screen h-full md:h-[90vh] bg-white dark:bg-[#121212] !p-0 md:shadow-xl">
+        <div className="w-screen h-full md:h-[90vh] bg-white dark:bg-[#121212] !p-0 md:shadow-xl relative">
           <Heading />
           <Heros />
+          <ScrollDownIcon />
         </div>
         <HeroScroll />
         <h1
