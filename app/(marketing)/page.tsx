@@ -37,7 +37,7 @@ const MarketingPage = () => {
         <HeroScroll />
         <h1
           className={cn(
-            "h-[150px] md:h-[270px] -mt-40 md:mt-0 mb-32 md:mb-10 text-5xl md:text-[100px] uppercase font-bold text-neutral-600 dark:text-neutral-300 heading px-2",
+            "h-[150px] md:h-[270px] -mt-40 md:mt-0 mb-32 md:mb-10 text-5xl md:text-[100px] uppercase font-bold text-neutral-600 dark:text-neutral-300 heading px-2 md:px-0",
             font.className
           )}
         >

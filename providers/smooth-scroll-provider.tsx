@@ -13,6 +13,8 @@ const SmoothScrollProvider = ({ children }: PropsWithChildren) => {
     }
 
     requestAnimationFrame(raf);
+    
+    return () => lenis.destroy();
   }, []);
   return children;
 };
