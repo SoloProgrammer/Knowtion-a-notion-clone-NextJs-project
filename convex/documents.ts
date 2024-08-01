@@ -342,6 +342,56 @@ export const getCollaborators = query({
   },
 });
 
+export const getFavouriteDocuments = query({
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new ConvexError("Not authenticated");
+    }
+    const userId = identity.subject;
+
+    const documentIds = (
+      await ctx.db
+        .query("favourites")
+        .withIndex("by_user", (q) => q.eq("userId", userId))
+        .collect()
+    ).map((doc) => doc.docId);
+
+    const documents = await Promise.all(
+      documentIds.map(async (id) => await ctx.db.get(id))
+    );
+
+    return documents;
+  },
+});
+
+export const checkFavourite = query({
+  args: {
+    docId: v.id("documents"),
+  },
+  handler: async (ctx, { docId }) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new ConvexError("Not authenticated");
+    }
+
+    const favouriteDoc = (
+      await ctx.db
+        .query("favourites")
+        .withIndex("by_user_doc", (q) =>
+          q.eq("userId", identity.subject).eq("docId", docId)
+        )
+        .collect()
+    )[0];
+
+    if (!favouriteDoc) return false;
+
+    return true;
+  },
+});
+
 export const create = mutation({
   args: {
     title: v.string(),
@@ -408,6 +458,7 @@ export const udpate = mutation({
     const document = await ctx.db.patch(args.id, {
       ...rest,
       updatedAt: Date.now(),
+      editedBy:identity.name
     });
 
     return document;
@@ -486,5 +537,55 @@ export const removeCollaborator = mutation({
     await ctx.db.delete(existingCollaborator._id);
 
     return true;
+  },
+});
+
+export const addToFavourites = mutation({
+  args: {
+    docId: v.id("documents"),
+  },
+  handler: async (ctx, { docId }) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new ConvexError("Not authenticated");
+    }
+
+    await ctx.db.insert("favourites", {
+      docId,
+      userId: identity.subject,
+    });
+
+    return "document added to favourites";
+  },
+});
+
+export const removeFromFavourites = mutation({
+  args: {
+    docId: v.id("documents"),
+  },
+  handler: async (ctx, { docId }) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new ConvexError("Not authenticated");
+    }
+
+    const favouriteDoc = (
+      await ctx.db
+        .query("favourites")
+        .withIndex("by_user_doc", (q) =>
+          q.eq("userId", identity.subject).eq("docId", docId)
+        )
+        .collect()
+    )[0];
+
+    if (!favouriteDoc) {
+      throw new ConvexError("Not added into favaourite yet!");
+    }
+
+    await ctx.db.delete(favouriteDoc._id);
+
+    return "document removed from favourites";
   },
 });
