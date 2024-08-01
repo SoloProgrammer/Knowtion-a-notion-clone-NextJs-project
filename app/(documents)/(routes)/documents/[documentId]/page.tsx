@@ -20,6 +20,7 @@ import { useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { useUser } from "@clerk/clerk-react";
+import { CommentsTrigger } from "@/app/(documents)/_components/comments/comments-sheet";
 
 const DynamicEditor = dynamic(() => import("@/components/editor"), {
   ssr: false,
@@ -77,6 +78,7 @@ const DocumentPage = ({ params }: DocumentPageProps) => {
           <DynamicEditor onChange={handleEditorChange} editable={!isPreview} />
         </div>
       </div>
+      <CommentsTrigger documentId={document._id} />
       <PreviewTabs setIsPreview={setIsPreview} />
     </div>
   );
