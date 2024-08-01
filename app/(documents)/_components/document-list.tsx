@@ -37,7 +37,7 @@ export const DocumentList = ({
 
   const { data: documents, isLoading } =
     useGetSidebarDocumentsQuery(parentDocument);
-  
+
   if (isLoading) {
     return (
       <>
@@ -61,7 +61,8 @@ export const DocumentList = ({
           (level > 0 || !documents || documents.length < 1) && "hidden"
         )}
       >
-        <Folder className="w-4 h-4" /> My documents
+        <Folder className="w-4 h-4" />
+        <span className="truncate">My documents</span>
       </h3>
       <p
         style={{
@@ -88,6 +89,7 @@ export const DocumentList = ({
             level={level}
             onExpand={() => onExpand(document._id)}
             lastEdited={document.updatedAt}
+            lastEditedBy={document.editedBy}
           />
           {expanded[document._id] && (
             <DocumentList level={level + 1} parentDocument={document._id} />
