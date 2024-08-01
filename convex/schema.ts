@@ -29,6 +29,21 @@ export default defineSchema({
   })
     .index("by_user_doc", ["userId", "docId"])
     .index("by_user", ["userId"]),
+  comments: defineTable({
+    content: v.string(),
+    parentComment: v.optional(v.id("comments")),
+    document: v.id("documents"),
+    author: v.object({
+      id: v.string(),
+      name: v.string(),
+      email: v.string(),
+      avatar: v.string(),
+    }),
+    createdAt: v.number(),
+  })
+    .index("by_document", ["document"])
+    .index("by_parent_document", ["parentComment", "document"])
+    .index("by_user", ["author.id"]),
   collaborators: defineTable({
     name: v.string(),
     email: v.string(),
