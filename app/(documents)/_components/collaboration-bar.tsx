@@ -25,6 +25,7 @@ import { useDebounceFunction } from "@/hooks/use-debounce-function";
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@clerk/clerk-react";
 import { useOthers } from "@liveblocks/react/suspense";
+import { ToggleFavorite } from "./toggle-favourite";
 
 type CollaborationBarProps = {
   documentId: Id<"documents">;
@@ -99,7 +100,9 @@ export const CollaborationBar = ({
               size="sm"
             />
           ) : (
-            <span className="text-muted-foreground text-sm">&#x2022; 0 online</span>
+            <span className="text-muted-foreground text-sm">
+              &#x2022; 0 online
+            </span>
           )
         ) : (
           <Popover>
@@ -123,45 +126,55 @@ export const CollaborationBar = ({
           </Popover>
         )}
       </div>
-      <Popover
-        onOpenChange={() => {
-          setQuery("");
-          setSelectedUser(undefined);
-        }}
-      >
-        <PopoverTrigger asChild>
-          <Button size={"sm"} className="h-auto py-1">
-            <span>Invite</span>
-            <MailPlus className="w-4 h-4 ml-1" />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent align="end" className="p-2">
-          <h2 className="font-medium pb-2 text-sm">Search users</h2>
-          <div className="flex items-center">
-            <Input
-              value={query}
-              type="search"
-              onChange={handleDebounceChange}
-              placeholder="pratham@gmail.com"
-              className="placeholder:text-primary/50 h-[30px] text-xs focus-visible:ring-transparent bg-muted/70 border rounded-tr-none rounded-br-none"
-            />
-            <Button
-              disabled={isPending || !selectedUser}
-              onClick={handleInvite}
-              className="h-[30px] min-w-[50px] rounded-tl-none rounded-bl-none"
-            >
-              {isPending ? <Spinner /> : <Send className="w-5 h-5 shrink-0" />}
+      <div className="flex items-center gap-x-2">
+        <ToggleFavorite
+          documentId={documentId}
+          disabled={user?.id !== ownerId}
+        />
+        <Popover
+          onOpenChange={() => {
+            setQuery("");
+            setSelectedUser(undefined);
+          }}
+        >
+          <PopoverTrigger asChild>
+            <Button size={"sm"} className="h-auto py-1">
+              <span>Invite</span>
+              <MailPlus className="w-4 h-4 ml-1" />
             </Button>
-          </div>
-          {isFetching ? (
-            <div className="py-5 flex items-center justify-center">
-              <Spinner />
+          </PopoverTrigger>
+          <PopoverContent align="end" className="p-2">
+            <h2 className="font-medium pb-2 text-sm">Search users</h2>
+            <div className="flex items-center">
+              <Input
+                value={query}
+                type="search"
+                onChange={handleDebounceChange}
+                placeholder="pratham@gmail.com"
+                className="placeholder:text-primary/50 h-[30px] text-xs focus-visible:ring-transparent bg-muted/70 border rounded-tr-none rounded-br-none"
+              />
+              <Button
+                disabled={isPending || !selectedUser}
+                onClick={handleInvite}
+                className="h-[30px] min-w-[50px] rounded-tl-none rounded-bl-none"
+              >
+                {isPending ? (
+                  <Spinner />
+                ) : (
+                  <Send className="w-5 h-5 shrink-0" />
+                )}
+              </Button>
             </div>
-          ) : (
-            <UsersList users={users} onUserSelect={handleUserSelect} />
-          )}
-        </PopoverContent>
-      </Popover>
+            {isFetching ? (
+              <div className="py-5 flex items-center justify-center">
+                <Spinner />
+              </div>
+            ) : (
+              <UsersList users={users} onUserSelect={handleUserSelect} />
+            )}
+          </PopoverContent>
+        </Popover>
+      </div>
     </div>
   );
 };

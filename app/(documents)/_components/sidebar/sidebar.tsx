@@ -33,6 +33,7 @@ import { SharedDocumentList } from "../shared-document-list";
 
 import { MAX_WIDTH, MIN_WIDTH } from "./constants";
 import { BRAND_NAME } from "@/app/constants";
+import { FavouriteDocumentsList } from "../favourite-documents-list";
 
 const font = Raleway({
   subsets: ["vietnamese"],
@@ -98,7 +99,7 @@ export const Sidebar = () => {
     <aside
       ref={sidebarRef}
       className={cn(
-        "w-[90%] md:w-[250px] relative flex flex-col h-full group/sidebar bg-neutral-100 dark:bg-neutral-900 overflow-y-auto z-[99999] border-r overflow-x-hidden",
+        "w-[90%] md:w-[250px] relative flex flex-col h-full group/sidebar bg-neutral-100 dark:bg-neutral-900 overflow-y-hidden z-[99999] border-r overflow-x-hidden",
         isMobile &&
           "fixed transition-all h-full w-[90%] left-0 top-0 duration-500",
         isMobile && isCollapsed && "-left-full",
@@ -108,31 +109,34 @@ export const Sidebar = () => {
         isTransitioning && "transition-all ease-in-expo duration-500"
       )}
     >
-      <div className="flex-grow pb-5">
-        <div
-          role="button"
-          className={cn(
-            "hover:bg-neutral-300 dark:hover:bg-neutral-600 text-muted-foreground absolute right-3 top-[.9rem] opacity-0 group-hover/sidebar:opacity-100 rounded-sm cursor-pointer",
-            isMobile && "opacity-100 bg-neutral-300 dark:bg-neutral-600"
-          )}
-          onClick={() => setIsCollapsed(true)}
-        >
-          <ChevronsLeft className="w-5 h-5 shrink-0" />
+      <div className="flex-grow pb-5 overflow-y-auto custom-scroll-bar">
+        <div>
+          <div
+            role="button"
+            className={cn(
+              "hover:bg-neutral-300 dark:hover:bg-neutral-600 text-muted-foreground absolute right-3 top-[.9rem] opacity-0 group-hover/sidebar:opacity-100 rounded-sm cursor-pointer",
+              isMobile && "opacity-100 bg-neutral-300 dark:bg-neutral-600"
+            )}
+            onClick={() => setIsCollapsed(true)}
+          >
+            <ChevronsLeft className="w-5 h-5 shrink-0" />
+          </div>
+          <div>
+            <UserItem />
+          </div>
+          <Item icon={Search} label="Search" isSearch onClick={openSearch} />
+          <SettingsModal>
+            <Item icon={Settings} label="Settings" />
+          </SettingsModal>
+          <Item
+            icon={isCreating ? Loader : PlusCircle}
+            label="New page"
+            isLoading={isCreating}
+            onClick={onCreateDocument}
+          />
         </div>
         <div>
-          <UserItem />
-        </div>
-        <Item icon={Search} label="Search" isSearch onClick={openSearch} />
-        <SettingsModal>
-          <Item icon={Settings} label="Settings" />
-        </SettingsModal>
-        <Item
-          icon={isCreating ? Loader : PlusCircle}
-          label="New page"
-          isLoading={isCreating}
-          onClick={onCreateDocument}
-        />
-        <div className="mt-3">
+          <FavouriteDocumentsList />
           <DocumentList />
           <Item
             icon={isCreating ? Loader : PlusIcon}
@@ -147,11 +151,6 @@ export const Sidebar = () => {
             </div>
           </TrashPopPver>
         </div>
-        <div
-          onMouseDown={handleDragStart}
-          onClick={handleResetSideBarWidth}
-          className="absolute top-0 right-0 bg-primary/10 h-full w-1 cursor-ew-resize opacity-0 group-hover/sidebar:opacity-100 transition-opacity hover:border-x-[0.05rem] hover:border-neutral-500"
-        />
       </div>
       <Link href={"/"}>
         <div className="px-3 hover:bg-primary/5 transition cursor-pointer h-[55px] border-t flex items-center gap-x-2 group">
@@ -173,6 +172,11 @@ export const Sidebar = () => {
           </span>
         </div>
       </Link>
+      <div
+        onMouseDown={handleDragStart}
+        onClick={handleResetSideBarWidth}
+        className="absolute top-0 right-0 bg-primary/10 h-full w-1 cursor-ew-resize opacity-0 group-hover/sidebar:opacity-100 transition-opacity hover:border-x-[0.05rem] hover:border-neutral-500"
+      />
     </aside>
   );
 };

@@ -35,6 +35,7 @@ export const Navbar = ({ document, ownerId }: NavbarProps) => {
           <ArchiveDropDown
             documentId={document._id}
             lastEdited={document.updatedAt!}
+            lastEditedBy={document.editedBy}
             side="bottom"
             align="end"
             disabled={document.isArchived || document.userId !== ownerId}

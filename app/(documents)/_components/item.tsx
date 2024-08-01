@@ -30,6 +30,7 @@ type ItemProps = {
   onClick?: () => void;
   icon: LucideIcon;
   lastEdited?: number;
+  lastEditedBy?: string;
   isLoading?: boolean;
   showActions?: boolean;
 };
@@ -46,6 +47,7 @@ export const Item = ({
   onClick,
   icon: Icon,
   lastEdited,
+  lastEditedBy,
   isLoading = false,
   showActions = true,
 }: ItemProps) => {
@@ -117,7 +119,11 @@ export const Item = ({
 
       {!!id && showActions && (
         <div className="flex ml-auto items-center gap-x-1">
-          <ArchiveDropDown documentId={id} lastEdited={lastEdited!}>
+          <ArchiveDropDown
+            documentId={id}
+            lastEdited={lastEdited!}
+            lastEditedBy={lastEditedBy}
+          >
             <button className="opacity-0 rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 group-hover:opacity-100">
               <MoreHorizontal
                 className={cn(
