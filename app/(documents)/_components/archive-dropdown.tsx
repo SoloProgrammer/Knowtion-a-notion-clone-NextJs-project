@@ -22,6 +22,7 @@ import { useArchiveDocumentMutation } from "../(routes)/documents/hooks";
 type ArchiveDropDownProps = {
   documentId: Id<"documents">;
   lastEdited: number;
+  lastEditedBy:string | undefined;
   align?: "start" | "center" | "end";
   side?: "bottom" | "left" | "right" | "top";
   disabled?: boolean;
@@ -31,6 +32,7 @@ export const ArchiveDropDown = ({
   documentId,
   children,
   lastEdited,
+  lastEditedBy,
   align = "start",
   side = "right",
   disabled = false,
@@ -65,7 +67,7 @@ export const ArchiveDropDown = ({
         <DropdownMenuSeparator />
         <div className="text-xs text-muted-foreground p-2 py-3">
           <span>
-            Last edited {getFromNowDate(lastEdited)} by: {user?.fullName}
+            Last edited {getFromNowDate(lastEdited)} by: {lastEditedBy}
           </span>
         </div>
       </DropdownMenuContent>

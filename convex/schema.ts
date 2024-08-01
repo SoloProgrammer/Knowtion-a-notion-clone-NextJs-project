@@ -11,6 +11,7 @@ export const DocumentColumns = {
   icon: v.optional(v.string()),
   isPublished: v.optional(v.boolean()),
   updatedAt: v.optional(v.number()),
+  editedBy: v.optional(v.string()),
 };
 
 const { userId, isArchived, parentDocument, updatedAt, ...rest } =
@@ -22,6 +23,12 @@ export default defineSchema({
   documents: defineTable(DocumentColumns)
     .index("by_user", ["userId"])
     .index("by_user_parent", ["userId", "parentDocument"]),
+  favourites: defineTable({
+    docId: v.id("documents"),
+    userId: v.string(),
+  })
+    .index("by_user_doc", ["userId", "docId"])
+    .index("by_user", ["userId"]),
   collaborators: defineTable({
     name: v.string(),
     email: v.string(),

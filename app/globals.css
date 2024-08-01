@@ -86,17 +86,30 @@ body {
 }
 
 .progress-bar::after {
-  content: '';
+  content: "";
   @apply absolute h-full bg-[#73ee08] rounded-full;
   width: calc(var(--progress) * 1%);
-  transition: .2s width ease-in;
+  transition: 0.2s width ease-in;
 }
-.ProseMirror{
-  @apply !h-full !bg-transparent !px-[17px] md:!px-[49px] !overflow-x-auto pt-4
+.ProseMirror {
+  @apply !h-full !bg-transparent !px-[17px] md:!px-[49px] !overflow-x-auto pt-4;
 }
-.bn-block-outer{
+.bn-block-outer {
   @apply w-[335px] xs:w-[362px] md:w-auto;
 }
-td>p{
+td > p {
   @apply !whitespace-nowrap;
+}
+.custom-scroll-bar::-webkit-scrollbar-track {
+  background: transparent !important;
+  display: none;
+}
+.custom-scroll-bar::-webkit-scrollbar-thumb {
+  @apply !bg-primary/30 dark:!bg-primary/40 w-4;
+}
+.custom-scroll-bar::-webkit-scrollbar-thumb{
+  @apply bg-primary/50
+}
+.custom-scroll-bar::-webkit-scrollbar {
+  @apply !bg-transparent !w-1
 }
