@@ -210,6 +210,26 @@ const useRemoveCollaboratorMutation = (
   return { ...rest, remove };
 };
 
+const useAddToFavouritesMutation = (
+  onSuccess?: () => void,
+  onError?: () => void
+) => {
+  const { mutate: addToFavourites, ...rest } = useMutation({
+    mutationFn: useConvexMutation(api.documents.addToFavourites),
+  });
+  return { addToFavourites, ...rest };
+};
+
+const useRemoveFromFavouritesMutation = (
+  onSuccess?: () => void,
+  onError?: () => void
+) => {
+  const { mutate: removeFromFavourites, ...rest } = useMutation({
+    mutationFn: useConvexMutation(api.documents.removeFromFavourites),
+  });
+  return { removeFromFavourites, ...rest };
+};
+
 const useGetSidebarDocumentsQuery = (
   parentDocument: Id<"documents"> | undefined
 ) =>
@@ -219,6 +239,12 @@ const useGetSidebarDocumentsQuery = (
 
 const useGetDocumentsQuery = () =>
   useQuery(convexQuery(api.documents.getDocumentsByUser, {}));
+
+const useGetFavoutiteDocumentsQuery = () =>
+  useQuery(convexQuery(api.documents.getFavouriteDocuments, {}));
+
+const useCheckDocumentIsFavoutiteQuery = (docId: Id<"documents">) =>
+  useQuery(convexQuery(api.documents.checkFavourite, { docId }));
 
 const useGetArchiveDocumentsQuery = () =>
   useQuery(convexQuery(api.documents.getArchiveDocuments, {}));
@@ -250,4 +276,8 @@ export {
   useRemoveCollaboratorMutation,
   useGetSharedDocuments,
   useGetCollaboratorsByDocument,
+  useAddToFavouritesMutation,
+  useRemoveFromFavouritesMutation,
+  useGetFavoutiteDocumentsQuery,
+  useCheckDocumentIsFavoutiteQuery,
 };
