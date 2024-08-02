@@ -103,6 +103,7 @@ export const CommentsSheet = ({
               maxRows={5}
               onKeyDown={handleKeyDown}
               autoFocus={!isMobile}
+              tabIndex={-1}
             />
             <Button
               disabled={isPending}
