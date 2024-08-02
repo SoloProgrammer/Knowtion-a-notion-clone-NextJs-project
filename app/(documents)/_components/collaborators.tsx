@@ -4,16 +4,10 @@ import { Id } from "@/convex/_generated/dataModel";
 
 import { Spinner } from "@/components/spinner";
 import { UsersList } from "./user-list";
-import { Avatar } from "@/components/ui/avatar";
-import { AvatarImage } from "@radix-ui/react-avatar";
 import { Separator } from "@/components/ui/separator";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { TryAgainButton } from "./try-again-button";
 import { Collaborator } from "../(routes)/documents/types";
+import { CollaboratorsAvatarStack } from "@/components/collaborators-avatar-stack";
 
 import { Blend } from "lucide-react";
 import { toast } from "sonner";
@@ -24,7 +18,6 @@ import {
   useRemoveCollaboratorMutation,
 } from "../(routes)/documents/hooks";
 import { useOthers } from "@liveblocks/react/suspense";
-import { CollaboratorsAvatarStack } from "@/components/collaborators-avatar-stack";
 
 type CollaboratorProps = {
   documentId: Id<"documents">;
