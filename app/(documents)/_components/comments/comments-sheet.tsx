@@ -82,7 +82,7 @@ export const CommentsSheet = ({
       <SheetContent
         side={isMobile ? "bottom" : "right"}
         className={cn(
-          "flex flex-col h-full pr-0 md:pr-3 px-4 pb-1",
+          "flex flex-col h-full pr-0 md:pr-3 px-4 pb-1 !overflow-y-auto",
           isMobile && "!w-[100%] !max-h-[70%]"
         )}
       >
@@ -123,11 +123,7 @@ export const CommentsSheet = ({
 };
 
 const CommentsList = ({ documentId }: { documentId: Id<"documents"> }) => {
-  const {
-    data: comments,
-    isLoading,
-    isFetching,
-  } = useGetDocumentsQuery(documentId);
+  const { data: comments, isLoading } = useGetDocumentsQuery(documentId);
 
   const commentsContainerRef = useRef<ElementRef<"div"> | null>(null);
 
@@ -136,7 +132,7 @@ const CommentsList = ({ documentId }: { documentId: Id<"documents"> }) => {
       commentsContainerRef.current.scrollTop =
         commentsContainerRef.current.scrollHeight;
     }
-  }, [comments, isFetching]);
+  }, [comments?.length]);
 
   if (isLoading) {
     return <CommentsList.Skeleton />;
@@ -174,7 +170,6 @@ const CommentsList = ({ documentId }: { documentId: Id<"documents"> }) => {
 
 const SingleComment = ({ comment }: { comment: Comment }) => {
   const { remove, isPending: isDeleting } = useDeleteComment();
-  const { react, isPending: isReacting } = useReactToComment();
   const { user } = useUser();
 
   const handleDelete = () => remove({ id: comment._id });
@@ -264,7 +259,7 @@ const ReactionsList = ({
   );
 
   return (
-    <div className="mt-2 flex flex-wrap items-center gap-x-2">
+    <div className="mt-2 flex flex-wrap items-center">
       <IconPicker onChange={handleReactToComment}>
         <Button
           className="h-auto p-1 transition-all text-primary/80 hover:text-primary inline-block"
@@ -278,9 +273,10 @@ const ReactionsList = ({
           <Tooltip key={`reaction-${i}`}>
             <TooltipTrigger>
               <Button
+                disabled={isReacting}
                 onClick={() => handleReactToComment(reaction)}
                 className={cn(
-                  "h-auto min-w-[40px] p-1 transition-all text-primary/80 hover:text-primary inline-block py-0 px-0 rounded-md ring-1 ring-black/40 dark:ring-white/40",
+                  "ml-2 h-auto min-w-[40px] p-1 transition-all text-primary/80 hover:text-primary inline-block py-0 px-0 rounded-md ring-1 ring-black/40 dark:ring-white/40",
                   reactionsByEmoji[reaction].includes(user?.fullName!) &&
                     "bg-sky-400/10 ring-1 !ring-sky-600"
                 )}
@@ -292,7 +288,7 @@ const ReactionsList = ({
                 </span>
               </Button>
             </TooltipTrigger>
-            <TooltipContent className="py-1">
+            <TooltipContent className="py-1 hidden md:inline-block">
               {reactionsByEmoji[reaction].map((uName, i) => (
                 <>
                   <span key={`user-${i}`} className="text-xs">
@@ -328,8 +324,8 @@ CommentsList.Skeleton = () => {
                 className="flex flex-col gap-y-0 w-full"
               >
                 <div className="flex items-center gap-x-2 w-full">
-                  <Skeleton className="rounded-full w-10 h-9" />
-                  <Skeleton className="w-full h-[10px] rounded-md" />
+                  <Skeleton className="rounded-full w-9 h-9" />
+                  <Skeleton className="w-[150px] h-[10px] rounded-md" />
                 </div>
                 <div className="ml-1 mt-2 w-full">
                   <Skeleton className="w-full md:w-[350px] h-3" />
