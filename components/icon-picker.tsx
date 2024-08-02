@@ -1,14 +1,13 @@
 "use client";
 
-import { PropsWithChildren } from "react";
-
+import { PropsWithChildren, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
-import { Theme } from "emoji-picker-react";
-
+// import { Theme } from "emoji-picker-react";
 import { useState } from "react";
 import { useTheme } from "next-themes";
 
-const DynamicEmojiPicker = dynamic(() => import("emoji-picker-react"), {
+import data from "@emoji-mart/data";
+const DynamicEmojiPicker = dynamic(() => import("@emoji-mart/react"), {
   ssr: false,
   loading: () => <IconPicker.Skeleton />,
 });
@@ -28,17 +27,26 @@ export const IconPicker = ({
   children,
   onChange,
 }: PropsWithChildren<IconPickerProps>) => {
-  const { resolvedTheme } = useTheme();
+  const { resolvedTheme: theme } = useTheme();
   const [loadingEmojiPicker, setLoadingEmojiPicker] = useState(true);
+  const emojiPickerRef = useRef<HTMLDivElement | null>(null);
 
-  const currentTheme = (resolvedTheme || "light") as keyof typeof themeMap;
+  useEffect(() => {
+    const handleScroll = (e: WheelEvent) => {
+      e.stopPropagation();
+    };
 
-  const themeMap = {
-    dark: Theme.DARK,
-    light: Theme.LIGHT,
-  };
+    const picker = emojiPickerRef.current;
+    if (picker) {
+      picker.addEventListener("wheel", handleScroll);
+    }
 
-  const theme = themeMap[currentTheme];
+    return () => {
+      if (picker) {
+        picker.removeEventListener("wheel", handleScroll);
+      }
+    };
+  }, [loadingEmojiPicker]);
 
   return (
     <Popover onOpenChange={() => setLoadingEmojiPicker(true)}>
@@ -56,14 +64,16 @@ export const IconPicker = ({
         {loadingEmojiPicker ? (
           <IconPicker.Skeleton />
         ) : (
-          <DynamicEmojiPicker
-            className="text-sm"
-            lazyLoadEmojis
-            height={350}
-            theme={theme}
-            onEmojiClick={(data) => onChange?.(data.emoji)}
-            autoFocusSearch={false}
-          />
+          <div ref={emojiPickerRef}>
+            <DynamicEmojiPicker
+              lazyLoadEmojis
+              height={350}
+              theme={theme}
+              onEmojiSelect={(data: any) => onChange?.(data.native)}
+              data={data}
+              autoFocusSearch={false}
+            />
+          </div>
         )}
       </PopoverContent>
     </Popover>
