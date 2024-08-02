@@ -26,9 +26,21 @@ const useDeleteComment = (
   return { remove, ...rest };
 };
 
+const useReactToComment = () => {
+  const { mutate: react, ...rest } = useMutation({
+    mutationFn: useConvexMutation(api.comments.reaction),
+  });
+  return { react, ...rest };
+};
+
 const useGetDocumentsQuery = (
   document: Id<"documents">,
   parentComment?: Id<"comments">
 ) => useQuery(convexQuery(api.comments.get, { document, parentComment }));
 
-export { useCreateNewComment, useDeleteComment, useGetDocumentsQuery };
+export {
+  useCreateNewComment,
+  useDeleteComment,
+  useReactToComment,
+  useGetDocumentsQuery,
+};
