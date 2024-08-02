@@ -67,3 +67,50 @@ export const remove = mutation({
     return true;
   },
 });
+
+export const reaction = mutation({
+  args: {
+    id: v.id("comments"),
+    reaction: v.string(),
+  },
+  handler: async (ctx, { id, reaction }) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new ConvexError("Not authenticated");
+    }
+
+    const userName = identity.name as string;
+
+    const comment = await ctx.db.get(id);
+
+    if (!comment) {
+      throw new ConvexError("Comment Not found!");
+    }
+
+    let reactions = comment.reactions || [];
+
+    const existingreaction = reactions.find(
+      (r) => r.user === userName && r.reaction === reaction
+    );
+
+    if (existingreaction) {
+      reactions = reactions.filter(
+        (reaction) => reaction.id !== existingreaction.id
+      );
+    } else {
+      const newReaction = {
+        reaction,
+        user: userName,
+        id: crypto.randomUUID(),
+      };
+      reactions = reactions.concat(newReaction);
+    }
+
+    await ctx.db.patch(id, {
+      reactions,
+    });
+    
+    return true;
+  },
+});

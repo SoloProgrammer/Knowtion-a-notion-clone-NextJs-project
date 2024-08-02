@@ -39,6 +39,15 @@ export default defineSchema({
       email: v.string(),
       avatar: v.string(),
     }),
+    reactions: v.optional(
+      v.array(
+        v.object({
+          id: v.string(),
+          reaction: v.string(),
+          user: v.string()
+        })
+      )
+    ),
     createdAt: v.number(),
   })
     .index("by_document", ["document"])
