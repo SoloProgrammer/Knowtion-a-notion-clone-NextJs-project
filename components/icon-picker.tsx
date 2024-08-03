@@ -2,7 +2,6 @@
 
 import { PropsWithChildren, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
-// import { Theme } from "emoji-picker-react";
 import { useState } from "react";
 import { useTheme } from "next-themes";
 
@@ -32,18 +31,20 @@ export const IconPicker = ({
   const emojiPickerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const handleScroll = (e: WheelEvent) => {
+    const handleScroll = (e: Event) => {
       e.stopPropagation();
     };
 
     const picker = emojiPickerRef.current;
     if (picker) {
       picker.addEventListener("wheel", handleScroll);
+      picker.addEventListener("touchmove", handleScroll);
     }
 
     return () => {
       if (picker) {
         picker.removeEventListener("wheel", handleScroll);
+        picker.removeEventListener("touchmove", handleScroll);
       }
     };
   }, [loadingEmojiPicker]);
