@@ -21,7 +21,14 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { MessageCircle, Send, SmilePlus, SquarePen, Trash } from "lucide-react";
+import {
+  MessageCircle,
+  Send,
+  SmilePlus,
+  SquarePen,
+  Trash,
+  X,
+} from "lucide-react";
 import AutoResizeTextArea from "react-textarea-autosize";
 import Image from "next/image";
 
@@ -99,7 +106,7 @@ export const CommentsSheet = ({
       <SheetContent
         side={isMobile ? "bottom" : "right"}
         className={cn(
-          "flex flex-col h-full px-0 pb-1 !overflow-y-auto pt-5",
+          "flex flex-col h-full px-0 pb-1 pt-5",
           isMobile && "!w-[100%] !max-h-[70%]"
         )}
       >
@@ -171,10 +178,10 @@ const CommentsList = ({ documentId }: { documentId: Id<"documents"> }) => {
           <p className="mt-2 font-medium">No comments yet!</p>
         </div>
       ) : (
-        <div className="flex-grow flex flex-col justify-end w-full overflow-y-auto custom-scroll-bar">
+        <div className="flex flex-grow flex-col justify-end w-full overflow-y-auto pr-1">
           <div
-            ref={commentsContainerRef}
             className="flex flex-col gap-y-3 w-full overflow-y-auto custom-scroll-bar pb-2 px-4 pr-3"
+            ref={commentsContainerRef}
           >
             {comments?.map((comment) => (
               <SingleComment key={comment._id} comment={comment} />
@@ -382,11 +389,10 @@ export const CommentsTrigger = ({
       setNotifications((prev) => ++prev);
       toast(`New message from ${event.data.user}`, {
         description: event.data.message,
-        cancel: true,
       });
     } else if (event.type === "MESSAGE_DELETED") {
       notification > 0 && setNotifications((prev) => --prev);
-      toast(`Message deleted by ${event.user}`, { cancel: true });
+      toast(`Message deleted by ${event.user}`);
     }
   });
 
