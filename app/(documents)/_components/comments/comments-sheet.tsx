@@ -82,18 +82,18 @@ export const CommentsSheet = ({
       <SheetContent
         side={isMobile ? "bottom" : "right"}
         className={cn(
-          "flex flex-col h-full pr-0 md:pr-3 px-4 pb-1 !overflow-y-auto",
+          "flex flex-col h-full px-0 pb-1 !overflow-y-auto pt-5",
           isMobile && "!w-[100%] !max-h-[70%]"
         )}
       >
         <SheetHeader>
-          <SheetTitle className="flex items-center">
+          <SheetTitle className="flex items-center px-4 pb-1">
             <MessageCircle className="text-muted-foreground mr-2" />{" "}
             <span>Live chat feed</span>
           </SheetTitle>
         </SheetHeader>
         <CommentsList documentId={documentId} />
-        <div>
+        <div className="px-3">
           <div className="flex items-center gap-x-2 relative flex-col">
             <AutoResizeTextArea
               ref={commentRef}
@@ -157,7 +157,7 @@ const CommentsList = ({ documentId }: { documentId: Id<"documents"> }) => {
         <div className="flex-grow flex flex-col justify-end w-full overflow-y-auto custom-scroll-bar">
           <div
             ref={commentsContainerRef}
-            className="flex flex-col gap-y-3 w-full overflow-y-auto custom-scroll-bar pb-2"
+            className="flex flex-col gap-y-3 w-full overflow-y-auto custom-scroll-bar pb-2 px-4 pr-3"
           >
             {comments?.map((comment) => (
               <SingleComment key={comment._id} comment={comment} />
@@ -193,7 +193,7 @@ const SingleComment = ({ comment }: { comment: Comment }) => {
               </span>
             </div>
           </div>
-          <div className="mr-1">
+          <div>
             {user?.id === comment.author.id ? (
               <div>
                 <ConfirmModal
@@ -231,7 +231,7 @@ const SingleComment = ({ comment }: { comment: Comment }) => {
         </div>
         <ReactionsList commentId={comment._id} reactions={comment.reactions} />
       </div>
-      <Separator className="last:hidden" />
+      <Separator className="last:hidden px-4 inline-block" />
     </>
   );
 };
@@ -314,7 +314,7 @@ const ReactionsList = ({
 
 CommentsList.Skeleton = () => {
   return (
-    <div className="flex-grow flex items-end py-5 w-full">
+    <div className="flex-grow flex items-end py-5 w-full px-4">
       <div className="flex flex-col gap-y-6 w-full">
         {Array(3)
           .fill(0)

@@ -81,4 +81,4 @@ export const IconPicker = ({
   );
 };
 
-IconPicker.Skeleton = () => <Skeleton className="w-[345px] h-[345px]" />;
+IconPicker.Skeleton = () => <Skeleton className="w-[350px] h-[370px]" />;
