@@ -28,7 +28,18 @@ declare global {
     };
 
     // Custom events, for useBroadcastEvent, useEventListener
-    RoomEvent: {};
+    RoomEvent:
+      | {
+          type: "NEW_MESSAGE";
+          data: {
+            user: string;
+            message: string;
+          };
+        }
+      | {
+          type: "MESSAGE_DELETED";
+          user: string;
+        };
     // Example has two events, using a union
     // | { type: "PLAY" }
     // | { type: "REACTION"; emoji: "🔥" };
