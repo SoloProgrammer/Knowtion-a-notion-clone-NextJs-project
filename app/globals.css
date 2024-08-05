@@ -111,7 +111,7 @@ td > p {
   @apply bg-primary/50
 }
 .custom-scroll-bar::-webkit-scrollbar {
-  @apply !bg-transparent !w-1
+  @apply !bg-transparent !w-[5px]
 }
 em-emoji-picker{
   @apply !h-[370px]

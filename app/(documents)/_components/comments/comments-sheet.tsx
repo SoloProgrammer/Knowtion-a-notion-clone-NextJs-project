@@ -21,7 +21,14 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { MessageCircle, Send, SmilePlus, SquarePen, Trash } from "lucide-react";
+import {
+  MessageCircle,
+  Send,
+  SmilePlus,
+  SquarePen,
+  Trash,
+  X,
+} from "lucide-react";
 import AutoResizeTextArea from "react-textarea-autosize";
 import Image from "next/image";
 
@@ -33,6 +40,7 @@ import {
   PropsWithChildren,
   useEffect,
   useRef,
+  useState,
 } from "react";
 import {
   useCreateNewComment,
@@ -42,10 +50,16 @@ import {
 } from "./hooks";
 import { useUser } from "@clerk/clerk-react";
 import { useMediaQuery } from "usehooks-ts";
+import {
+  useBroadcastEvent,
+  useEventListener,
+} from "@liveblocks/react/suspense";
 
 import { getFromNowDate } from "@/utils/date";
 import { cn } from "@/lib/utils";
 import { Comment, Reaction } from "./types";
+import { toast } from "sonner";
+import { useCommentsSheet } from "@/hooks/zustand/use-comments-sheet";
 
 type CommentsSheetProps = {
   documentId: Id<"documents">;
@@ -55,9 +69,19 @@ export const CommentsSheet = ({
   children,
   documentId,
 }: PropsWithChildren<CommentsSheetProps>) => {
+  const { user } = useUser();
   const commentRef = useRef<HTMLTextAreaElement | null>(null);
-
+  const { closeSheet } = useCommentsSheet();
+  // Broadcast event hook
+  const broadcast = useBroadcastEvent();
   const { create, isPending } = useCreateNewComment(() => {
+    broadcast({
+      type: "NEW_MESSAGE",
+      data: {
+        message: commentRef.current?.value.trim() || "",
+        user: user?.fullName || "",
+      },
+    });
     if (commentRef.current) commentRef.current.value = "";
   });
 
@@ -77,12 +101,12 @@ export const CommentsSheet = ({
   const isMobile = useMediaQuery("(max-width:768px)");
 
   return (
-    <Sheet>
+    <Sheet onOpenChange={(open) => !open && closeSheet()}>
       <SheetTrigger asChild>{children}</SheetTrigger>
       <SheetContent
         side={isMobile ? "bottom" : "right"}
         className={cn(
-          "flex flex-col h-full px-0 pb-1 !overflow-y-auto pt-5",
+          "flex flex-col h-full px-0 pb-1 pt-5",
           isMobile && "!w-[100%] !max-h-[70%]"
         )}
       >
@@ -154,10 +178,10 @@ const CommentsList = ({ documentId }: { documentId: Id<"documents"> }) => {
           <p className="mt-2 font-medium">No comments yet!</p>
         </div>
       ) : (
-        <div className="flex-grow flex flex-col justify-end w-full overflow-y-auto custom-scroll-bar">
+        <div className="flex flex-grow flex-col justify-end w-full overflow-y-auto pr-1">
           <div
-            ref={commentsContainerRef}
             className="flex flex-col gap-y-3 w-full overflow-y-auto custom-scroll-bar pb-2 px-4 pr-3"
+            ref={commentsContainerRef}
           >
             {comments?.map((comment) => (
               <SingleComment key={comment._id} comment={comment} />
@@ -170,8 +194,17 @@ const CommentsList = ({ documentId }: { documentId: Id<"documents"> }) => {
 };
 
 const SingleComment = ({ comment }: { comment: Comment }) => {
-  const { remove, isPending: isDeleting } = useDeleteComment();
   const { user } = useUser();
+
+  // Broadcast event hook
+  const broadcast = useBroadcastEvent();
+
+  const { remove, isPending: isDeleting } = useDeleteComment(() => {
+    broadcast({
+      type: "MESSAGE_DELETED",
+      user: user?.fullName || "",
+    });
+  });
 
   const handleDelete = () => remove({ id: comment._id });
 
@@ -346,13 +379,40 @@ export const CommentsTrigger = ({
 }: {
   documentId: Id<"documents">;
 }) => {
+  const { isOpen, openSheet } = useCommentsSheet();
+  const [notification, setNotifications] = useState(0);
+
+  useEventListener(({ event }) => {
+    if (isOpen) return;
+
+    if (event.type === "NEW_MESSAGE") {
+      setNotifications((prev) => ++prev);
+      toast(`New message from ${event.data.user}`, {
+        description: event.data.message,
+      });
+    } else if (event.type === "MESSAGE_DELETED") {
+      notification > 0 && setNotifications((prev) => --prev);
+      toast(`Message deleted by ${event.user}`);
+    }
+  });
+
+  useEffect(() => {
+    if (isOpen) setNotifications(0);
+  }, [isOpen]);
+
   return (
     <div className="fixed bottom-20 right-6 z-[99]">
       <CommentsSheet documentId={documentId}>
         <Button
+          onClick={() => openSheet()}
+          data-notification-count={(notification || "1").toString()}
           variant="ghost"
           size={"sm"}
-          className="bg-neutral-100 border-t shadow-md dark:bg-neutral-800 h-auto p-2 pt-[6px]"
+          className={cn(
+            "bg-neutral-100 border-t shadow-md dark:bg-neutral-800 h-auto p-2 pt-[6px]",
+            "before:absolute before:-top-1 before:-left-1 before:transition-opacity before:rounded-full before:bg-red-500 before:animate-bounce before:content-[attr(data-notification-count)] before:flex before:text-xs before:items-center before:justify-center before:w-4 before:h-4 before:opacity-0",
+            notification > 0 && "before:opacity-100 before:animate-bounce"
+          )}
         >
           <MessageCircle className="rotate" />
         </Button>

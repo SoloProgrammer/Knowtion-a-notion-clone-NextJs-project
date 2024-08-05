@@ -22,6 +22,8 @@ const useDeleteComment = (
 ) => {
   const { mutate: remove, ...rest } = useMutation({
     mutationFn: useConvexMutation(api.comments.remove),
+    onSuccess,
+    onError,
   });
   return { remove, ...rest };
 };
