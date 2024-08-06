@@ -31,8 +31,10 @@ export const Heading = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto mt-4 relative">
+    <div className="max-w-4xl mx-auto mt-4 relative">
       <Cursor
+        duration={0.3}
+        delay={0.2}
         color="#34893f"
         initialLeft={"-15%"}
         left={isMobile ? "-2%" : "-10%"}
@@ -44,6 +46,8 @@ export const Heading = () => {
         flip
       />
       <Cursor
+        duration={0.3}
+        delay={0.3}
         color="#01befe"
         initialLeft={"110%"}
         left={isMobile ? "78%" : "99%"}
@@ -57,10 +61,11 @@ export const Heading = () => {
         {...anim(headingVariants)}
         transition={{
           delay: 0,
+          duration: 0.2,
         }}
         className="flex flex-col gap-7 items-center space-y-1"
       >
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold px-2 md:px-0 text-[#333330] dark:text-[beige]">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold px-2 md:px-2 text-[#333330] dark:text-[beige]">
           Your Ideas, Documents. & Plans. Unified. Welcome to{" "}
           <span className="underline">{BRAND_NAME}</span>
         </h1>
