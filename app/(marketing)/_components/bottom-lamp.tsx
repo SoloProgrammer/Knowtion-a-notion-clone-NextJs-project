@@ -12,12 +12,16 @@ export const BottomLamp = () => {
     animate: {
       width: 220,
       height: 220,
+      transition: {
+        duration: 0.4,
+        delay: 0.45,
+      },
     },
   };
   return (
-    <motion.div
+    <motion.span
       {...anim(lampVariants)}
-      className="hidden md:block absolute bottom-[-10px] z-0 bg-[beige] rounded-full left-1/2 -translate-x-1/2"
+      className="hidden md:inline absolute top-[65%] z-0 bg-[beige] rounded-full left-1/2 -translate-x-1/2"
     />
   );
 };
