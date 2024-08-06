@@ -32,7 +32,7 @@ const MarketingPage = () => {
       <div className="flex flex-col flex-grow justify-center md:justify-start text-center p-0 pb-10 gap-5 mx-auto">
         <div className="w-screen h-full md:h-[90vh] bg-white dark:bg-[#121212] !p-0 md:shadow-xl relative overflow-hidden">
           <BottomLamp/>
-          <div className="md:backdrop-blur-[220px]">
+          <div className="md:backdrop-blur-[220px] h-full flex flex-col justify-center">
             <Heading />
             <Heros />
             <ScrollDownIcon />

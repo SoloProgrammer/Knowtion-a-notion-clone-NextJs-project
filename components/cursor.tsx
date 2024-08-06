@@ -15,12 +15,16 @@ type CursorProps = {
   avatar?: string;
   flip?: boolean;
   className?: string;
+  duration?: number;
+  delay?: number;
 };
 
 export default function Cursor({
   color,
   className,
   left,
+  duration = 0.3,
+  delay = 0,
   initialLeft,
   top,
   initialTop,
@@ -49,7 +53,7 @@ export default function Cursor({
   return (
     <AnimatePresence>
       <motion.div
-        transition={{ bounce: 0, duration: 0.2 }}
+        transition={{ bounce: 0, duration, delay }}
         {...anim(cursorMove)}
         className={cn(
           "z-[999] absolute top-0 left-0",
