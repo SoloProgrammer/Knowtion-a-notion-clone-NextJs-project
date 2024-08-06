@@ -15,7 +15,7 @@ export const LoginButton = ({
 }: PropsWithChildren<LoginButtonProps>) => {
   return (
     <SignInButton mode={mode}>
-      <Button {...rest} variant={"default"} size="sm" className={cn("text-xs", className)}>
+      <Button {...rest} variant={"default"} size="sm" className={cn("text-xs relative z-10", className)}>
         Get knowtion free
       </Button>
     </SignInButton>
