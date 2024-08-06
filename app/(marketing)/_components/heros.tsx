@@ -1,8 +1,8 @@
 "use client";
 
 import { useScroll, useTransform, motion } from "framer-motion";
-import Image from "next/image";
 import { useMediaQuery } from "usehooks-ts";
+import Image from "next/image";
 
 export const Heros = () => {
   const isMobile = useMediaQuery("(max-width:768px)");
@@ -10,7 +10,7 @@ export const Heros = () => {
 
   const xP = useTransform(scrollYProgress, [0, 1], [0, isMobile ? 0 : 700]); // positive x value
   const xN = useTransform(xP, (value) => -value); // converting x value to negative
-  const scale = useTransform(scrollYProgress, [0, 1], [1, isMobile ? 1 : 1.5]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, isMobile ? 2 : 1.5]);
 
   return (
     <div className="flex flex-col max-w-5xl mx-auto justify-center items-center relative">

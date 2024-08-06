@@ -11,6 +11,7 @@ import { TextTranslate } from "./_components/text-translate";
 import { BRAND_NAME } from "../constants";
 import { cn } from "@/lib/utils";
 import { ScrollDownIcon } from "./_components/scroll-down-icon";
+import { BottomLamp } from "./_components/bottom-lamp";
 
 const font = Raleway({
   subsets: ["vietnamese"],
@@ -18,8 +19,8 @@ const font = Raleway({
 });
 
 const MarketingPage = () => {
-  const words = [
-    "<span class=text-[#fc2f00]>Features</span>",
+  const words = ["HOT", "<span class=text-[#fc2f00]>Features</span>"];
+  const words1 = [
     "that",
     "are",
     "<span class='text-[#04e762] animate-pulse'>live</span>",
@@ -29,10 +30,13 @@ const MarketingPage = () => {
   return (
     <div className="min-h-full flex flex-col antialiased w-screen">
       <div className="flex flex-col flex-grow justify-center md:justify-start text-center p-0 pb-10 gap-5 mx-auto">
-        <div className="w-screen h-full md:h-[90vh] bg-white dark:bg-[#121212] !p-0 md:shadow-xl relative">
-          <Heading />
-          <Heros />
-          <ScrollDownIcon />
+        <div className="w-screen h-full md:h-[90vh] bg-white dark:bg-[#121212] !p-0 md:shadow-xl relative overflow-hidden">
+          <BottomLamp/>
+          <div className="md:backdrop-blur-[220px]">
+            <Heading />
+            <Heros />
+            <ScrollDownIcon />
+          </div>
         </div>
         <HeroScroll />
         <h1
@@ -42,6 +46,7 @@ const MarketingPage = () => {
           )}
         >
           <TextReveal words={words} animateOnce={false} delayPerWord={0.15} />
+          <TextReveal words={words1} animateOnce={false} delayPerWord={0.15} />
         </h1>
         <BentoGrid />
         <TextTranslate className="md:block !text-[#d7d2ca82]">

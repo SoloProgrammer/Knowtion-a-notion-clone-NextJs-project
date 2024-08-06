@@ -40,8 +40,8 @@ export const LiveCursorsProvider = ({ children }: PropsWithChildren) => {
               <Cursor
                 key={`cursor-${connectionId}`}
                 color={info.color}
-                x={presence.cursor.x}
-                y={presence.cursor.y}
+                left={presence.cursor.x}
+                top={presence.cursor.y}
                 name={info.name}
                 avatar={info.avatar}
               />
