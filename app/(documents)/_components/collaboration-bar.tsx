@@ -92,19 +92,8 @@ export const CollaborationBar = ({
 
   return (
     <div className="px-2 border-b flex items-center justify-between min-h-12">
-      <div>
-        {ownerId !== user?.id ? (
-          onlineCollaborators.length > 0 ? (
-            <CollaboratorsAvatarStack
-              collaborators={onlineCollaborators}
-              size="sm"
-            />
-          ) : (
-            <span className="text-muted-foreground text-sm">
-              &#x2022; 0 online
-            </span>
-          )
-        ) : (
+      <div className="flex items-center gap-x-2">
+        {ownerId === user?.id && (
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -125,6 +114,18 @@ export const CollaborationBar = ({
             </PopoverContent>
           </Popover>
         )}
+        {onlineCollaborators.length > 0 ? (
+          <CollaboratorsAvatarStack
+            collaborators={onlineCollaborators}
+            size="sm"
+          />
+        ) : (
+          ownerId !== user?.id && (
+            <span className="text-muted-foreground text-sm">
+              &#x2022; 0 online
+            </span>
+          )
+        )}
       </div>
       <div className="flex items-center gap-x-2">
         <ToggleFavorite
@@ -144,7 +145,7 @@ export const CollaborationBar = ({
             </Button>
           </PopoverTrigger>
           <PopoverContent align="end" className="p-2">
-            <h2 className="font-medium pb-2 text-sm">Search users</h2>
+            <h2 className="font-medium pb-2 text-sm">Search & Invite</h2>
             <div className="flex items-center">
               <Input
                 value={query}
