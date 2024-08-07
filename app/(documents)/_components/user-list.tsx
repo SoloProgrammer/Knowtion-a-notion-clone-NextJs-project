@@ -23,7 +23,7 @@ export const UsersList = ({
   enabledRemove,
 }: UsersListProps) => {
   return (
-    <div className="mt-2 flex flex-col gap-y-1">
+    <div className="mt-2 flex flex-col gap-y-[6px]">
       {users?.map((user) => (
         <UserItem
           key={user.email}
@@ -41,11 +41,11 @@ const UserItem = ({ user, onUserSelect, enabledRemove }: UserItemProps) => {
     <div
       onClick={() => onUserSelect?.(user)}
       className={cn(
-        "flex items-center gap-x-3 bg-muted/60 py-1 rounded-sm px-1 hover:bg-muted cursor-pointer group",
+        "flex items-center gap-x-3 bg-muted/60 py-[2px] rounded-sm px-1 hover:bg-muted cursor-pointer group",
         enabledRemove && "hover:bg-red-400/20"
       )}
     >
-      <Avatar className="w-5 h-5">
+      <Avatar className="w-7 h-7">
         <AvatarImage
           src={user.imgUrl}
           alt={user.name as string}
@@ -61,7 +61,22 @@ const UserItem = ({ user, onUserSelect, enabledRemove }: UserItemProps) => {
           )}
         />
       </Avatar>
-      <span className={cn("truncate text-[.775rem]", enabledRemove && "group-hover:text-red-500")}>{user.email}</span>
+      <span
+        className={cn(
+          "flex flex-col",
+          enabledRemove && "group-hover:text-red-500"
+        )}
+      >
+        <span className="text-sm capitalize">{user.name}</span>
+        <span
+          className={cn(
+            "truncate text-[.7rem] text-neutral-400",
+            enabledRemove && "group-hover:text-red-500"
+          )}
+        >
+          {user.email}
+        </span>
+      </span>
     </div>
   );
 };

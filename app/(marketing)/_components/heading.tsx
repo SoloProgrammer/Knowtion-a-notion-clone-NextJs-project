@@ -17,7 +17,8 @@ import { anim } from "@/lib/utils";
 export const Heading = () => {
   const { isAuthenticated, isLoading } = useConvexAuth();
 
-  const isMobile = useMediaQuery("(max-width:768px)");
+  const isMobile = useMediaQuery("(max-width:767px)");
+  const isTablet = useMediaQuery("(max-width:1025px)");
 
   const headingVariants = {
     initial: {
@@ -30,6 +31,9 @@ export const Heading = () => {
     },
   };
 
+  const cursor_blue_left = (isMobile && "78%") || (isTablet && "83%") || "93%";
+  const cursor_green_left = (isMobile && "-2%") || (isTablet && "10%") || "-10%";
+
   return (
     <div className="max-w-4xl mx-auto mt-4 relative z-10">
       <Cursor
@@ -37,7 +41,7 @@ export const Heading = () => {
         delay={0.2}
         color="#34893f"
         initialLeft={"-15%"}
-        left={isMobile ? "-2%" : "-10%"}
+        left={cursor_green_left}
         initialTop={"120%"}
         top={isMobile ? "100%" : "80%"}
         name="Pratham Shinde"
@@ -50,7 +54,7 @@ export const Heading = () => {
         delay={0.3}
         color="#01befe"
         initialLeft={"100%"}
-        left={isMobile ? "78%" : "93%"}
+        left={cursor_blue_left}
         initialTop={170}
         top={isMobile ? 175 : 120}
         name="John Wick"
