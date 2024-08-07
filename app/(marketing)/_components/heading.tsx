@@ -21,17 +21,17 @@ export const Heading = () => {
 
   const headingVariants = {
     initial: {
-      y: -20,
-      opacity: 0.3,
+      y: 35,
+      opacity: 0.1,
     },
     animate: {
-      y: 0,
+      y: -5,
       opacity: 1,
     },
   };
 
   return (
-    <div className="max-w-4xl mx-auto mt-4 relative">
+    <div className="max-w-4xl mx-auto mt-4 relative z-10">
       <Cursor
         duration={0.3}
         delay={0.2}
@@ -49,9 +49,9 @@ export const Heading = () => {
         duration={0.3}
         delay={0.3}
         color="#01befe"
-        initialLeft={"110%"}
-        left={isMobile ? "78%" : "99%"}
-        initialTop={140}
+        initialLeft={"100%"}
+        left={isMobile ? "78%" : "93%"}
+        initialTop={170}
         top={isMobile ? 175 : 120}
         name="John Wick"
         avatar="/avatar.png"
@@ -62,6 +62,7 @@ export const Heading = () => {
         transition={{
           delay: 0,
           duration: 0.2,
+          ease: "easeOut",
         }}
         className="flex flex-col gap-7 items-center space-y-1"
       >
@@ -80,7 +81,7 @@ export const Heading = () => {
         )}
         {!isLoading && isAuthenticated && (
           <Link href={"/documents"}>
-            <Button className="group z-10 relative" size="sm">
+            <Button className="group" size="sm">
               Enter {BRAND_NAME}{" "}
               <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition" />
             </Button>
