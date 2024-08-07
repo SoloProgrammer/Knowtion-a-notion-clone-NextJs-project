@@ -6,15 +6,15 @@ import { motion } from "framer-motion";
 export const BottomLamp = () => {
   const lampVariants = {
     initial: {
-      width: 90,
-      height: 90,
+      width: 0,
+      height: 0,
     },
     animate: {
-      width: 220,
-      height: 220,
+      width: 230,
+      height: 230,
       transition: {
         duration: 0.4,
-        delay: 0.45,
+        delay: 0.25,
       },
     },
   };
