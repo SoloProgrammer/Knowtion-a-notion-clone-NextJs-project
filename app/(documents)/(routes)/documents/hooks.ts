@@ -240,6 +240,9 @@ const useGetSidebarDocumentsQuery = (
 const useGetDocumentsQuery = () =>
   useQuery(convexQuery(api.documents.getDocumentsByUser, {}));
 
+const useGetTotalDocumentsCount = () =>
+  useQuery(convexQuery(api.documents.getTotalDocumentsCount, {}));
+
 const useGetFavoutiteDocumentsQuery = () =>
   useQuery(convexQuery(api.documents.getFavouriteDocuments, {}));
 
@@ -269,6 +272,7 @@ export {
   useGetSidebarDocumentsQuery,
   useGetDocumentsQuery,
   useGetArchiveDocumentsQuery,
+  useGetTotalDocumentsCount,
   usePublishDocumentMutation,
   useGetSingleDocument,
   useGetPreviewDocument,

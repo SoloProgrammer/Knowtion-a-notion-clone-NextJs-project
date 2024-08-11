@@ -366,6 +366,27 @@ export const getFavouriteDocuments = query({
   },
 });
 
+export const getTotalDocumentsCount = query({
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new ConvexError("Not authenticated");
+    }
+    const userId = identity.subject;
+
+    const totalDocuments = (
+      await ctx.db
+        .query("documents")
+        .withIndex("by_user", (q) => q.eq("userId", userId))
+        .filter((q) => q.eq(q.field("isArchived"), false))
+        .collect()
+    ).length;
+
+    return totalDocuments;
+  },
+});
+
 export const checkFavourite = query({
   args: {
     docId: v.id("documents"),
@@ -458,7 +479,7 @@ export const udpate = mutation({
     const document = await ctx.db.patch(args.id, {
       ...rest,
       updatedAt: Date.now(),
-      editedBy:identity.name
+      editedBy: identity.name,
     });
 
     return document;
