@@ -44,6 +44,7 @@ export const LiveCursorsProvider = ({ children }: PropsWithChildren) => {
                 top={presence.cursor.y}
                 name={info.name}
                 avatar={info.avatar}
+                duration={0.15}
               />
             );
           })}

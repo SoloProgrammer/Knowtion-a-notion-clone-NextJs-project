@@ -11,6 +11,8 @@ import { useConvexAuth } from "convex/react";
 
 import { EdgeStoreProvider } from "@/lib/edgestore";
 import { DocumentLayoutProvider } from "@/providers/document-layout-provider";
+import { UpgradePlanModal } from "@/components/modals/upgrade-plan-modal";
+import { useUpgrade } from "@/hooks/zustand/use-upgrade";
 
 const DocumentsLayout = ({ children }: PropsWithChildren) => {
   const { isAuthenticated, isLoading } = useConvexAuth();
@@ -30,6 +32,7 @@ const DocumentsLayout = ({ children }: PropsWithChildren) => {
       <div className="w-full h-full flex justify-center !overflow-y-hidden">
         <Sidebar />
         <SearchCommand />
+        <UpgradePlanModal />
         <main className="flex-grow">
           <EdgeStoreProvider>{children}</EdgeStoreProvider>
         </main>

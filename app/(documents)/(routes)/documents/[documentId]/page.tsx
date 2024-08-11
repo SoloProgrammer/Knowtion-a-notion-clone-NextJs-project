@@ -74,8 +74,11 @@ const DocumentPage = ({ params }: DocumentPageProps) => {
           preview={isPreview}
         />
         <div className="md:max-w-4xl lg:max-w-5xl px-2 mx-auto mt-3 flex flex-col gap-y-4 flex-grow w-full">
-          <Toolbar document={document!} preview={isPreview} />
-          <DynamicEditor onChange={handleEditorChange} editable={!isPreview} />
+          <Toolbar document={document!} preview={isPreview || document.isArchived} />
+          <DynamicEditor
+            onChange={handleEditorChange}
+            editable={!isPreview && !document.isArchived}
+          />
         </div>
       </div>
       <CommentsTrigger documentId={document._id} />
