@@ -1,8 +1,5 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
-import { Raleway } from "next/font/google";
 import { ElementRef, MouseEvent } from "react";
 
 import { cn } from "@/lib/utils";
@@ -22,6 +19,8 @@ import { useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import { useSideBar } from "@/hooks/zustand/use-sidebar";
 import { useSearch } from "@/hooks/zustand/use-search";
+import { useUpgrade } from "@/hooks/zustand/use-upgrade";
+import { useTotalDocuments } from "@/hooks/zustand/use-total-documents";
 import { useCreateNewDocumentMutation } from "../../(routes)/documents/hooks";
 
 import { UserItem } from "../user-item";
@@ -30,27 +29,23 @@ import { DocumentList } from "../document-list";
 import { TrashPopPver } from "../trash-popover";
 import { SettingsModal } from "@/components/modals/settings-modal";
 import { SharedDocumentList } from "../shared-document-list";
-
-import { MAX_WIDTH, MIN_WIDTH } from "./constants";
-import { BRAND_NAME } from "@/app/constants";
 import { FavouriteDocumentsList } from "../favourite-documents-list";
 
-const font = Raleway({
-  subsets: ["vietnamese"],
-  weight: ["400", "600", "700"],
-});
+import { MAX_FILES, MAX_WIDTH, MIN_WIDTH } from "./constants";
+import { Footer } from "./footer";
 
 export const Sidebar = () => {
   const pathName = usePathname();
   const isMobile = useMediaQuery("(max-width: 768px)");
   const { onCreateDocument: create, isCreating } =
     useCreateNewDocumentMutation();
-
   const sidebarRef = useRef<ElementRef<"aside">>(null);
   const isResizingRef = useRef(false);
   const [isResetting, setIsResetting] = useState(false);
   const { isCollapsed, setIsCollapsed, isTransitioning } = useSideBar(isMobile);
   const { openSearch } = useSearch();
+  const { openUpgrade } = useUpgrade();
+  const { totalFiles } = useTotalDocuments();
 
   const handleDragStart = (e: MouseEvent) => {
     e.preventDefault();
@@ -84,7 +79,11 @@ export const Sidebar = () => {
     }, 400);
   };
 
-  const onCreateDocument = () => create({ title: "" });
+  const onCreateDocument = () => {
+    if (totalFiles >= MAX_FILES) {
+      openUpgrade();
+    } else create({ title: "" });
+  };
 
   useEffect(() => {
     isMobile && setIsCollapsed(true);
@@ -109,7 +108,7 @@ export const Sidebar = () => {
         isTransitioning && "transition-all ease-in-expo duration-500"
       )}
     >
-      <div className="flex-grow pb-5 overflow-y-auto custom-scroll-bar">
+      <div className="flex-grow pb-5 overflow-y-auto custom-scroll-bar overflow-x-hidden">
         <div>
           <div
             role="button"
@@ -152,26 +151,7 @@ export const Sidebar = () => {
           </TrashPopPver>
         </div>
       </div>
-      <Link href={"/"}>
-        <div className="px-3 hover:bg-primary/5 transition cursor-pointer h-[55px] border-t flex items-center gap-x-2 group">
-          <div className="w-6 h-6 relative truncate">
-            <Image
-              src={"/logo.png"}
-              fill
-              alt="logo"
-              className="object-cover dark:invert"
-            />
-          </div>
-          <span
-            className={cn(
-              font.className,
-              "text-muted-foreground font-semibold truncate group-hover:text-primary"
-            )}
-          >
-            {BRAND_NAME}
-          </span>
-        </div>
-      </Link>
+      <Footer />
       <div
         onMouseDown={handleDragStart}
         onClick={handleResetSideBarWidth}

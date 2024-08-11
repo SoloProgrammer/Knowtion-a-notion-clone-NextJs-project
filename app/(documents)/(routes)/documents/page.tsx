@@ -9,12 +9,18 @@ import { Button } from "@/components/ui/button";
 import { Loader, PlusCircle } from "lucide-react";
 
 import { useUser } from "@clerk/clerk-react";
-import { cn } from "@/lib/utils";
+import { useUpgrade } from "@/hooks/zustand/use-upgrade";
 import { useCreateNewDocumentMutation } from "./hooks";
+
+import { cn } from "@/lib/utils";
+import { useTotalDocuments } from "@/hooks/zustand/use-total-documents";
+import { MAX_FILES } from "../../_components/sidebar/constants";
 
 const DocumentsPage = () => {
   const { user } = useUser();
   const { onCreateDocument, isCreating } = useCreateNewDocumentMutation();
+  const { totalFiles } = useTotalDocuments();
+  const { openUpgrade } = useUpgrade();
 
   const CreateNewDocumentIcon = isCreating ? Loader : PlusCircle;
 
@@ -37,14 +43,21 @@ const DocumentsPage = () => {
           disabled={isCreating}
           className="mt-5 disabled:opacity-80"
           size={"sm"}
-          onClick={() => onCreateDocument({ title: "" })}
+          onClick={() => {
+            if (totalFiles >= MAX_FILES) {
+              openUpgrade();
+              return;
+            } else onCreateDocument({ title: "" });
+          }}
         >
           <span>
             <CreateNewDocumentIcon
               className={cn("w-4 h-4 mr-2", isCreating && "animate-spin")}
             />
           </span>
-          <span>{isCreating ? "Creating new document.." : "Create a note"}</span>
+          <span>
+            {isCreating ? "Creating new document.." : "Create a note"}
+          </span>
         </Button>
       </div>
     </div>
