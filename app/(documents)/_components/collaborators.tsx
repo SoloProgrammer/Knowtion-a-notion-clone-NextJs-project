@@ -89,7 +89,7 @@ export const Collaborators = ({ documentId }: CollaboratorProps) => {
           <p className="text-muted-foreground text-xs font-semibold">
             Now Editing
           </p>
-          <div className="flex -space-x-1 my-3 pb-1">
+          <div className="my-3 pb-1">
             <CollaboratorsAvatarStack collaborators={onlineCollaborators} />
           </div>
           <Separator />

@@ -26,6 +26,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@clerk/clerk-react";
 import { useOthers } from "@liveblocks/react/suspense";
 import { ToggleFavorite } from "./toggle-favourite";
+import { useMediaQuery } from "usehooks-ts";
 
 type CollaborationBarProps = {
   documentId: Id<"documents">;
@@ -37,6 +38,7 @@ export const CollaborationBar = ({
   ownerId,
 }: CollaborationBarProps) => {
   const { user } = useUser();
+  const isMobile = useMediaQuery("(max-width:600px)");
   const [query, setQuery] = useState("");
   const [isEnabled, setIsEnabled] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | undefined>();
@@ -114,7 +116,7 @@ export const CollaborationBar = ({
             </PopoverContent>
           </Popover>
         )}
-        {onlineCollaborators.length > 0 ? (
+        {!isMobile && onlineCollaborators.length > 0 ? (
           <CollaboratorsAvatarStack
             collaborators={onlineCollaborators}
             size="sm"
