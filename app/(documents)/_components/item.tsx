@@ -19,8 +19,10 @@ import { cn } from "@/lib/utils";
 import { useCreateNewDocumentMutation } from "../(routes)/documents/hooks";
 import { useTotalDocuments } from "@/hooks/zustand/use-total-documents";
 import { useUpgrade } from "@/hooks/zustand/use-upgrade";
+import { useSubscription } from "@/hooks/zustand/use-subscription";
 
 import { MAX_FILES } from "./sidebar/constants";
+import { PLANS } from "@/app/constants";
 
 type ItemProps = {
   id?: Id<"documents">;
@@ -55,6 +57,7 @@ export const Item = ({
   isLoading = false,
   showActions = true,
 }: ItemProps) => {
+  const { plan } = useSubscription();
   const { onCreateDocument, isCreating, documentId } =
     useCreateNewDocumentMutation();
 
@@ -72,7 +75,7 @@ export const Item = ({
     e.stopPropagation();
     e.preventDefault();
 
-    if (totalFiles && totalFiles >= MAX_FILES) {
+    if (totalFiles && totalFiles >= MAX_FILES && plan !== PLANS.PRO) {
       openUpgrade();
       return;
     }
@@ -117,11 +120,16 @@ export const Item = ({
         </div>
       ) : (
         <Icon
-          className={cn("h-[18px] shrink-0 mr-2 group-hover:text-primary", isLoading && "animate-spin")}
+          className={cn(
+            "h-[18px] shrink-0 mr-2 group-hover:text-primary",
+            isLoading && "animate-spin"
+          )}
         />
       )}
 
-      <span className="truncate select-none mr-2 group-hover:text-primary">{label}</span>
+      <span className="truncate select-none mr-2 group-hover:text-primary">
+        {label}
+      </span>
 
       {isSearch && (
         <kbd className="ml-auto bg-muted font-medium border-b text-[10px] text-muted-foreground shadow-sm pointer-events-none select-none rounded inline-flex items-center mr-2 px-1 gap-1">

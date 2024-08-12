@@ -230,6 +230,18 @@ const useRemoveFromFavouritesMutation = (
   return { removeFromFavourites, ...rest };
 };
 
+const useCreateSubscriptionMutation = (
+  onSuccess?: () => void,
+  onError?: (err: Error) => void
+) => {
+  const { mutate: create, ...rest } = useMutation({
+    mutationFn: useConvexMutation(api.subscriptions.create),
+    onSuccess,
+    onError,
+  });
+  return { create, ...rest };
+};
+
 const useGetSidebarDocumentsQuery = (
   parentDocument: Id<"documents"> | undefined
 ) =>
@@ -264,6 +276,9 @@ const useGetSharedDocuments = (email: string) =>
 const useGetCollaboratorsByDocument = (documentId: Id<"documents">) =>
   useQuery(convexQuery(api.documents.getCollaborators, { id: documentId }));
 
+const useGetUserSubcriptionQuery = () =>
+  useQuery(convexQuery(api.subscriptions.get, {}));
+
 export {
   useArchiveDocumentMutation,
   useCreateNewDocumentMutation,
@@ -272,6 +287,8 @@ export {
   useGetSidebarDocumentsQuery,
   useGetDocumentsQuery,
   useGetArchiveDocumentsQuery,
+  useGetUserSubcriptionQuery,
+  useCreateSubscriptionMutation,
   useGetTotalDocumentsCount,
   usePublishDocumentMutation,
   useGetSingleDocument,
