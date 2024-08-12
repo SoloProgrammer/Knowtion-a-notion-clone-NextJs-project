@@ -2,7 +2,7 @@ import { ConvexError, v } from "convex/values";
 
 import { mutation, query } from "./_generated/server";
 import { Doc, Id } from "./_generated/dataModel";
-import { udpateDocumentColumns } from "./schema";
+import { udpateDocumentDto } from "./schema";
 
 export const archiveDocument = mutation({
   args: {
@@ -441,7 +441,7 @@ export const create = mutation({
 
 export const udpate = mutation({
   args: {
-    ...udpateDocumentColumns,
+    ...udpateDocumentDto,
     id: v.id("documents"),
     title: v.optional(v.string()),
   },

@@ -65,4 +65,9 @@ const THEMS: ThemeType[] = [
   },
 ];
 
-export { META, BRAND_NAME, THEMS, DARK, LIGHT, SYSTEM };
+const PLANS = {
+  FREE: "free",
+  PRO: "pro",
+};
+
+export { META, BRAND_NAME, THEMS, DARK, LIGHT, SYSTEM, PLANS };
