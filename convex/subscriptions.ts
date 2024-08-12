@@ -26,12 +26,6 @@ export const create = mutation({
 export const update = mutation({
   args: { ...SubscriptionDto, id: v.id("subscriptions") },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-
-    if (!identity) {
-      throw new ConvexError("Not authenticated");
-    }
-
     const { id, ...rest } = args;
     await ctx.db.patch(id, rest);
 
