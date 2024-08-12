@@ -1,7 +1,7 @@
 "use client";
 
 import { redirect } from "next/navigation";
-import { PropsWithChildren, useEffect } from "react";
+import { PropsWithChildren, use, useEffect } from "react";
 
 import { Spinner } from "@/components/spinner";
 import { SearchCommand } from "@/components/search-command";
@@ -19,27 +19,30 @@ import { useSubscription } from "@/hooks/zustand/use-subscription";
 import { useConvexAuth } from "convex/react";
 
 import { PLANS } from "@/app/constants";
+import { useUser } from "@clerk/clerk-react";
 
 const DocumentsLayout = ({ children }: PropsWithChildren) => {
   const { isAuthenticated, isLoading } = useConvexAuth();
+  const { user } = useUser();
 
   const {
     data: subscription,
     isSuccess,
     isLoading: isPlanLoading,
-  } = useGetUserSubcriptionQuery();
+  } = useGetUserSubcriptionQuery(user?.id!);
   const { create } = useCreateSubscriptionMutation();
   const { setPlan, setPlanIsLoading } = useSubscription();
 
   // CHECKING FOR EXISTING SUBSCRIPTION IF NOT FOUND CREATE NEW WITH _FREE_ PLAN OR UPDATE PLAN TO THE STORE
   useEffect(() => {
     setPlanIsLoading(isPlanLoading);
+    if (!user) return;
     if (isSuccess && subscription) {
       setPlan(subscription?.plan);
     } else if (!subscription && !isPlanLoading) {
       create({ plan: PLANS.FREE });
     }
-  }, [subscription, isSuccess, isPlanLoading]);
+  }, [subscription, isSuccess, isPlanLoading, user]);
 
   if (isLoading) {
     return (
