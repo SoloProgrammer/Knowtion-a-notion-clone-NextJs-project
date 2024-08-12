@@ -1,6 +1,6 @@
 "use client";
 
-import { PropsWithChildren } from "react";
+import { HTMLAttributes, PropsWithChildren, useState } from "react";
 
 import {
   Dialog,
@@ -17,17 +17,28 @@ import Image from "next/image";
 import { Button } from "../ui/button";
 import { Sparkles } from "lucide-react";
 import { useUpgrade } from "@/hooks/zustand/use-upgrade";
+import { checkout } from "@/actions/transaction.actions";
+import { useAuth } from "@clerk/clerk-react";
+import { Spinner } from "../spinner";
 
 export const UpgradePlanModal = ({ children }: PropsWithChildren) => {
   const { isOpen, closeUpgrade } = useUpgrade();
+  const [loading, setLoading] = useState(false);
+  const { userId } = useAuth();
+
   return (
     <ModalProvider>
       <Dialog open={isOpen} onOpenChange={closeUpgrade}>
         <DialogTrigger asChild>{children}</DialogTrigger>
         <DialogContent className="p-0">
           <DialogHeader className="mx-auto pt-4 px-5 !pr-10 text-left">
-            <h2 className="text-2xl font-semibold">Opps!... looks like you're running out of free access.</h2>
-            <small className="text-muted-foreground">No worries upgrade to pro plan to get unlimited access <Sparkles className="w-3 h-3 shrink-0 text-primary inline" /></small>
+            <h2 className="text-2xl font-semibold">
+              Opps!... looks like you're running out of free access.
+            </h2>
+            <small className="text-muted-foreground">
+              No worries upgrade to pro plan to get unlimited access{" "}
+              <Sparkles className="w-3 h-3 shrink-0 text-primary inline" />
+            </small>
           </DialogHeader>
           <div className="flex flex-col gap-y-1 items-start w-full">
             <div className="relative h-[300px] w-full -my-8">
@@ -53,14 +64,46 @@ export const UpgradePlanModal = ({ children }: PropsWithChildren) => {
                   Unlimited workspaces(coming soon..)
                 </li>
               </ul>
-              <Button className="mt-7 font-semibold text-[16px]">
-                <span>Upgrade</span>
-                <Sparkles className="w-4 h-4 shrink-0 ml-2" />
-              </Button>
+              <CheckoutButton
+                isLoading={loading}
+                onClick={() => {
+                  setLoading(true);
+                  checkout({
+                    amount: 20,
+                    buyerId: userId as string,
+                    plan: "PRO",
+                  });
+                }}
+              />
             </div>
           </div>
         </DialogContent>
       </Dialog>
     </ModalProvider>
+  );
+};
+
+const CheckoutButton = ({
+  isLoading,
+  ...props
+}: HTMLAttributes<HTMLButtonElement> & { isLoading: boolean }) => {
+  return (
+    <Button
+      {...props}
+      disabled={isLoading}
+      className="mt-7 font-semibold text-[16px]"
+    >
+      {!isLoading ? (
+        <>
+          <span>Upgrade</span>
+          <Sparkles className="w-4 h-4 shrink-0 ml-2" />
+        </>
+      ) : (
+        <>
+          <span>Redirecting to payment page</span>
+          <Spinner className="ml-2"/>
+        </>
+      )}
+    </Button>
   );
 };
