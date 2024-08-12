@@ -16,6 +16,7 @@ import type {
 } from "convex/server";
 import type * as comments from "../comments.js";
 import type * as documents from "../documents.js";
+import type * as subscriptions from "../subscriptions.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -28,6 +29,7 @@ import type * as documents from "../documents.js";
 declare const fullApi: ApiFromModules<{
   comments: typeof comments;
   documents: typeof documents;
+  subscriptions: typeof subscriptions;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

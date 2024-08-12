@@ -22,6 +22,7 @@ import { useSearch } from "@/hooks/zustand/use-search";
 import { useUpgrade } from "@/hooks/zustand/use-upgrade";
 import { useTotalDocuments } from "@/hooks/zustand/use-total-documents";
 import { useCreateNewDocumentMutation } from "../../(routes)/documents/hooks";
+import { useSubscription } from "@/hooks/zustand/use-subscription";
 
 import { UserItem } from "../user-item";
 import { Item } from "../item";
@@ -30,9 +31,10 @@ import { TrashPopPver } from "../trash-popover";
 import { SettingsModal } from "@/components/modals/settings-modal";
 import { SharedDocumentList } from "../shared-document-list";
 import { FavouriteDocumentsList } from "../favourite-documents-list";
+import { Footer } from "./footer";
 
 import { MAX_FILES, MAX_WIDTH, MIN_WIDTH } from "./constants";
-import { Footer } from "./footer";
+import { PLANS } from "@/app/constants";
 
 export const Sidebar = () => {
   const pathName = usePathname();
@@ -46,6 +48,7 @@ export const Sidebar = () => {
   const { openSearch } = useSearch();
   const { openUpgrade } = useUpgrade();
   const { totalFiles } = useTotalDocuments();
+  const { plan } = useSubscription();
 
   const handleDragStart = (e: MouseEvent) => {
     e.preventDefault();
@@ -80,7 +83,7 @@ export const Sidebar = () => {
   };
 
   const onCreateDocument = () => {
-    if (totalFiles >= MAX_FILES) {
+    if (totalFiles >= MAX_FILES && plan !== PLANS.PRO) {
       openUpgrade();
     } else create({ title: "" });
   };
