@@ -36,18 +36,20 @@ export const update = mutation({
 export const get = query({
   args: { userId: v.optional(v.string()) },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
+    let buyerId = args.userId;
+    if (!args.userId) {
+      const identity = await ctx.auth.getUserIdentity();
 
-    if (!identity) {
-      throw new ConvexError("Not authenticated");
+      if (!identity) {
+        throw new ConvexError("Not authenticated");
+      }
+      buyerId = identity.subject;
     }
-
-    const buyerId = args.userId || identity.subject;
 
     const subscription = (
       await ctx.db
         .query("subscriptions")
-        .withIndex("by_buyer", (q) => q.eq("buyerId", buyerId))
+        .withIndex("by_buyer", (q) => q.eq("buyerId", buyerId || ""))
         .collect()
     )[0];
 
