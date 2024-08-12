@@ -10,16 +10,19 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { DialogTrigger } from "@radix-ui/react-dialog";
+import { Button } from "../ui/button";
+import { checkout } from "@/actions/transaction.actions";
+import { Spinner } from "../spinner";
 
 import ModalProvider from "@/providers/modal-provider";
 
 import Image from "next/image";
-import { Button } from "../ui/button";
 import { Sparkles } from "lucide-react";
-import { useUpgrade } from "@/hooks/zustand/use-upgrade";
-import { checkout } from "@/actions/transaction.actions";
+
 import { useAuth } from "@clerk/clerk-react";
-import { Spinner } from "../spinner";
+import { useUpgrade } from "@/hooks/zustand/use-upgrade";
+
+import { PLANS } from "@/app/constants";
 
 export const UpgradePlanModal = ({ children }: PropsWithChildren) => {
   const { isOpen, closeUpgrade } = useUpgrade();
@@ -71,7 +74,7 @@ export const UpgradePlanModal = ({ children }: PropsWithChildren) => {
                   checkout({
                     amount: 20,
                     buyerId: userId as string,
-                    plan: "PRO",
+                    plan: PLANS.PRO,
                   });
                 }}
               />
