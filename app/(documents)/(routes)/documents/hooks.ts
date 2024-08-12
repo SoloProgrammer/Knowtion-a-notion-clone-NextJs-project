@@ -276,8 +276,8 @@ const useGetSharedDocuments = (email: string) =>
 const useGetCollaboratorsByDocument = (documentId: Id<"documents">) =>
   useQuery(convexQuery(api.documents.getCollaborators, { id: documentId }));
 
-const useGetUserSubcriptionQuery = () =>
-  useQuery(convexQuery(api.subscriptions.get, {}));
+const useGetUserSubcriptionQuery = (userId: string) =>
+  useQuery(convexQuery(api.subscriptions.get, { userId }));
 
 export {
   useArchiveDocumentMutation,
