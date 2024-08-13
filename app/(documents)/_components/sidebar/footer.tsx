@@ -58,7 +58,12 @@ export const Footer = () => {
         </div>
       )}
       <Link href={"/"}>
-        <div className="px-3 hover:bg-primary/5 transition cursor-pointer h-[50px] flex items-center justify-between group">
+        <div
+          className={cn(
+            "px-3 hover:bg-primary/5 transition cursor-pointer h-[50px] flex items-center justify-between group",
+            plan === PLANS.PRO && "border-t border-muted-foreground/30"
+          )}
+        >
           <div className="flex items-center gap-x-2">
             <div className="w-6 h-6 relative truncate">
               <Image
