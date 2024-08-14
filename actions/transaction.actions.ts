@@ -16,7 +16,7 @@ export const checkout = async (transaction: CheckoutTransactionParams) => {
           unit_amount: price,
           currency: "usd",
           product_data: {
-            name: BRAND_NAME + transaction.plan,
+            name: `${BRAND_NAME} ${transaction.plan}`,
             images: [`${process.env.NEXT_PUBLIC_HOST_URL!}/upgrade.png`],
           },
         },
