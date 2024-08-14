@@ -31,7 +31,7 @@ export const BentoGrid = () => {
   return (
     <div
       ref={scrollContainerRef}
-      className="h-full md:h-[110rem] bg-muted/ flex justify-center items-center flex-col relative -mb-28 md:mb-0"
+      className="h-full md:h-[90rem] bg-muted/ flex justify-center items-center flex-col relative -mb-28 md:-mb-24"
     >
       <div className="w-full md:max-w-7xl mx-auto p-1 md:p-5 columns-1 md:columns-2 gap-3 group">
         {cards.map((card, i) => (
@@ -68,7 +68,7 @@ const FeatureCard = ({
     [0, 1],
     isMobile
       ? [100, -200]
-      : [index > 1 ? `10%` : -200, index > 1 ? `-39%` : -100]
+      : [index > 1 ? `10%` : -200, index > 1 ? `-39%` : -89]
   );
 
   const { image, title, desc } = card;

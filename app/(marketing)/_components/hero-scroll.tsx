@@ -17,13 +17,13 @@ export function HeroScroll() {
               <TypingCursor
                 color="#ff218c"
                 text="Pratham shinde"
-                className="h-[22px] md:h-[38px] md:hidden"
+                className="h-[22px] md:h-[38px] md:hidden w-[1.5px]"
               />{" "}
               power{" "}
               <TypingCursor
                 color="#ff218c"
                 text="Pratham shinde"
-                className="h-[20px] md:h-[38px] hidden md:inline-block"
+                className="h-[20px] md:h-[38px] hidden md:inline-block w-[1.5px]"
               />
               of <br />
               <span className="text-4xl md:text-[6rem] font-bold mt-1 leading-none">
