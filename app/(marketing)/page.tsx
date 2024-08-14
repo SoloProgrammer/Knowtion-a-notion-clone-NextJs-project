@@ -12,6 +12,7 @@ import { BRAND_NAME } from "../constants";
 import { cn } from "@/lib/utils";
 import { ScrollDownIcon } from "./_components/scroll-down-icon";
 import { BottomLamp } from "./_components/bottom-lamp";
+import { Pricing } from "./_components/pricing-section";
 
 const font = Raleway({
   subsets: ["vietnamese"],
@@ -41,7 +42,7 @@ const MarketingPage = () => {
         <HeroScroll />
         <h1
           className={cn(
-            "h-[150px] md:h-[270px] -mt-40 md:mt-0 mb-32 md:mb-10 text-5xl md:text-[100px] uppercase font-bold text-neutral-600 dark:text-neutral-300 heading px-2 md:px-0",
+            "h-[150px] md:h-[450px] -mt-40 md:mt-0 mb-32 md:mb-10 text-5xl md:text-[100px] uppercase font-bold text-neutral-600 dark:text-neutral-300 heading px-2 md:px-0",
             font.className
           )}
         >
@@ -49,6 +50,7 @@ const MarketingPage = () => {
           <TextReveal words={words1} animateOnce={false} delayPerWord={0.15} />
         </h1>
         <BentoGrid />
+        <Pricing/>
         <TextTranslate className="md:block !text-[#d7d2ca82]">
           {Array(10)
             .fill(0)
