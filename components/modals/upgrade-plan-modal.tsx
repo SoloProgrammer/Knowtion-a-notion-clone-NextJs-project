@@ -22,7 +22,7 @@ import { Sparkles } from "lucide-react";
 import { useAuth } from "@clerk/clerk-react";
 import { useUpgrade } from "@/hooks/zustand/use-upgrade";
 
-import { PLANS } from "@/app/constants";
+import { BRAND_NAME, PLANS } from "@/app/constants";
 
 export const UpgradePlanModal = ({ children }: PropsWithChildren) => {
   const { isOpen, closeUpgrade } = useUpgrade();
@@ -74,7 +74,7 @@ export const UpgradePlanModal = ({ children }: PropsWithChildren) => {
                   checkout({
                     amount: 20,
                     buyerId: userId as string,
-                    plan: PLANS.PRO,
+                    plan: BRAND_NAME + PLANS.PRO,
                   });
                 }}
               />
