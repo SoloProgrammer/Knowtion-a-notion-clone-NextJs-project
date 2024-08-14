@@ -101,7 +101,7 @@ export const Pricing = () => {
                 <Image
                   src={Payment}
                   width={undefined}
-                  height={510}
+                  height={535}
                   alt="payment-screen"
                   className="object-cover static"
                   placeholder="blur"
