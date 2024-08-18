@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 
+/**
+ * @param {number} threshold
+ */
+
 export const useScrollTop = (threshold: number = 10) => {
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
   useEffect(() => {
