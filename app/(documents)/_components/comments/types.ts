@@ -22,3 +22,12 @@ export type Comment = {
   createdAt: number;
   document: string;
 };
+
+export type CommentFormProps = {
+  isLoading?: boolean;
+  isEdit?: boolean;
+  onSubmit: (commentText: string) => void;
+  disabled?: boolean;
+  autoFocus?: boolean;
+  defaultValue?: string;
+};
