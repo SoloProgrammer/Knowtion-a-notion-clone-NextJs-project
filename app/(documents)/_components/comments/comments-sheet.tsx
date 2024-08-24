@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/tooltip";
 
 import {
+  Check,
   MessageCircle,
   Send,
   SmilePlus,
@@ -37,6 +38,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import {
   ElementRef,
   KeyboardEvent,
+  MouseEvent,
   PropsWithChildren,
   useEffect,
   useRef,
@@ -47,6 +49,7 @@ import {
   useDeleteComment,
   useGetDocumentsQuery,
   useReactToComment,
+  useUpdateComment,
 } from "./hooks";
 import { useUser } from "@clerk/clerk-react";
 import { useMediaQuery } from "usehooks-ts";
@@ -54,12 +57,12 @@ import {
   useBroadcastEvent,
   useEventListener,
 } from "@liveblocks/react/suspense";
+import { useCommentsSheet } from "@/hooks/zustand/use-comments-sheet";
 
 import { getFromNowDate } from "@/utils/date";
 import { cn } from "@/lib/utils";
-import { Comment, Reaction } from "./types";
+import { Comment, CommentFormProps, Reaction } from "./types";
 import { toast } from "sonner";
-import { useCommentsSheet } from "@/hooks/zustand/use-comments-sheet";
 
 type CommentsSheetProps = {
   documentId: Id<"documents">;
@@ -70,32 +73,22 @@ export const CommentsSheet = ({
   documentId,
 }: PropsWithChildren<CommentsSheetProps>) => {
   const { user } = useUser();
-  const commentRef = useRef<HTMLTextAreaElement | null>(null);
   const { closeSheet } = useCommentsSheet();
   // Broadcast event hook
   const broadcast = useBroadcastEvent();
-  const { create, isPending } = useCreateNewComment(() => {
+  const { create, isPending } = useCreateNewComment((comment: string) => {
     broadcast({
       type: "NEW_MESSAGE",
       data: {
-        message: commentRef.current?.value.trim() || "",
+        message: comment || "",
         user: user?.fullName || "",
       },
     });
-    if (commentRef.current) commentRef.current.value = "";
   });
 
-  const handleCreateComment = () => {
-    const content = commentRef.current?.value;
+  const handleCreateComment = (content: string = "") => {
     if (!content?.trim()) return;
     create({ content, document: documentId });
-  };
-
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === "Enter" && e.shiftKey) {
-      e.preventDefault();
-      handleCreateComment();
-    }
   };
 
   const isMobile = useMediaQuery("(max-width:768px)");
@@ -118,32 +111,82 @@ export const CommentsSheet = ({
         </SheetHeader>
         <CommentsList documentId={documentId} />
         <div className="px-3">
-          <div className="flex items-center gap-x-2 relative flex-col">
-            <AutoResizeTextArea
-              ref={commentRef}
-              className="bg-neutral-100 dark:bg-neutral-900 text-sm w-full resize-none focus:ring-2 ring-black/80 dark:ring-white outline-none rounded-md transition-all p-2 custom-scroll-bar py-[10px]"
-              minRows={1}
-              placeholder="Type your comment here..."
-              maxRows={5}
-              onKeyDown={handleKeyDown}
-              autoFocus={!isMobile}
-              tabIndex={-1}
-            />
-            <Button
-              disabled={isPending}
-              onClick={handleCreateComment}
-              size="icon"
-              className="absolute right-[5px] bottom-[5px] h-[30px] w-[30px]"
-            >
-              {isPending ? <Spinner /> : <Send className="w-4 h-4 shrink-0" />}
-            </Button>
-          </div>
-          <span className="text-[11px] text-muted-foreground my-2 inline-block">
-            Pro tip: hit shift + ↵ to push new comment!
-          </span>
+          <CommentForm
+            autoFocus={!isMobile}
+            isLoading={isPending}
+            onSubmit={handleCreateComment}
+            key={"create-comment-form"}
+          />
         </div>
       </SheetContent>
     </Sheet>
+  );
+};
+
+const CommentForm = ({
+  isLoading,
+  defaultValue = "",
+  isEdit,
+  onSubmit,
+  disabled,
+  autoFocus = true,
+}: CommentFormProps) => {
+  const commentRef = useRef<HTMLTextAreaElement | null>(null);
+
+  const handleSubmit = () => {
+    const content = commentRef.current?.value;
+    onSubmit(content?.trim() || "");
+    if (commentRef.current && !isEdit) commentRef.current.value = "";
+  };
+
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === "Enter" && e.shiftKey) {
+      e.preventDefault();
+      handleSubmit();
+    }
+  };
+
+  const SubmitButtonIcon = isEdit ? Check : Send;
+
+  return (
+    <div className="px-0">
+      <div className="flex items-center gap-x-2 relative flex-col">
+        <AutoResizeTextArea
+          ref={commentRef}
+          className="bg-neutral-100 dark:bg-neutral-900 text-sm w-full resize-none focus:ring-2 ring-black/80 dark:ring-white outline-none rounded-md transition-all p-2 custom-scroll-bar py-[10px]"
+          minRows={1}
+          placeholder="Type your comment here..."
+          maxRows={5}
+          defaultValue={defaultValue}
+          onKeyDown={handleKeyDown}
+          autoFocus={autoFocus}
+          tabIndex={-1}
+          autoComplete="off"
+          onFocus={(e) =>
+            e.target.setSelectionRange(defaultValue.length, defaultValue.length)
+          }
+        />
+        <Button
+          disabled={isLoading || disabled}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleSubmit();
+          }}
+          size="icon"
+          className="absolute right-[5px] bottom-[5px] h-[30px] w-[30px]"
+        >
+          {isLoading ? (
+            <Spinner />
+          ) : (
+            <SubmitButtonIcon className="w-4 h-4 shrink-0" />
+          )}
+        </Button>
+      </div>
+      <span className="text-[11px] text-muted-foreground my-2 inline-block">
+        Pro tip: hit shift + ↵ to{" "}
+        {isEdit ? "save changes!" : "add new comment!"}
+      </span>
+    </div>
   );
 };
 
@@ -195,6 +238,7 @@ const CommentsList = ({ documentId }: { documentId: Id<"documents"> }) => {
 
 const SingleComment = ({ comment }: { comment: Comment }) => {
   const { user } = useUser();
+  const [isEdit, setIsEdit] = useState(false);
 
   // Broadcast event hook
   const broadcast = useBroadcastEvent();
@@ -206,7 +250,15 @@ const SingleComment = ({ comment }: { comment: Comment }) => {
     });
   });
 
+  const { save, isPending: isSaving } = useUpdateComment(() =>
+    setIsEdit(false)
+  );
+
   const handleDelete = () => remove({ id: comment._id });
+
+  const handleSaveChanges = (content: string = "") => {
+    save({ commentId: comment._id, content });
+  };
 
   return (
     <>
@@ -250,6 +302,7 @@ const SingleComment = ({ comment }: { comment: Comment }) => {
                   disabled={isDeleting}
                   className="h-auto ml-1 p-1 md:opacity-0 group-hover/comment:opacity-100 transition-all text-primary/80 hover:text-primary"
                   variant="ghost"
+                  onClick={() => setIsEdit(true)}
                 >
                   <SquarePen className="w-4 h-4 shrink-0" />
                 </Button>
@@ -260,7 +313,19 @@ const SingleComment = ({ comment }: { comment: Comment }) => {
           </div>
         </div>
         <div className="text-primary/80 text-[14px] md:text-[13px] md ml-1 mt-2">
-          {comment.content}
+          {isEdit ? (
+            <div tabIndex={0} onBlur={() => setIsEdit(false)}>
+              <CommentForm
+                defaultValue={comment.content}
+                onSubmit={handleSaveChanges}
+                isEdit
+                autoFocus
+                isLoading={isSaving}
+              />
+            </div>
+          ) : (
+            comment.content
+          )}
         </div>
         <ReactionsList commentId={comment._id} reactions={comment.reactions} />
       </div>
