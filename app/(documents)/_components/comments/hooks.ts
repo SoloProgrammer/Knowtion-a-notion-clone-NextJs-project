@@ -4,7 +4,7 @@ import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 const useCreateNewComment = (
-  onSuccess?: () => void,
+  onSuccess?: (data: string) => void,
   onError?: (err: Error) => void
 ) => {
   const { mutate: create, ...rest } = useMutation({
@@ -28,6 +28,18 @@ const useDeleteComment = (
   return { remove, ...rest };
 };
 
+const useUpdateComment = (
+  onSuccess?: () => void,
+  onError?: (err: Error) => void
+) => {
+  const { mutate: save, ...rest } = useMutation({
+    mutationFn: useConvexMutation(api.comments.update),
+    onSuccess,
+    onError,
+  });
+  return { save, ...rest };
+};
+
 const useReactToComment = () => {
   const { mutate: react, ...rest } = useMutation({
     mutationFn: useConvexMutation(api.comments.reaction),
@@ -45,4 +57,5 @@ export {
   useDeleteComment,
   useReactToComment,
   useGetDocumentsQuery,
+  useUpdateComment,
 };
