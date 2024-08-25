@@ -30,4 +30,5 @@ export type CommentFormProps = {
   disabled?: boolean;
   autoFocus?: boolean;
   defaultValue?: string;
+  size?: "default" | "small";
 };

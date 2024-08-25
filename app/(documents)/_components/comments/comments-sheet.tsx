@@ -130,11 +130,13 @@ const CommentForm = ({
   onSubmit,
   disabled,
   autoFocus = true,
+  size = "default",
 }: CommentFormProps) => {
   const commentRef = useRef<HTMLTextAreaElement | null>(null);
 
   const handleSubmit = () => {
-    const content = commentRef.current?.value;
+    const content = commentRef.current?.value || "";
+    if(content?.length < 1) return
     onSubmit(content?.trim() || "");
     if (commentRef.current && !isEdit) commentRef.current.value = "";
   };
@@ -148,32 +150,49 @@ const CommentForm = ({
 
   const SubmitButtonIcon = isEdit ? Check : Send;
 
+  const [isChanged, setIsChanged] = useState(false);
+
+  const btnDisabled = isLoading || disabled || (!isChanged && isEdit)
+
   return (
     <div className="px-0">
       <div className="flex items-center gap-x-2 relative flex-col">
         <AutoResizeTextArea
           ref={commentRef}
-          className="bg-neutral-100 dark:bg-neutral-900 text-sm w-full resize-none focus:ring-2 ring-black/80 dark:ring-white outline-none rounded-md transition-all p-2 custom-scroll-bar py-[10px]"
+          className={cn(
+            "bg-neutral-100 dark:bg-neutral-900 text-sm w-full resize-none focus:ring-2 ring-black/80 dark:ring-white outline-none rounded-md transition-all p-2 custom-scroll-bar py-[10px]",
+            size === "small" && "py-[5px] text-[.85rem]"
+          )}
           minRows={1}
           placeholder="Type your comment here..."
           maxRows={5}
           defaultValue={defaultValue}
           onKeyDown={handleKeyDown}
           autoFocus={autoFocus}
-          tabIndex={-1}
+          tabIndex={isEdit ? 1 :-1}
           autoComplete="off"
-          onFocus={(e) =>
-            e.target.setSelectionRange(defaultValue.length, defaultValue.length)
-          }
+          onFocus={(e) => {
+            e.target.setSelectionRange(
+              defaultValue.length,
+              defaultValue.length
+            );
+          }}
+          onClick={(e) => e.stopPropagation()}
+          onChange={(e) => {
+            isEdit && setIsChanged(e.target.value.trim() !== defaultValue);
+          }}
         />
         <Button
-          disabled={isLoading || disabled}
+          disabled={btnDisabled}
           onClick={(e) => {
             e.stopPropagation();
             handleSubmit();
           }}
           size="icon"
-          className="absolute right-[5px] bottom-[5px] h-[30px] w-[30px]"
+          className={cn(
+            "absolute right-[5px] bottom-[5px] h-[30px] w-[30px]",
+            size === "small" && "right-[3px] h-[25px] w-[25px] bottom-[2px]"
+          )}
         >
           {isLoading ? (
             <Spinner />
@@ -262,7 +281,11 @@ const SingleComment = ({ comment }: { comment: Comment }) => {
 
   return (
     <>
-      <div key={comment._id} className="group/comment">
+      <div
+        key={comment._id}
+        className="group/comment"
+        onClick={() => setIsEdit(false)}
+      >
         <div className="flex items-start justify-between w-full">
           <div className="flex items-center gap-x-2">
             <Avatar className="w-9 h-9">
@@ -302,7 +325,10 @@ const SingleComment = ({ comment }: { comment: Comment }) => {
                   disabled={isDeleting}
                   className="h-auto ml-1 p-1 md:opacity-0 group-hover/comment:opacity-100 transition-all text-primary/80 hover:text-primary"
                   variant="ghost"
-                  onClick={() => setIsEdit(true)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsEdit(prev => !prev);
+                  }}
                 >
                   <SquarePen className="w-4 h-4 shrink-0" />
                 </Button>
@@ -314,13 +340,14 @@ const SingleComment = ({ comment }: { comment: Comment }) => {
         </div>
         <div className="text-primary/80 text-[14px] md:text-[13px] md ml-1 mt-2">
           {isEdit ? (
-            <div tabIndex={0} onBlur={() => setIsEdit(false)}>
+            <div>
               <CommentForm
                 defaultValue={comment.content}
                 onSubmit={handleSaveChanges}
                 isEdit
                 autoFocus
                 isLoading={isSaving}
+                size="small"
               />
             </div>
           ) : (
