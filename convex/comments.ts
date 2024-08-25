@@ -26,7 +26,7 @@ export const create = mutation({
       createdAt: Date.now(),
     });
 
-    return "comment created!";
+    return content;
   },
 });
 
@@ -50,6 +50,26 @@ export const get = query({
       .collect();
 
     return comments;
+  },
+});
+
+export const update = mutation({
+  args: {
+    commentId: v.id("comments"),
+    content: v.string(),
+  },
+  handler: async (ctx, { commentId, content }) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new ConvexError("Not authenticated");
+    }
+
+    await ctx.db.patch(commentId, {
+      content,
+    });
+
+    return "Comment updated"
   },
 });
 
@@ -110,7 +130,7 @@ export const reaction = mutation({
     await ctx.db.patch(id, {
       reactions,
     });
-    
+
     return true;
   },
 });
