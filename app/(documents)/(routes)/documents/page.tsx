@@ -28,6 +28,7 @@ const DocumentsPage = () => {
   const CreateNewDocumentIcon = isCreating ? Loader : PlusCircle;
 
   const handleCreateNewDocument = () => {
+    if(!totalFiles || !plan) return;
     if (totalFiles >= MAX_FILES && plan !== PLANS.PRO) {
       openUpgrade();
     } else onCreateDocument({ title: "" });

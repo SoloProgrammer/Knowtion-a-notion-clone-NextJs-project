@@ -33,7 +33,6 @@ export const update = mutation({
   },
 });
 
-
 export const get = query({
   args: { userId: v.string() },
   handler: async (ctx, args) => {
