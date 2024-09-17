@@ -22,8 +22,11 @@ import {
 } from "@/components/ui/tooltip";
 
 import {
+  ArrowLeft,
   Check,
+  Forward,
   MessageCircle,
+  MessagesSquare,
   Send,
   SmilePlus,
   SquarePen,
@@ -57,23 +60,24 @@ import {
   useBroadcastEvent,
   useEventListener,
 } from "@liveblocks/react/suspense";
-import { useCommentsSheet } from "@/hooks/zustand/use-comments-sheet";
+import { useComments } from "@/hooks/zustand/use-comments";
 
 import { getFromNowDate } from "@/utils/date";
 import { cn } from "@/lib/utils";
-import { Comment, CommentFormProps, Reaction } from "./types";
+import {
+  Comment,
+  CommentFormProps,
+  CommentsSheetProps,
+  Reaction,
+} from "./types";
 import { toast } from "sonner";
-
-type CommentsSheetProps = {
-  documentId: Id<"documents">;
-};
 
 export const CommentsSheet = ({
   children,
   documentId,
 }: PropsWithChildren<CommentsSheetProps>) => {
   const { user } = useUser();
-  const { closeSheet } = useCommentsSheet();
+  const { close, isAddOrViewReply, setIsAddOrViewReply } = useComments();
   // Broadcast event hook
   const broadcast = useBroadcastEvent();
   const { create, isPending } = useCreateNewComment((comment: string) => {
@@ -94,7 +98,14 @@ export const CommentsSheet = ({
   const isMobile = useMediaQuery("(max-width:768px)");
 
   return (
-    <Sheet onOpenChange={(open) => !open && closeSheet()}>
+    <Sheet
+      onOpenChange={(open) => {
+        setTimeout(() => {
+          setIsAddOrViewReply(false);
+        }, 100);
+        !open && close();
+      }}
+    >
       <SheetTrigger asChild>{children}</SheetTrigger>
       <SheetContent
         side={isMobile ? "bottom" : "right"}
@@ -109,15 +120,21 @@ export const CommentsSheet = ({
             <span>Live chat feed</span>
           </SheetTitle>
         </SheetHeader>
-        <CommentsList documentId={documentId} />
-        <div className="px-3">
-          <CommentForm
-            autoFocus={!isMobile}
-            isLoading={isPending}
-            onSubmit={handleCreateComment}
-            key={"create-comment-form"}
-          />
-        </div>
+        {!isAddOrViewReply ? (
+          <>
+            <CommentsList documentId={documentId} />
+            <div className="px-3">
+              <CommentForm
+                autoFocus={!isMobile}
+                isLoading={isPending}
+                onSubmit={handleCreateComment}
+                key={"create-comment-form"}
+              />
+            </div>
+          </>
+        ) : (
+          <ChildCommentsContainer />
+        )}
       </SheetContent>
     </Sheet>
   );
@@ -136,7 +153,7 @@ const CommentForm = ({
 
   const handleSubmit = () => {
     const content = commentRef.current?.value || "";
-    if(content?.length < 1) return
+    if (content?.length < 1) return;
     onSubmit(content?.trim() || "");
     if (commentRef.current && !isEdit) commentRef.current.value = "";
   };
@@ -152,7 +169,7 @@ const CommentForm = ({
 
   const [isChanged, setIsChanged] = useState(false);
 
-  const btnDisabled = isLoading || disabled || (!isChanged && isEdit)
+  const btnDisabled = isLoading || disabled || (!isChanged && isEdit);
 
   return (
     <div className="px-0">
@@ -169,7 +186,7 @@ const CommentForm = ({
           defaultValue={defaultValue}
           onKeyDown={handleKeyDown}
           autoFocus={autoFocus}
-          tabIndex={isEdit ? 1 :-1}
+          tabIndex={isEdit ? 1 : -1}
           autoComplete="off"
           onFocus={(e) => {
             e.target.setSelectionRange(
@@ -205,6 +222,28 @@ const CommentForm = ({
         Pro tip: hit shift + ↵ to{" "}
         {isEdit ? "save changes!" : "add new comment!"}
       </span>
+    </div>
+  );
+};
+
+const ChildCommentsContainer = () => {
+  const { parent, setIsAddOrViewReply } = useComments();
+
+  if (!parent) return <></>;
+
+  return (
+    <div className="px-4">
+      <Button
+        className="hover:underline h-auto p-0 px-2 mb-2 text-sm py-[0.2rem]"
+        size={"sm"}
+        variant="ghost"
+        onClick={() => setIsAddOrViewReply(false)}
+      >
+        <ArrowLeft className="w-4 h-4 shrink-0 mr-2" /> Back to chat
+      </Button>
+      <div className="mt-3">
+        <SingleComment comment={parent} />
+      </div>
     </div>
   );
 };
@@ -258,6 +297,7 @@ const CommentsList = ({ documentId }: { documentId: Id<"documents"> }) => {
 const SingleComment = ({ comment }: { comment: Comment }) => {
   const { user } = useUser();
   const [isEdit, setIsEdit] = useState(false);
+  const { setIsAddOrViewReply, setParent } = useComments();
 
   // Broadcast event hook
   const broadcast = useBroadcastEvent();
@@ -277,6 +317,11 @@ const SingleComment = ({ comment }: { comment: Comment }) => {
 
   const handleSaveChanges = (content: string = "") => {
     save({ commentId: comment._id, content });
+  };
+
+  const handleViewOrAddReply = () => {
+    setParent(comment);
+    setIsAddOrViewReply(true);
   };
 
   return (
@@ -327,7 +372,7 @@ const SingleComment = ({ comment }: { comment: Comment }) => {
                   variant="ghost"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setIsEdit(prev => !prev);
+                    setIsEdit((prev) => !prev);
                   }}
                 >
                   <SquarePen className="w-4 h-4 shrink-0" />
@@ -354,7 +399,27 @@ const SingleComment = ({ comment }: { comment: Comment }) => {
             comment.content
           )}
         </div>
+        {/* Reactions list */}
         <ReactionsList commentId={comment._id} reactions={comment.reactions} />
+        {/* Reply actions */}
+        <div>
+          <Button
+            variant={"ghost"}
+            onClick={handleViewOrAddReply}
+            className="p-0 h-auto !text-xs py-[0.1rem] px-1 mt-2 text-foreground/90"
+          >
+            <span>Add reply</span>
+            <Forward className="pl-1 w-5 h-5 shrink-0" />
+          </Button>
+          <Button
+            onClick={handleViewOrAddReply}
+            variant={"ghost"}
+            className="p-0 h-auto !text-xs py-[0.1rem] px-1 mt-2 hover:underline text-foreground/70 ml-2"
+          >
+            View replies
+            <MessagesSquare className="pl-[0.3rem] w-5 h-5 shrink-0" />
+          </Button>
+        </div>
       </div>
       <Separator className="last:hidden px-4 inline-block" />
     </>
@@ -385,10 +450,10 @@ const ReactionsList = ({
   );
 
   return (
-    <div className="mt-2 flex flex-wrap items-center">
+    <div className="mt-1 flex flex-wrap items-center gap-y-1">
       <IconPicker onChange={handleReactToComment}>
         <Button
-          className="h-auto p-1 transition-all text-primary/80 hover:text-primary inline-block"
+          className="h-auto p-1 transition-all text-primary/80 hover:text-primary inline-block mt-1"
           variant="ghost"
         >
           <SmilePlus className="w-4 h-4 shrink-0" />
@@ -471,7 +536,7 @@ export const CommentsTrigger = ({
 }: {
   documentId: Id<"documents">;
 }) => {
-  const { isOpen, openSheet } = useCommentsSheet();
+  const { isOpen, open } = useComments();
   const [notification, setNotifications] = useState(0);
 
   useEventListener(({ event }) => {
@@ -496,7 +561,7 @@ export const CommentsTrigger = ({
     <div className="fixed bottom-20 right-6 z-[99]">
       <CommentsSheet documentId={documentId}>
         <Button
-          onClick={() => openSheet()}
+          onClick={() => open()}
           data-notification-count={(notification || "1").toString()}
           variant="ghost"
           size={"sm"}

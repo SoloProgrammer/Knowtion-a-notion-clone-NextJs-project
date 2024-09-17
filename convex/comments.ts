@@ -5,9 +5,10 @@ import { mutation, query } from "./_generated/server";
 export const create = mutation({
   args: {
     document: v.id("documents"),
+    parentComment: v.optional(v.id("comments")),
     content: v.string(),
   },
-  handler: async (ctx, { content, document }) => {
+  handler: async (ctx, { content, document, parentComment }) => {
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
@@ -23,6 +24,7 @@ export const create = mutation({
       },
       content,
       document,
+      parentComment,
       createdAt: Date.now(),
     });
 
@@ -69,7 +71,7 @@ export const update = mutation({
       content,
     });
 
-    return "Comment updated"
+    return "Comment updated";
   },
 });
 

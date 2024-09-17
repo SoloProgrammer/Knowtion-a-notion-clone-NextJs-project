@@ -32,3 +32,7 @@ export type CommentFormProps = {
   defaultValue?: string;
   size?: "default" | "small";
 };
+
+export type CommentsSheetProps = {
+  documentId: Id<"documents">;
+};
