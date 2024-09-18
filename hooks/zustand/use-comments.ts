@@ -3,19 +3,19 @@ import { create } from "zustand";
 
 type CommentsState = {
   isOpen: boolean;
-  isAddOrViewReply: Boolean;
+  isAddOrViewThread: Boolean;
   parent?: Comment | undefined;
   open: () => void;
   close: () => void;
-  setIsAddOrViewReply: (value: Boolean) => void;
-  setParent: (parent: Comment) => void;
+  setIsAddOrViewThread: (value: Boolean) => void;
+  setParent: (parent: Comment | undefined) => void;
 };
 
 export const useComments = create<CommentsState>((set) => ({
   isOpen: false,
-  isAddOrViewReply: false,
+  isAddOrViewThread: false,
   open: () => set({ isOpen: true }),
   close: () => set({ isOpen: false }),
-  setIsAddOrViewReply: (value: Boolean) => set({ isAddOrViewReply: value }),
-  setParent: (parent: Comment) => set({ parent }),
+  setIsAddOrViewThread: (value: Boolean) => set({ isAddOrViewThread: value }),
+  setParent: (parent: Comment | undefined) => set({ parent }),
 }));
