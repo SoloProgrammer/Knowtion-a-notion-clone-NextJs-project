@@ -22,8 +22,11 @@ import {
 } from "@/components/ui/tooltip";
 
 import {
+  ArrowLeft,
   Check,
+  Forward,
   MessageCircle,
+  MessagesSquare,
   Send,
   SmilePlus,
   SquarePen,
@@ -47,7 +50,7 @@ import {
 import {
   useCreateNewComment,
   useDeleteComment,
-  useGetDocumentsQuery,
+  useGetCommentsQuery,
   useReactToComment,
   useUpdateComment,
 } from "./hooks";
@@ -57,23 +60,24 @@ import {
   useBroadcastEvent,
   useEventListener,
 } from "@liveblocks/react/suspense";
-import { useCommentsSheet } from "@/hooks/zustand/use-comments-sheet";
+import { useComments } from "@/hooks/zustand/use-comments";
 
 import { getFromNowDate } from "@/utils/date";
 import { cn } from "@/lib/utils";
-import { Comment, CommentFormProps, Reaction } from "./types";
+import {
+  Comment,
+  CommentFormProps,
+  CommentsSheetProps,
+  Reaction,
+} from "./types";
 import { toast } from "sonner";
-
-type CommentsSheetProps = {
-  documentId: Id<"documents">;
-};
 
 export const CommentsSheet = ({
   children,
   documentId,
 }: PropsWithChildren<CommentsSheetProps>) => {
   const { user } = useUser();
-  const { closeSheet } = useCommentsSheet();
+  const { close, isAddOrViewThread, setIsAddOrViewThread } = useComments();
   // Broadcast event hook
   const broadcast = useBroadcastEvent();
   const { create, isPending } = useCreateNewComment((comment: string) => {
@@ -94,7 +98,14 @@ export const CommentsSheet = ({
   const isMobile = useMediaQuery("(max-width:768px)");
 
   return (
-    <Sheet onOpenChange={(open) => !open && closeSheet()}>
+    <Sheet
+      onOpenChange={(open) => {
+        setTimeout(() => {
+          setIsAddOrViewThread(false);
+        }, 100);
+        !open && close();
+      }}
+    >
       <SheetTrigger asChild>{children}</SheetTrigger>
       <SheetContent
         side={isMobile ? "bottom" : "right"}
@@ -109,15 +120,21 @@ export const CommentsSheet = ({
             <span>Live chat feed</span>
           </SheetTitle>
         </SheetHeader>
-        <CommentsList documentId={documentId} />
-        <div className="px-3">
-          <CommentForm
-            autoFocus={!isMobile}
-            isLoading={isPending}
-            onSubmit={handleCreateComment}
-            key={"create-comment-form"}
-          />
-        </div>
+        {!isAddOrViewThread ? (
+          <>
+            <CommentsList documentId={documentId} />
+            <div className="px-3">
+              <CommentForm
+                autoFocus={!isMobile}
+                isLoading={isPending}
+                onSubmit={handleCreateComment}
+                key={"create-comment-form"}
+              />
+            </div>
+          </>
+        ) : (
+          <Threads documentId={documentId} />
+        )}
       </SheetContent>
     </Sheet>
   );
@@ -136,7 +153,7 @@ const CommentForm = ({
 
   const handleSubmit = () => {
     const content = commentRef.current?.value || "";
-    if(content?.length < 1) return
+    if (content?.length < 1) return;
     onSubmit(content?.trim() || "");
     if (commentRef.current && !isEdit) commentRef.current.value = "";
   };
@@ -152,7 +169,7 @@ const CommentForm = ({
 
   const [isChanged, setIsChanged] = useState(false);
 
-  const btnDisabled = isLoading || disabled || (!isChanged && isEdit)
+  const btnDisabled = isLoading || disabled || (!isChanged && isEdit);
 
   return (
     <div className="px-0">
@@ -169,7 +186,7 @@ const CommentForm = ({
           defaultValue={defaultValue}
           onKeyDown={handleKeyDown}
           autoFocus={autoFocus}
-          tabIndex={isEdit ? 1 :-1}
+          tabIndex={isEdit ? 1 : -1}
           autoComplete="off"
           onFocus={(e) => {
             e.target.setSelectionRange(
@@ -209,8 +226,67 @@ const CommentForm = ({
   );
 };
 
+const Threads = ({ documentId }: { documentId: Id<"documents"> }) => {
+  const { parent, setIsAddOrViewThread } = useComments();
+  const {
+    data: threads,
+    isLoading,
+    isError,
+  } = useGetCommentsQuery(documentId, parent?._id, "desc");
+
+  const { create, isPending } = useCreateNewComment();
+
+  const handleCreateThread = (thread: string) => {
+    create({
+      content: thread,
+      document: documentId,
+      parentComment: parent?._id,
+    });
+  };
+
+  if (!parent) return <></>;
+
+  return (
+    <div className="px-4 overflow-y-auto custom-scroll-bar pb-5">
+      <Button
+        className="hover:underline h-auto p-0 px-2 mb-2 text-sm py-[0.2rem]"
+        size={"sm"}
+        variant="ghost"
+        onClick={() => setIsAddOrViewThread(false)}
+      >
+        <ArrowLeft className="w-4 h-4 shrink-0 mr-2" /> Back to chat
+      </Button>
+      <div className="mt-3">
+        <SingleComment comment={parent} showThreadActions={false} />
+      </div>
+      <div>
+        <h1 className="my-3 underline">Add your Reply</h1>
+        <CommentForm
+          onSubmit={handleCreateThread}
+          autoFocus
+          isLoading={isPending}
+        />
+      </div>
+      <Separator />
+      <div className="">
+        <h1 className="mt-2 pb-3 underline">Threads</h1>
+        {isLoading && <CommentsList.Skeleton />}
+        {!isLoading && !threads?.length && (
+          <h1 className="text-center text-lg text-foreground/80">
+            No Threads yet!
+          </h1>
+        )}
+        {!isLoading &&
+          threads?.map((thread) => (
+            <SingleComment comment={thread} showThreadActions={false} />
+          ))}
+      </div>
+    </div>
+  );
+};
+
 const CommentsList = ({ documentId }: { documentId: Id<"documents"> }) => {
-  const { data: comments, isLoading } = useGetDocumentsQuery(documentId);
+  const { data: comments, isLoading } = useGetCommentsQuery(documentId);
 
   const commentsContainerRef = useRef<ElementRef<"div"> | null>(null);
 
@@ -222,7 +298,7 @@ const CommentsList = ({ documentId }: { documentId: Id<"documents"> }) => {
   }, [comments?.length]);
 
   if (isLoading) {
-    return <CommentsList.Skeleton />;
+    return <CommentsList.Skeleton className="px-4" />;
   }
 
   return (
@@ -242,7 +318,7 @@ const CommentsList = ({ documentId }: { documentId: Id<"documents"> }) => {
       ) : (
         <div className="flex flex-grow flex-col justify-end w-full overflow-y-auto pr-1">
           <div
-            className="flex flex-col gap-y-3 w-full overflow-y-auto custom-scroll-bar pb-2 px-4 pr-3"
+            className="flex flex-col w-full overflow-y-auto custom-scroll-bar pb-2 px-4 pr-3"
             ref={commentsContainerRef}
           >
             {comments?.map((comment) => (
@@ -255,28 +331,50 @@ const CommentsList = ({ documentId }: { documentId: Id<"documents"> }) => {
   );
 };
 
-const SingleComment = ({ comment }: { comment: Comment }) => {
+const SingleComment = ({
+  comment,
+  showThreadActions = true,
+}: {
+  comment: Comment;
+  showThreadActions?: Boolean;
+}) => {
   const { user } = useUser();
   const [isEdit, setIsEdit] = useState(false);
+  const { setIsAddOrViewThread, setParent, isAddOrViewThread, parent } =
+    useComments();
 
   // Broadcast event hook
   const broadcast = useBroadcastEvent();
 
   const { remove, isPending: isDeleting } = useDeleteComment(() => {
+    if (isAddOrViewThread && parent?._id === comment._id) {
+      setIsAddOrViewThread(false);
+      setParent(undefined);
+    }
     broadcast({
       type: "MESSAGE_DELETED",
       user: user?.fullName || "",
     });
   });
 
-  const { save, isPending: isSaving } = useUpdateComment(() =>
-    setIsEdit(false)
-  );
+  const { save, isPending: isSaving } = useUpdateComment((data) => {
+    setIsEdit(false);
+    if (isAddOrViewThread && parent?._id === comment._id) {
+      const parentClone = { ...parent };
+      parentClone.content = data;
+      setParent(parentClone);
+    }
+  });
 
   const handleDelete = () => remove({ id: comment._id });
 
   const handleSaveChanges = (content: string = "") => {
     save({ commentId: comment._id, content });
+  };
+
+  const handleViewOrAddReply = () => {
+    setParent(comment);
+    setIsAddOrViewThread(true);
   };
 
   return (
@@ -327,7 +425,7 @@ const SingleComment = ({ comment }: { comment: Comment }) => {
                   variant="ghost"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setIsEdit(prev => !prev);
+                    setIsEdit((prev) => !prev);
                   }}
                 >
                   <SquarePen className="w-4 h-4 shrink-0" />
@@ -354,9 +452,31 @@ const SingleComment = ({ comment }: { comment: Comment }) => {
             comment.content
           )}
         </div>
+        {/* Reactions list */}
         <ReactionsList commentId={comment._id} reactions={comment.reactions} />
+        {/* Reply actions */}
+        {showThreadActions && (
+          <div>
+            <Button
+              variant={"ghost"}
+              onClick={handleViewOrAddReply}
+              className="p-0 h-auto !text-xs py-[0.1rem] px-1 mt-2 text-foreground/90"
+            >
+              <span>Add Reply</span>
+              <Forward className="pl-1 w-5 h-5 shrink-0" />
+            </Button>
+            <Button
+              onClick={handleViewOrAddReply}
+              variant={"ghost"}
+              className="p-0 h-auto !text-xs py-[0.1rem] px-1 mt-2 hover:underline text-foreground/70 ml-2"
+            >
+              View threads
+              <MessagesSquare className="pl-[0.3rem] w-5 h-5 shrink-0" />
+            </Button>
+          </div>
+        )}
       </div>
-      <Separator className="last:hidden px-4 inline-block" />
+      <Separator className="last:hidden px-4 my-3" />
     </>
   );
 };
@@ -368,7 +488,14 @@ const ReactionsList = ({
   reactions: Reaction[] | undefined;
   commentId: Id<"comments">;
 }) => {
-  const { react, isPending: isReacting } = useReactToComment();
+  const { parent, setParent } = useComments()
+  const { react, isPending: isReacting } = useReactToComment((reactions)=>{
+    if(parent?._id === commentId){
+      const parentClone = {...parent}
+      parentClone.reactions = reactions
+      setParent(parentClone)
+    }
+  });
 
   const { user } = useUser();
 
@@ -385,10 +512,10 @@ const ReactionsList = ({
   );
 
   return (
-    <div className="mt-2 flex flex-wrap items-center">
+    <div className="mt-1 flex flex-wrap items-center gap-y-1">
       <IconPicker onChange={handleReactToComment}>
         <Button
-          className="h-auto p-1 transition-all text-primary/80 hover:text-primary inline-block"
+          className="h-auto p-1 transition-all text-primary/80 hover:text-primary inline-block mt-1"
           variant="ghost"
         >
           <SmilePlus className="w-4 h-4 shrink-0" />
@@ -437,9 +564,9 @@ const ReactionsList = ({
   );
 };
 
-CommentsList.Skeleton = () => {
+CommentsList.Skeleton = ({ className }: { className?: string }) => {
   return (
-    <div className="flex-grow flex items-end py-5 w-full px-4">
+    <div className={cn("flex-grow flex items-end py-5 w-full", className)}>
       <div className="flex flex-col gap-y-6 w-full">
         {Array(3)
           .fill(0)
@@ -471,7 +598,7 @@ export const CommentsTrigger = ({
 }: {
   documentId: Id<"documents">;
 }) => {
-  const { isOpen, openSheet } = useCommentsSheet();
+  const { isOpen, open } = useComments();
   const [notification, setNotifications] = useState(0);
 
   useEventListener(({ event }) => {
@@ -496,7 +623,7 @@ export const CommentsTrigger = ({
     <div className="fixed bottom-20 right-6 z-[99]">
       <CommentsSheet documentId={documentId}>
         <Button
-          onClick={() => openSheet()}
+          onClick={() => open()}
           data-notification-count={(notification || "1").toString()}
           variant="ghost"
           size={"sm"}

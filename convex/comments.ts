@@ -5,9 +5,10 @@ import { mutation, query } from "./_generated/server";
 export const create = mutation({
   args: {
     document: v.id("documents"),
+    parentComment: v.optional(v.id("comments")),
     content: v.string(),
   },
-  handler: async (ctx, { content, document }) => {
+  handler: async (ctx, { content, document, parentComment }) => {
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
@@ -23,6 +24,7 @@ export const create = mutation({
       },
       content,
       document,
+      parentComment,
       createdAt: Date.now(),
     });
 
@@ -34,8 +36,9 @@ export const get = query({
   args: {
     document: v.id("documents"),
     parentComment: v.optional(v.id("comments")),
+    orderBy: v.optional(v.string()),
   },
-  handler: async (ctx, { document, parentComment }) => {
+  handler: async (ctx, { document, parentComment, orderBy = "asc" }) => {
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
@@ -47,6 +50,7 @@ export const get = query({
       .withIndex("by_parent_document", (q) =>
         q.eq("parentComment", parentComment).eq("document", document)
       )
+      .order(orderBy === "asc" ? "asc" : "desc")
       .collect();
 
     return comments;
@@ -69,7 +73,7 @@ export const update = mutation({
       content,
     });
 
-    return "Comment updated"
+    return content;
   },
 });
 
@@ -83,6 +87,12 @@ export const remove = mutation({
     if (!identity) {
       throw new ConvexError("Not authenticated");
     }
+    const threads = await ctx.db
+      .query("comments")
+      .withIndex("by_parent_document", (q) => q.eq("parentComment", id))
+      .collect();
+
+    threads.forEach(async (thread) => await ctx.db.delete(thread._id));
     await ctx.db.delete(id);
     return true;
   },
@@ -131,6 +141,6 @@ export const reaction = mutation({
       reactions,
     });
 
-    return true;
+    return reactions;
   },
 });
