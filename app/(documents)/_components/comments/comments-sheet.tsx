@@ -462,7 +462,7 @@ const SingleComment = ({
               onClick={handleViewOrAddReply}
               className="p-0 h-auto !text-xs py-[0.1rem] px-1 mt-2 text-foreground/90"
             >
-              <span>Add Reply</span>
+              <span>Reply</span>
               <Forward className="pl-1 w-5 h-5 shrink-0" />
             </Button>
             <Button
