@@ -12,12 +12,13 @@ import { CollaboratorsAvatarStack } from "@/components/collaborators-avatar-stac
 import { Blend } from "lucide-react";
 import { toast } from "sonner";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import {
   useGetCollaboratorsByDocument,
   useRemoveCollaboratorMutation,
 } from "../(routes)/documents/hooks";
 import { useOthers } from "@liveblocks/react/suspense";
+import AccessManagerModal from "@/components/modals/access-manager-modal";
 
 type CollaboratorProps = {
   documentId: Id<"documents">;
@@ -29,19 +30,10 @@ export const Collaborators = ({ documentId }: CollaboratorProps) => {
     data: collaborators,
     isLoading,
     isError,
-    refetch,
+    refetch
   } = useGetCollaboratorsByDocument(documentId);
 
-  const { remove } = useRemoveCollaboratorMutation(
-    () => {
-      toast.dismiss(toastId.current);
-      toast.success("Document unshared!");
-    },
-    () => {
-      toast.dismiss(toastId.current);
-      toast.error("Some error occured! Try again.");
-    }
-  );
+  const [showAccessModal, setShowAccessModal] = useState<boolean>(false);
 
   const others = useOthers();
 
@@ -73,21 +65,12 @@ export const Collaborators = ({ documentId }: CollaboratorProps) => {
     );
   }
 
-  const handleRemoveCollaborator = (
-    collaborator: Omit<Collaborator, "avatar">
-  ) => {
-    remove({ email: collaborator.email, documentId: documentId });
-    toastId.current = toast.loading(
-      `Unsharing the document with ${collaborator.name}`
-    );
-  };
-
   return (
     <div>
       {onlineCollaborators.length > 0 && (
         <div>
           <p className="text-muted-foreground text-xs font-semibold">
-            Now Editing
+            Active users
           </p>
           <div className="my-3 pb-1">
             <CollaboratorsAvatarStack collaborators={onlineCollaborators} />
@@ -96,15 +79,19 @@ export const Collaborators = ({ documentId }: CollaboratorProps) => {
         </div>
       )}
       <div className="mt-2">
-        <p className="text-muted-foreground text-xs font-semibold pb-2">
-          Shared with
-        </p>
+        <div className="flex justify-between items-center">
+          <p className="text-muted-foreground text-xs font-semibold pb-2">
+            Shared with
+          </p>
+          <p onClick={()=> setShowAccessModal(true)} className=" dark:text-white/70 text-black/70 cursor-pointer hover:bg-secondary text-xs font-semibold bg-secondary/70 p-1 px-2 rounded select-none">
+            Manage Access
+          </p>
+        </div>
         <UsersList
           users={collaborators}
-          enabledRemove
-          onUserSelect={handleRemoveCollaborator}
         />
       </div>
+      <AccessManagerModal show={showAccessModal} documentId={documentId} collaborators={collaborators} setShow={setShowAccessModal}/>
     </div>
   );
 };

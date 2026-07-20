@@ -338,6 +338,8 @@ export const getCollaborators = query({
       name: collaborator.name,
       email: collaborator.email,
       imgUrl: collaborator.avatar,
+      id: collaborator._id,
+      access: collaborator.access
     }));
   },
 });
@@ -494,6 +496,7 @@ export const addCollaborator = mutation({
       avatar: v.string(),
       email: v.string(),
       id: v.optional(v.string()),
+      access: v.optional(v.union(v.literal("read"), v.literal("write"))),
     }),
   },
   handler: async (ctx, args) => {
@@ -525,7 +528,6 @@ export const addCollaborator = mutation({
     await ctx.db.insert("collaborators", {
       ...args.collaborator,
       document: args.id,
-      access: "read",
     });
 
     return true;
@@ -562,6 +564,26 @@ export const removeCollaborator = mutation({
     return true;
   },
 });
+
+export const updateCollaboratorAccess = mutation({
+  args: {
+    collaboratorId: v.id("collaborators"),
+    access: v.union(v.literal("read"), v.literal("write"))
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new ConvexError("Not authenticated");
+    }
+
+    await ctx.db.patch(args.collaboratorId, {
+      access: args.access
+    });
+
+    return true;
+  },
+})
 
 export const getCollaboratorById = query({
   args: {
