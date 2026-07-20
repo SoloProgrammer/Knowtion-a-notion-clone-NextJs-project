@@ -338,6 +338,8 @@ export const getCollaborators = query({
       name: collaborator.name,
       email: collaborator.email,
       imgUrl: collaborator.avatar,
+      id: collaborator._id,
+      access: collaborator.access
     }));
   },
 });
@@ -493,6 +495,8 @@ export const addCollaborator = mutation({
       name: v.string(),
       avatar: v.string(),
       email: v.string(),
+      id: v.optional(v.string()),
+      access: v.optional(v.union(v.literal("read"), v.literal("write"))),
     }),
   },
   handler: async (ctx, args) => {
@@ -560,6 +564,53 @@ export const removeCollaborator = mutation({
     return true;
   },
 });
+
+export const updateCollaboratorAccess = mutation({
+  args: {
+    collaboratorId: v.id("collaborators"),
+    access: v.union(v.literal("read"), v.literal("write"))
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new ConvexError("Not authenticated");
+    }
+
+    await ctx.db.patch(args.collaboratorId, {
+      access: args.access
+    });
+
+    return true;
+  },
+})
+
+export const getCollaboratorById = query({
+  args: {
+    userId: v.string(),
+    documentId: v.id("documents"),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new ConvexError("Not authenticated");
+    }
+    const collaborator = (
+      await ctx.db
+        .query("collaborators")
+        .withIndex("by_userid_document", (q) =>
+          q.eq("document", args.documentId).eq("id", args.userId)
+        )
+        .collect()
+    )[0];
+
+    if (!collaborator) {
+      throw new ConvexError("Collaborator Not found!");
+    }
+
+    return collaborator;
+  },
+})
 
 export const addToFavourites = mutation({
   args: {

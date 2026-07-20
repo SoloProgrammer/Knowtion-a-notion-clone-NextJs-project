@@ -209,6 +209,24 @@ const useRemoveCollaboratorMutation = (
 
   return { ...rest, remove };
 };
+const useUpdateCollaboratorAccess = (
+  onSuccess?: () => void,
+  onError?: (errMsg: string) => void
+) => {
+  const { mutate: update, ...rest } = useMutation({
+    mutationFn: useConvexMutation(api.documents.updateCollaboratorAccess),
+    onSuccess,
+    onError: (err) => {
+      let message = err.message;
+      if (err instanceof ConvexError) {
+        message = err.data as string;
+      }
+      onError?.(message);
+    },
+  });
+
+  return { ...rest, update };
+};
 
 const useAddToFavouritesMutation = (
   onSuccess?: () => void,
@@ -276,6 +294,9 @@ const useGetSharedDocuments = (email: string) =>
 const useGetCollaboratorsByDocument = (documentId: Id<"documents">) =>
   useQuery(convexQuery(api.documents.getCollaborators, { id: documentId }));
 
+const useGetCollaboratorByUserId = (documentId: Id<"documents">, userId: string) =>
+  useQuery(convexQuery(api.documents.getCollaboratorById, { documentId, userId }));
+
 const useGetUserSubcriptionQuery = (userId: string) =>
   useQuery(convexQuery(api.subscriptions.get, { userId }));
 
@@ -301,4 +322,6 @@ export {
   useRemoveFromFavouritesMutation,
   useGetFavoutiteDocumentsQuery,
   useCheckDocumentIsFavoutiteQuery,
+  useGetCollaboratorByUserId,
+  useUpdateCollaboratorAccess
 };

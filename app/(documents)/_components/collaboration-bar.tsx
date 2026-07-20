@@ -7,14 +7,10 @@ import { useAddCollaboratorMutation } from "../(routes)/documents/hooks";
 import { UsersList } from "./user-list";
 import { Collaborators } from "./collaborators";
 import { CollaboratorsAvatarStack } from "@/components/collaborators-avatar-stack";
-import {
-  PopoverContent,
-  Popover,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { PopoverContent, Popover, PopoverTrigger } from "@/components/ui/popover";
 
 import { Id } from "@/convex/_generated/dataModel";
-import { Collaborator, User } from "../(routes)/documents/types";
+import { AccessLabel, Collaborator, User } from "../(routes)/documents/types";
 
 import { MailPlus, Send } from "lucide-react";
 import { ChangeEvent, useState } from "react";
@@ -27,16 +23,16 @@ import { useUser } from "@clerk/clerk-react";
 import { useOthers } from "@liveblocks/react/suspense";
 import { ToggleFavorite } from "./toggle-favourite";
 import { useMediaQuery } from "usehooks-ts";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { ACCESS_LABELS } from "@/app/constants";
+import { queryClient } from "@/providers/convex-provider";
 
 type CollaborationBarProps = {
   documentId: Id<"documents">;
   ownerId: string;
 };
 
-export const CollaborationBar = ({
-  documentId,
-  ownerId,
-}: CollaborationBarProps) => {
+export const CollaborationBar = ({ documentId, ownerId }: CollaborationBarProps) => {
   const { user } = useUser();
   const isMobile = useMediaQuery("(max-width:600px)");
   const [query, setQuery] = useState("");
@@ -44,6 +40,7 @@ export const CollaborationBar = ({
   const [selectedUser, setSelectedUser] = useState<User | undefined>();
   const others = useOthers();
   const onlineCollaborators = others.map(({ info }) => info);
+  const [access, setAccess] = useState<AccessLabel>("Viewer");
 
   const debounceEnabled = useDebounceFunction(() => setIsEnabled(true));
 
@@ -54,23 +51,28 @@ export const CollaborationBar = ({
 
   const { data: users, isFetching } = useQuery({
     queryFn: async () => {
-      const users = (await useSearchUsers(query.trim())).filter(
-        (u) => u.id !== user?.id && u.id !== ownerId
-      );
+      const users = (await useSearchUsers(query.trim())).filter((u) => u.id !== user?.id && u.id !== ownerId);
       setIsEnabled(false);
       return users;
     },
     enabled: isEnabled && !!query.trim(),
-    queryKey: ["search-users"],
+    queryKey: ["search-users"]
   });
+
+  const emptyUsersList = () => {
+    queryClient.removeQueries({
+      queryKey: ["search-users"],
+    });
+  }
 
   const { add, isPending } = useAddCollaboratorMutation(
     () => {
       toast.success("Invite sent successully!");
       setSelectedUser(undefined);
       setQuery("");
+      emptyUsersList();
     },
-    (errMsg) => toast.error(errMsg)
+    (errMsg) => toast.error(errMsg),
   );
 
   const handleUserSelect = (user: User) => {
@@ -85,6 +87,8 @@ export const CollaborationBar = ({
       avatar: selectedUser.imgUrl,
       name: selectedUser.name || "guest",
       email: selectedUser.email,
+      id: selectedUser.id,
+      access: ACCESS_LABELS[access] as Collaborator["access"]
     };
     add({
       id: documentId,
@@ -98,46 +102,29 @@ export const CollaborationBar = ({
         {ownerId === user?.id && (
           <Popover>
             <PopoverTrigger asChild>
-              <Button
-                disabled={ownerId !== user?.id}
-                className="h-auto py-1 bg-secondary/50 select-none"
-                size={"sm"}
-                variant={"ghost"}
-              >
+              <Button disabled={ownerId !== user?.id} className="h-auto py-1 bg-secondary/50 select-none" size={"sm"} variant={"ghost"}>
                 Manage collaborators
               </Button>
             </PopoverTrigger>
-            <PopoverContent
-              align="start"
-              className="p-2"
-              onOpenAutoFocus={(e) => e.preventDefault()}
-            >
+            <PopoverContent align="start" className="p-2" onOpenAutoFocus={(e) => e.preventDefault()}>
               <Collaborators documentId={documentId} />
             </PopoverContent>
           </Popover>
         )}
         {!isMobile && onlineCollaborators.length > 0 ? (
-          <CollaboratorsAvatarStack
-            collaborators={onlineCollaborators}
-            size="sm"
-          />
+          <CollaboratorsAvatarStack collaborators={onlineCollaborators} size="sm" />
         ) : (
-          ownerId !== user?.id && (
-            <span className="text-muted-foreground text-sm">
-              &#x2022; 0 online
-            </span>
-          )
+          ownerId !== user?.id && <span className="text-muted-foreground text-sm">&#x2022; 0 online</span>
         )}
       </div>
       <div className="flex items-center gap-x-2">
-        <ToggleFavorite
-          documentId={documentId}
-          disabled={user?.id !== ownerId}
-        />
+        <ToggleFavorite documentId={documentId} disabled={user?.id !== ownerId} />
         <Popover
           onOpenChange={() => {
             setQuery("");
+            setAccess("Viewer")
             setSelectedUser(undefined);
+            emptyUsersList();
           }}
         >
           <PopoverTrigger asChild>
@@ -161,19 +148,36 @@ export const CollaborationBar = ({
                 onClick={handleInvite}
                 className="h-[30px] min-w-[50px] rounded-tl-none rounded-bl-none"
               >
-                {isPending ? (
-                  <Spinner />
-                ) : (
-                  <Send className="w-5 h-5 shrink-0" />
-                )}
+                {isPending ? <Spinner /> : <Send className="w-5 h-5 shrink-0" />}
               </Button>
             </div>
+            {users && users.length > 0 ? (
+              <div className="mt-2 flex justify-between items-center gap-2">
+                <span className="text-xs">Send Invite with Access as: </span>
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="flex-1" value={access}>
+                    <Button className="h-auto py-1 bg-secondary/50 select-none w-full" size={"sm"} variant={"outline"}>
+                      <span>{access}</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {Object.keys(ACCESS_LABELS).map((accessKey) => (
+                      <DropdownMenuItem key={accessKey} onClick={() => setAccess(accessKey as AccessLabel)}>
+                        {accessKey}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            ) : (
+              <></>
+            )}
             {isFetching ? (
               <div className="py-5 flex items-center justify-center">
                 <Spinner />
               </div>
             ) : (
-              <UsersList users={users} onUserSelect={handleUserSelect} />
+              <UsersList users={users} onUserSelect={handleUserSelect} viewOnly={false}/>
             )}
           </PopoverContent>
         </Popover>

@@ -11,12 +11,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { FileIcon } from "lucide-react";
 
 import { useMutation } from "convex/react";
+import { cn } from "@/lib/utils";
 
 type TitleProps = {
   document: Doc<"documents">;
+  isEditable?: boolean;
 };
 
-export const Title = ({ document }: TitleProps) => {
+export const Title = ({ document, isEditable = true }: TitleProps) => {
   const update = useMutation(api.documents.udpate);
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(document.title);
@@ -32,6 +34,7 @@ export const Title = ({ document }: TitleProps) => {
     setIsEditing(false);
   };
   const enableInput = () => {
+    if(!isEditable) return;
     setTitle(document.title);
     setIsEditing(true);
   };
@@ -60,6 +63,7 @@ export const Title = ({ document }: TitleProps) => {
               disableInput();
               setTitle(document.title);
             }}
+            disabled={!isEditable}
             value={title}
             onChange={handleTitleChange}
             className="placeholder:text-muted-foreground px-[0.68rem] h-7 focus-visible:ring-transparent font-medium"
@@ -68,7 +72,7 @@ export const Title = ({ document }: TitleProps) => {
           <div
             role="button"
             onClick={enableInput}
-            className="h-auto font-medium line-clamp-1 text-sm cursor-pointer hover:bg-secondary px-3 py-1 rounded-md"
+            className={cn("h-auto font-medium line-clamp-1 text-sm cursor-pointer hover:bg-secondary px-3 py-1 rounded-md", !isEditable && "cursor-default")}
           >
             {title.trim() || "Untitled"}
           </div>

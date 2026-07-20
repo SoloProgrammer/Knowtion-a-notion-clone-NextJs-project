@@ -16,15 +16,16 @@ import { MoreHorizontal } from "lucide-react";
 type NavbarProps = {
   document: Doc<"documents">;
   ownerId?: string;
+  isEditAccess?: boolean;
 };
 
-export const Navbar = ({ document, ownerId }: NavbarProps) => {
+export const Navbar = ({ document, ownerId, isEditAccess = true }: NavbarProps) => {
   return (
     <>
       <nav className="min-h-14 px-2 border-b flex items-center justify-between">
         <div className="flex items-center gap-x-2">
           <SideBarMenu />
-          <Title document={document} />
+          <Title document={document} isEditable={isEditAccess}/>
         </div>
         <div className="flex items-center gap-x-2">
           <Publish

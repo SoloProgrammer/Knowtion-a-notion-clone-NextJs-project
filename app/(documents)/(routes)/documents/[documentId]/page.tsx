@@ -16,11 +16,13 @@ import { Id } from "@/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import { useGetSingleDocument } from "../hooks";
 import { useDebounceFunction } from "@/hooks/use-debounce-function";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { useUser } from "@clerk/clerk-react";
 import { CommentsTrigger } from "@/app/(documents)/_components/comments/comments-sheet";
+import { SetDocumentAccessLevel } from "@/app/(documents)/_components/SetDocumentAccessLevel";
+import { useDocumentAccess } from "@/hooks/zustand/use-document-accessControl";
 
 const DynamicEditor = dynamic(() => import("@/components/editor"), {
   ssr: false,
@@ -47,10 +49,20 @@ const DocumentPage = ({ params }: DocumentPageProps) => {
   const { user } = useUser();
 
   const update = useDebounceFunction(useMutation(api.documents.udpate), 1000);
+  const { hasEditAccess } = useDocumentAccess()
+
+  useEffect(() => {
+    if(!document) return;
+    if(document.isArchived) {
+      setIsPreview(false);
+    }
+  },[document])
 
   if (isLoading) return <DocumentPage.Skeleton />;
 
   if (!document || isError) throw new Error("Document not found");
+
+  const isDocumentEditable = !document.isArchived && hasEditAccess;
 
   const handleEditorChange = (content: string) => {
     update({ id: document?._id, content });
@@ -58,7 +70,8 @@ const DocumentPage = ({ params }: DocumentPageProps) => {
 
   return (
     <div className="flex flex-col h-full">
-      <Navbar document={document!} ownerId={user?.id} />
+      <SetDocumentAccessLevel documentId={document._id} userId={user?.id!} />
+      <Navbar document={document!} ownerId={user?.id} isEditAccess={isDocumentEditable} />
       <div
         className={cn(
           "flex flex-col w-full flex-grow overflow-y-auto overflow-x-hidden pb-20 border-b-[3px] border-transparent transition-colors",
@@ -71,18 +84,18 @@ const DocumentPage = ({ params }: DocumentPageProps) => {
         <CoverImage
           url={document?.coverImage}
           documentId={document?._id!}
-          preview={isPreview}
+          preview={isPreview || document.isArchived || !isDocumentEditable}
         />
         <div className="md:max-w-4xl lg:max-w-5xl px-2 mx-auto mt-3 flex flex-col gap-y-4 flex-grow w-full">
-          <Toolbar document={document!} preview={isPreview || document.isArchived} />
+          <Toolbar document={document!} preview={isPreview || document.isArchived || !isDocumentEditable} />
           <DynamicEditor
             onChange={handleEditorChange}
-            editable={!isPreview && !document.isArchived}
+            editable={!isPreview && isDocumentEditable}
           />
         </div>
       </div>
-      <CommentsTrigger documentId={document._id} />
-      <PreviewTabs setIsPreview={setIsPreview} />
+      <CommentsTrigger documentId={document._id} className={isDocumentEditable ? "bottom-20" : "bottom-3"}/>
+      <PreviewTabs setIsPreview={setIsPreview} show={isDocumentEditable} />
     </div>
   );
 };
