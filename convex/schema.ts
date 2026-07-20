@@ -63,12 +63,15 @@ export default defineSchema({
   collaborators: defineTable({
     name: v.string(),
     email: v.string(),
+    id: v.optional(v.string()),
     avatar: v.string(),
     document: v.id("documents"),
+    access: v.optional(v.union(v.literal("read"), v.literal("write"))),
   })
     .index("by_document", ["document"])
     .index("by_email", ["email"])
-    .index("by_email_document", ["document", "email"]),
+    .index("by_email_document", ["document", "email"])
+    .index("by_userid_document", ["document", "id"]),
   subscriptions: defineTable(SubscriptionDto)
     .index("by_buyer", ["buyerId"])
     .index("by_stripe", ["stripeId"]),

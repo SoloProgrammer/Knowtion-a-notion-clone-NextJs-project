@@ -70,4 +70,10 @@ const PLANS = {
   PRO: "pro",
 };
 
-export { META, BRAND_NAME, THEMS, DARK, LIGHT, SYSTEM, PLANS };
+const ACCESS_LEVELS = {
+  READ: "read",
+  WRITE: "write",
+  OWNER: "owner",
+};
+
+export { META, BRAND_NAME, THEMS, DARK, LIGHT, SYSTEM, PLANS, ACCESS_LEVELS };

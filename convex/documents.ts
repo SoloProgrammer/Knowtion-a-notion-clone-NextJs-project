@@ -493,6 +493,7 @@ export const addCollaborator = mutation({
       name: v.string(),
       avatar: v.string(),
       email: v.string(),
+      id: v.optional(v.string()),
     }),
   },
   handler: async (ctx, args) => {
@@ -524,6 +525,7 @@ export const addCollaborator = mutation({
     await ctx.db.insert("collaborators", {
       ...args.collaborator,
       document: args.id,
+      access: "read",
     });
 
     return true;
@@ -560,6 +562,33 @@ export const removeCollaborator = mutation({
     return true;
   },
 });
+
+export const getCollaboratorById = query({
+  args: {
+    userId: v.string(),
+    documentId: v.id("documents"),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new ConvexError("Not authenticated");
+    }
+    const collaborator = (
+      await ctx.db
+        .query("collaborators")
+        .withIndex("by_userid_document", (q) =>
+          q.eq("document", args.documentId).eq("id", args.userId)
+        )
+        .collect()
+    )[0];
+
+    if (!collaborator) {
+      throw new ConvexError("Collaborator Not found!");
+    }
+
+    return collaborator;
+  },
+})
 
 export const addToFavourites = mutation({
   args: {

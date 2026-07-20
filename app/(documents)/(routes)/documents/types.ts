@@ -8,4 +8,5 @@ export type User = {
 export type Collaborator = Omit<User, "imgUrl"> & {
   color?: string;
   avatar: string;
+  access?: "read" | "write";
 };
