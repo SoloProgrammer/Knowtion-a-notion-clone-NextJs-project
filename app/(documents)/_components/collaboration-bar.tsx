@@ -79,12 +79,15 @@ export const CollaborationBar = ({
   };
 
   const handleInvite = () => {
+    console.log(selectedUser, "selectedUser");
+    debugger;
     if (!selectedUser) return;
 
     const collaborator: Collaborator = {
       avatar: selectedUser.imgUrl,
       name: selectedUser.name || "guest",
       email: selectedUser.email,
+      id: selectedUser.id,
     };
     add({
       id: documentId,

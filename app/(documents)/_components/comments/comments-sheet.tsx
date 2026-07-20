@@ -595,8 +595,10 @@ CommentsList.Skeleton = ({ className }: { className?: string }) => {
 
 export const CommentsTrigger = ({
   documentId,
+  className = ""
 }: {
   documentId: Id<"documents">;
+  className?: string;
 }) => {
   const { isOpen, open } = useComments();
   const [notification, setNotifications] = useState(0);
@@ -620,7 +622,7 @@ export const CommentsTrigger = ({
   }, [isOpen]);
 
   return (
-    <div className="fixed bottom-20 right-6 z-[99]">
+    <div className={cn("fixed bottom-20 right-6 z-[99]", className)}>
       <CommentsSheet documentId={documentId}>
         <Button
           onClick={() => open()}
